@@ -1,0 +1,4 @@
+enum ImageViewState{
+  IDLE,
+  LOADING,
+}

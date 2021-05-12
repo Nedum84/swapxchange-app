@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "961054493199",
+    "project_id": "swapxchange-bc2c8",
+    "storage_bucket": "swapxchange-bc2c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961054493199:android:9dc29c811117303a41717a",
+        "android_client_info": {
+          "package_name": "com.app.swapxchange"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961054493199-qdl3mq1u5rbe77cvpnp1o8jp0bsh11ah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_IAGrAe2BgHpxz1_UOjCf0I4mr2OKTCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961054493199-qdl3mq1u5rbe77cvpnp1o8jp0bsh11ah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
