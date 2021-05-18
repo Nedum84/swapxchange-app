@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
 import 'package:swapxchange/controllers/product_controller.dart';
 import 'package:swapxchange/ui/splash/splashscreen.dart';
-import 'package:swapxchange/utils/user_prefs.dart';
 
 void main() async {
   // await GetStorage.init('SwapXchangeContainer'); //get storage initialization
@@ -53,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() {
-    UserPrefs.setUserId(newId: Random().nextInt(123434).toString());
+    // UserPrefs.setUserId(newId: Random().nextInt(123434).toString());
     Get.to(() => SplashScreen(), transition: Transition.downToUp);
     // Get.snackbar(
     //   'title',
@@ -96,9 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              UserPrefs.getUserId,
-            ),
+            // Text(
+            //   UserPrefs.getUserId,
+            // ),
             Text(
               'You have:',
             ),

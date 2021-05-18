@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
-import 'package:swapxchange/ui/home/tabs/dashboard/dashboard.dart';
+import 'package:swapxchange/ui/splash/splashscreen.dart';
 
 void main() async {
   // await GetStorage.init('SwapXchangeContainer'); //get storage initialization
@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
       ),
       initialBinding: AllControllerBinding(),
-      // home: SplashScreen(),
-      home: Dashboard(),
+      home: SplashScreen(),
+      // home: Dashboard(),
     );
   }
 }

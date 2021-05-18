@@ -20,7 +20,7 @@ class DioCustomInterceptors extends Interceptor {
     String token = await getToken();
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    options.baseUrl = 'https://jsonplaceholder.typicode.com';
+    options.baseUrl = 'http://127.0.0.1:8088/v1/';
     options.connectTimeout = 5000;
     options.receiveTimeout = 3000;
     // Transform response data to Json Map
@@ -65,6 +65,7 @@ class DioCustomInterceptors extends Interceptor {
   @override
   onError(DioError dioError, ErrorInterceptorHandler handler) async {
     print('ERROR[${dioError.response?.statusCode}]');
+    print('ERROR[${dioError.response?.data}]');
     if (CancelToken.isCancel(dioError)) {
       print('User cancelled the request');
     }
@@ -122,7 +123,6 @@ class DioCustomInterceptors extends Interceptor {
       });
       return;
     }
-    // print(dioError.error);
     return super.onError(dioError, handler);
   }
 

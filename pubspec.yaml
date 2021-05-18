@@ -29,21 +29,25 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
-  fluttertoast: ^7.1.4
+  fluttertoast: ^8.0.6
 
   #intl(FOR DATE AND CO...)
-  intl: ^0.16.1
+  intl: ^0.17.0
 
-  firebase_core: #FOR FIREBASE APP INITIALIZATION
-#  FCM
-  firebase_messaging:
+  firebase_core: ^1.1.0 #FOR FIREBASE APP INITIALIZATION
+  #   For handling authentication via firebase
+  firebase_auth: ^1.1.3
+  #  FCM
+  firebase_messaging: ^9.1.3
+
 #   firebase storage
   firebase_storage:
 #   For making request to firestore database
   cloud_firestore:
 
   # For handling google sign in
-  flutter_facebook_login: ^3.0.0
+  #https://stackoverflow.com/questions/27448684/android-facebook-sdk-generate-release-key-hash
+  flutter_facebook_auth: ^3.3.3+1
 
   # Shimmer effect library
   shimmer: ^1.1.2
@@ -58,7 +62,6 @@ dependencies:
 
   # path provider
   path_provider: ^2.0.1
-
   # provider
   provider: ^5.0.0
 
@@ -73,6 +76,7 @@ dependencies:
 
   #  image compressor
   wechat_assets_picker: ^5.1.3
+  animated_text_kit: ^4.2.1
 
   #Http calls
 #  http: ^0.13.1
@@ -91,6 +95,7 @@ dependencies:
   google_fonts: ^2.0.0
   animations: ^2.0.0
   web_socket_channel: ^2.1.0
+  enum_to_string: ^2.0.1
 
 
 

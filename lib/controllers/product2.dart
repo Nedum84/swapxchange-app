@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/ui/repository/repo_product.dart';
+import 'package:swapxchange/repository/repo_product.dart';
 
 class PostsController extends GetxController {
   List<Product> postsList = [];

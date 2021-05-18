@@ -1,16 +1,118 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:swapxchange/ui/auth/phoneauth/enter_name.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-import '../login.dart';
+class VerifyOtp extends StatefulWidget {
+  final String phoneVerificationId;
+  final String phoneNo;
 
-class VerifyOtp extends StatelessWidget {
+  VerifyOtp(
+      {Key? key, required this.phoneVerificationId, required this.phoneNo})
+      : super(key: key);
+
+  @override
+  _VerifyOtpState createState() => _VerifyOtpState();
+}
+
+class _VerifyOtpState extends State<VerifyOtp> {
   TextEditingController otpCodeController = TextEditingController();
   FocusNode textFieldFocusOtp = FocusNode();
+
+  bool _isLoading = false;
+  AuthRepo _authRepo = AuthRepo();
+  String? _phoneVerificationId;
+
+  Timer? timerTicker;
+  int _currentTime = 0;
+  int totalTimeMins = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneVerificationId = widget.phoneVerificationId;
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timerTicker?.cancel();
+  }
+
+  void startTimer() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      timerTicker = timer;
+      print(timer.tick);
+      setState(() => _currentTime = timer.tick);
+
+      if (timer.tick >= totalTimeMins) {
+        timer.cancel();
+      }
+    });
+  }
+
+  _resendOtp() {
+    setState(() => _isLoading = true);
+    _authRepo.phoneNumberSignIn(
+      phoneNumber: widget.phoneNo,
+      loginSuccess: (user) {},
+      onCodeSent: (phoneVerificationId) {
+        _phoneVerificationId = phoneVerificationId;
+        AlertUtils.toast('An OTP has been sent to your phone number');
+      },
+      onCodeAutoRetrievalTimeout: (er) {
+        AlertUtils.toast('Timeout: $er');
+        setState(() => _isLoading = false);
+      },
+      onFailed: (er) {
+        AlertUtils.toast('Error encountered: $er');
+        print(er);
+        setState(() => _isLoading = false);
+      },
+    );
+  }
+
+  _verifyOtp() async {
+    String otpCode = otpCodeController.text.toString().trim();
+    if (otpCode.isEmpty) {
+      AlertUtils.toast('Enter OTP code');
+      return;
+    } else if (otpCode.length < 5) {
+      AlertUtils.toast('Incorrect OTP code');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    var user = await _authRepo.verifyOTP(
+        otpCode: otpCode, verificationId: _phoneVerificationId!);
+    if (user == null) {
+      AlertUtils.toast('Incorrect OTP entered');
+      setState(() => _isLoading = false);
+    } else {
+      _authenticate(user);
+    }
+  }
+
+  _authenticate(User user) {
+    Auth.authenticateUser(
+      user: user,
+      onDone: () {
+        setState(() => _isLoading = false);
+      },
+      onError: (er) {
+        setState(() => _isLoading = false);
+        AlertUtils.toast("$er");
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +129,7 @@ class VerifyOtp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Enter Otp sent to +23481243439374893',
+                  'Enter Otp sent to ${widget.phoneNo}',
                   style: H1Style,
                   textAlign: TextAlign.center,
                 ),
@@ -44,7 +146,7 @@ class VerifyOtp extends StatelessWidget {
                     focusNode: textFieldFocusOtp,
                     keyboardType: TextInputType.number,
                     maxLines: 1,
-                    maxLength: 5,
+                    maxLength: 6,
                     autofocus: true,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -65,15 +167,17 @@ class VerifyOtp extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                Text(
-                  'Resend OTP in 12:32s',
-                  style: TextStyle(color: KColors.TEXT_COLOR),
-                ),
-                resendOtp(),
+                (_currentTime < totalTimeMins)
+                    ? Text(
+                        'Resend OTP in 00:${totalTimeMins - _currentTime}s',
+                        style: TextStyle(color: KColors.TEXT_COLOR),
+                      )
+                    : resendOtp(),
                 SizedBox(height: 64),
                 PrimaryButton(
                   btnText: 'CONTINUE',
-                  onClick: () => Get.to(() => EnterName()),
+                  onClick: () => _verifyOtp(),
+                  isLoading: _isLoading,
                 ),
               ],
             ),
@@ -109,7 +213,7 @@ class VerifyOtp extends StatelessWidget {
         ),
         ButtonSmall(
           text: 'Resend',
-          onClick: () => null,
+          onClick: _resendOtp,
         ),
       ],
     );

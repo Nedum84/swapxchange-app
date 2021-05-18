@@ -1,24 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/ui/repository/dio/api_client.dart';
+import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoProduct extends ApiClient {
   //Request token for cancelling requests...
   var token = CancelToken();
 
   Future<void> getProductById() async {
-    Response response = await ApiClient.apiClient().get('path');
+    Response response = await ApiClient.request().get('path');
   }
 
   //with cancelRequestToken
   Future<void> getProductById2() async {
-    Dio client = await ApiClient.apiClient();
+    Dio client = await ApiClient.request();
 
     Response response = await client.get('path', cancelToken: token);
   }
 
   _post() async {
-    var response = await ApiClient.apiClient().post(
+    var response = await ApiClient.request().post(
       '/test',
       data: {'id': 12, 'name': 'wendu'},
       onReceiveProgress: _onReceiveProgress,
@@ -33,7 +33,7 @@ class RepoProduct extends ApiClient {
   late Options _dioOptions;
 
   void downloadFile(String publishSubject) {
-    ApiClient.apiClient().download('urlOfFileToDownload', 'dir/filename',
+    ApiClient.request().download('urlOfFileToDownload', 'dir/filename',
         onReceiveProgress: (received, total) {
       int percentage = ((received / total) * 100).floor();
     });
@@ -45,7 +45,7 @@ class RepoProduct extends ApiClient {
     required Function(ErrorResponse error) onError,
   }) async {
     if (beforeSend != null) beforeSend();
-    ApiClient.apiClient().get('/posts').then((res) {
+    ApiClient.request().get('/posts').then((res) {
       try {
         if (res != null && onSuccess != null) {
           onSuccess(

@@ -10,38 +10,48 @@ class PrimaryButton extends StatelessWidget {
   final Color? bgColor;
   final Color? textColor;
   final Color? arrowColor;
-  const PrimaryButton(
-      {Key? key,
-      required this.onClick,
-      required this.btnText,
-      this.bgColor,
-      this.textColor,
-      this.arrowColor})
-      : super(key: key);
+  final bool? isLoading;
+
+  const PrimaryButton({
+    Key? key,
+    required this.onClick,
+    required this.btnText,
+    this.bgColor,
+    this.textColor,
+    this.arrowColor,
+    this.isLoading,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onClick,
+      onTap: () => isLoading == true ? null : onClick(),
       child: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: bgColor ?? KColors.PRIMARY,
+          color: bgColor ?? KColors.PRIMARY.withOpacity(.8),
           boxShadow: [Constants.SHADOW],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             circle(isBlank: true),
-            Text(
-              btnText,
-              style: TextStyle(
-                color: textColor ?? Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),
-            ),
-            circle(),
+            isLoading == true
+                ? ButtonLoadingSpinner(
+                    spinnerColor: Colors.white30,
+                  )
+                : Expanded(
+                    child: Text(
+                      btnText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textColor ?? Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+            circle(isBlank: isLoading == true),
           ],
         ),
       ),
@@ -66,14 +76,17 @@ class PrimaryButton extends StatelessWidget {
 
 class SecondaryButton extends StatelessWidget {
   final Function() onClick;
+  final bool? isLoading;
 
-  const SecondaryButton({Key? key, required this.onClick}) : super(key: key);
+  const SecondaryButton({Key? key, required this.onClick, this.isLoading})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onClick,
+      onTap: () => isLoading == true ? null : onClick(),
       child: Container(
+        width: double.infinity,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -84,15 +97,19 @@ class SecondaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             circle(isBlank: true),
-            Text(
-              'SIGN IN WITH FACEBOOK',
-              style: TextStyle(
-                color: KColors.BLUE,
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),
-            ),
-            circle(),
+            isLoading == true
+                ? ButtonLoadingSpinner(
+                    spinnerColor: KColors.BLUE.withOpacity(.5),
+                  )
+                : Text(
+                    'SIGN IN WITH FACEBOOK',
+                    style: TextStyle(
+                      color: KColors.BLUE,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+            circle(isBlank: isLoading == true),
           ],
         ),
       ),
@@ -242,6 +259,26 @@ class ButtonOutline2 extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: StyleNormal.copyWith(color: titleColor ?? KColors.TEXT_COLOR),
+        ),
+      ),
+    );
+  }
+}
+
+class ButtonLoadingSpinner extends StatelessWidget {
+  final Color? spinnerColor;
+
+  const ButtonLoadingSpinner({Key? key, this.spinnerColor}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 20,
+      height: 20,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          spinnerColor ?? KColors.PRIMARY,
         ),
       ),
     );

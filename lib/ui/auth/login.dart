@@ -1,10 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/enter_phone.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  bool _isLoading = false;
+  AuthRepo _authRepo = AuthRepo();
+
+  _facebookSignIn() async {
+    setState(() => _isLoading = true);
+
+    _authRepo.facebookSignIn(
+      loginSuccess: (user) {
+        Auth.authenticateUser(
+          user: user,
+          onDone: () {
+            setState(() => _isLoading = false);
+          },
+          onError: (er) {
+            setState(() => _isLoading = false);
+            AlertUtils.toast("$er");
+          },
+        );
+      },
+      onProgress: () {
+        setState(() => _isLoading = true);
+      },
+      onCancelled: () {
+        AlertUtils.toast('Operation cancelled');
+        setState(() => _isLoading = false);
+      },
+      onFailed: () {
+        AlertUtils.toast('Facebook signin failed');
+        setState(() => _isLoading = false);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +69,48 @@ class Login extends StatelessWidget {
             ),
             SizedBox(height: 32),
             PrimaryButton(
-                btnText: 'CONTINUE WITH PHONE NUMBER',
-                onClick: () => Get.to(() => EnterPhone(),
-                    transition: Transition.rightToLeftWithFade)),
+              btnText: 'CONTINUE WITH PHONE NUMBER',
+              onClick: () {
+                if (!_isLoading)
+                  Get.to(
+                    () => EnterPhone(),
+                    transition: Transition.rightToLeft,
+                  );
+              },
+            ),
             SizedBox(height: 16),
             SecondaryButton(
-                onClick: () => Get.to(() => EnterPhone(),
-                    transition: Transition.leftToRight)),
+              onClick: _facebookSignIn,
+              isLoading: _isLoading,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 24),
+              child: Text.rich(
+                TextSpan(
+                  text: 'By signing up or logging in, you agree to our ',
+                  style: StyleNormal.copyWith(fontSize: 12),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Privacy Policy',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    TextSpan(text: ' and '),
+                    TextSpan(
+                        text: 'Licence Agreement',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                        )),
+                    // can add more TextSpans here...
+                  ],
+                ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    // color: kColorAsh
+                    ),
+              ),
+            )
           ],
         ),
       ),

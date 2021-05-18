@@ -1,16 +1,80 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/verify_phone.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-import '../login.dart';
+class EnterPhone extends StatefulWidget {
+  @override
+  _EnterPhoneState createState() => _EnterPhoneState();
+}
 
-class EnterPhone extends StatelessWidget {
+class _EnterPhoneState extends State<EnterPhone> {
   TextEditingController phoneNumberController = TextEditingController();
+
   FocusNode textFieldFocusPhone = FocusNode();
+
+  bool _isLoading = false;
+
+  AuthRepo _authRepo = AuthRepo();
+
+  _signInWithPhone() {
+    String phoneNo = phoneNumberController.text.toString().trim();
+    if (phoneNo.isEmpty) {
+      AlertUtils.toast('Enter your phone number');
+      return;
+    } else if (phoneNo.length < 10) {
+      AlertUtils.toast('Enter valid phone number');
+      return;
+    }
+    //include country code
+    phoneNo = '+234$phoneNo';
+
+    setState(() => _isLoading = true);
+    _authRepo.phoneNumberSignIn(
+      phoneNumber: '$phoneNo',
+      loginSuccess: (user) {
+        _authenticate(user);
+      },
+      onCodeSent: (phoneVerificationId) {
+        Get.to(
+          () => VerifyOtp(
+            phoneVerificationId: phoneVerificationId,
+            phoneNo: phoneNo,
+          ),
+          transition: Transition.leftToRight,
+        );
+      },
+      onCodeAutoRetrievalTimeout: (er) {
+        AlertUtils.toast('Timeout: $er');
+        setState(() => _isLoading = false);
+      },
+      onFailed: (er) {
+        AlertUtils.toast('Error encountered: $er');
+        print(er);
+        setState(() => _isLoading = false);
+      },
+    );
+  }
+
+  _authenticate(User user) {
+    Auth.authenticateUser(
+      user: user,
+      onDone: () {
+        setState(() => _isLoading = false);
+      },
+      onError: (er) {
+        setState(() => _isLoading = false);
+        AlertUtils.toast("$er");
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +137,8 @@ class EnterPhone extends StatelessWidget {
                 SizedBox(height: 64),
                 PrimaryButton(
                   btnText: 'CONTINUE',
-                  onClick: () => Get.to(() => VerifyOtp(),
-                      transition: Transition.rightToLeftWithFade),
+                  onClick: _signInWithPhone,
+                  isLoading: _isLoading,
                 ),
               ],
             ),
