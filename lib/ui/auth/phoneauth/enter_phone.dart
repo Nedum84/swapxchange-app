@@ -21,8 +21,14 @@ class _EnterPhoneState extends State<EnterPhone> {
   FocusNode textFieldFocusPhone = FocusNode();
 
   bool _isLoading = false;
-
   AuthRepo _authRepo = AuthRepo();
+
+  @override
+  void initState() {
+    super.initState();
+    User user = _authRepo.getCurrentUser()!;
+    _authenticate(user);
+  }
 
   _signInWithPhone() {
     String phoneNo = phoneNumberController.text.toString().trim();

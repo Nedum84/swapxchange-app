@@ -41,9 +41,13 @@ class UserPrefs {
     (await _prefs).setString(USER_TOKENS, tks);
   }
 
-  static Future<Tokens> getTokens() async {
+  static Future<Tokens?> getTokens() async {
     var tks = (await _prefs).getString(USER_TOKENS);
-    return Tokens.fromMap(jsonDecode(tks!));
+    try {
+      return Tokens.fromMap(jsonDecode(tks!));
+    } catch (e) {
+      return null;
+    }
   }
 
   // logout

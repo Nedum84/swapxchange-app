@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart' as pHandler;
+import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/components/step_progress_view.dart';
 import 'package:swapxchange/ui/home/tabs/dashboard/dashboard.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/permissions.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class GrantPermission extends StatefulWidget {
@@ -17,6 +23,8 @@ class _GrantPermissionState extends State<GrantPermission> {
   Color _stepperActiveColor = KColors.PRIMARY;
 
   int _curStep = 0;
+  bool _isLoading = false;
+  AuthRepo _authRepo = AuthRepo();
 
   @override
   void initState() {
@@ -38,8 +46,47 @@ class _GrantPermissionState extends State<GrantPermission> {
   }
 
   _grantLocationAccess() async {
-    controller.animateToPage(_curStep + 1,
-        duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+    setState(() => _isLoading = true);
+    Permissions.locationPermission().then((isPermGranted) async {
+      if (isPermGranted) {
+        await Geolocator.getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.high)
+            .then((Position position) async {
+          List<Placemark> addresses = await placemarkFromCoordinates(
+              position.latitude, position.longitude);
+
+          print(addresses.first.toJson());
+          print(addresses.first.locality);
+          print(addresses.first.subLocality);
+          print(addresses.first.subAdministrativeArea);
+          print(addresses.first.isoCountryCode);
+          var address = addresses.first;
+
+          _authRepo.updateAddress(
+              address: address.name!,
+              address_lat: position.latitude,
+              address_long: position.longitude,
+              state: address.subLocality!,
+              onSuccess: (appUser) {
+                print(appUser!.toMap());
+                // controller.animateToPage(_curStep + 1,
+                //     duration: const Duration(milliseconds: 400),
+                //     curve: Curves.easeInOut);
+              },
+              onError: (er) {
+                AlertUtils.toast("$er");
+              });
+          setState(() => _isLoading = false);
+        }).catchError((e) {
+          print(e);
+          setState(() => _isLoading = false);
+        });
+      } else {
+        pHandler.openAppSettings();
+        setState(() => _isLoading = false);
+        AlertUtils.toast("Access denied");
+      }
+    });
   }
 
   _grantFileAccess() {
@@ -65,6 +112,7 @@ class _GrantPermissionState extends State<GrantPermission> {
                 button: PrimaryButton(
                   onClick: () => _grantLocationAccess(),
                   btnText: 'Allow Access',
+                  isLoading: _isLoading,
                 ),
               );
             } else {

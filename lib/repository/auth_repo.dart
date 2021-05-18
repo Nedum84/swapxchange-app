@@ -135,14 +135,7 @@ class AuthRepo {
     }
   }
 
-  Future<bool> authenticateUser(User user) async {
-    QuerySnapshot result = await _userCollection
-        .where(FirebaseCollection.UID, isEqualTo: user.uid)
-        .get();
-    final List<DocumentSnapshot> docs = result.docs;
-    return docs.length == 0 ? true : false;
-  }
-
+  //Update user & return new Appuser data
   void addDataToDb({
     required User firebaseUser,
     required Function(AppUser? appUser, Tokens? tokens) onSuccess,
@@ -187,6 +180,46 @@ class AuthRepo {
           .doc(firebaseUser.uid)
           .set(appUser.toMap())
           .then((value) => onSuccess(appUser, tokens))
+          .catchError((error) => onError(error))
+          .timeout(Duration(seconds: 5));
+    } catch (e) {
+      onError(e);
+    }
+  }
+
+  //Update Address & return new Appuser data
+  void updateAddress({
+    required String address,
+    required address_lat,
+    required address_long,
+    required String state,
+    required Function(AppUser? appUser) onSuccess,
+    required Function(dynamic er) onError,
+  }) async {
+    AppUser appUser = AppUser();
+    //Register/Update on the server
+    await ApiClient.request().patch('/users/address', data: {
+      "address": address,
+      "address_lat": address_lat,
+      "address_long": address_long,
+      "state": state,
+    }).then((res) {
+      try {
+        appUser = AppUser.fromMap(res.data["data"]["user"]);
+      } catch (e) {
+        onError(e);
+      }
+    }).catchError((error) {
+      onError(catchErrors(error));
+      return;
+    });
+
+    //Update on firebase
+    try {
+      await _userCollection
+          .doc(appUser.uid)
+          .set(appUser.toMap())
+          .then((value) => onSuccess(appUser))
           .catchError((error) => onError(error))
           .timeout(Duration(seconds: 5));
     } catch (e) {

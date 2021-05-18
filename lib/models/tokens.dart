@@ -6,12 +6,12 @@ import 'dart:convert';
 
 class Tokens {
   Tokens({
-    required this.access,
-    required this.refresh,
+    this.access,
+    this.refresh,
   });
 
-  final Token access;
-  final Token refresh;
+  final Token? access;
+  final Token? refresh;
 
   factory Tokens.fromJson(String str) => Tokens.fromMap(json.decode(str));
 
@@ -23,8 +23,8 @@ class Tokens {
       );
 
   Map<String, dynamic> toMap() => {
-        "access": access.toMap(),
-        "refresh": refresh.toMap(),
+        "access": access?.toMap(),
+        "refresh": refresh?.toMap(),
       };
 }
 
