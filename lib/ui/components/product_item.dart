@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class ProductItem extends StatelessWidget {
+  final Product? product;
+
+  const ProductItem({Key? key, this.product}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -39,7 +44,7 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Text(
-              'Leather Chair ',
+              "${product!.productName}",
               style: StyleProductTitle,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -49,13 +54,13 @@ class ProductItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '₦302,547',
+                    '₦${product!.price}',
                     style: StyleProductPrice,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                LocationBtn()
+                LocationBadge(product: product)
               ],
             ),
           ],
@@ -65,31 +70,37 @@ class ProductItem extends StatelessWidget {
   }
 }
 
-class LocationBtn extends StatelessWidget {
+class LocationBadge extends StatelessWidget {
+  final Product? product;
+
+  const LocationBadge({Key? key, required this.product}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      decoration: BoxDecoration(
-          color: KColors.PRIMARY, borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        children: [
-          Icon(
-            Icons.location_on_outlined,
-            size: 10,
-            color: Colors.white,
-          ),
-          Text(
-            'Lagos',
-            style: TextStyle(
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        decoration: BoxDecoration(color: KColors.PRIMARY, borderRadius: BorderRadius.circular(16)),
+        child: Row(
+          children: [
+            Icon(
+              Icons.location_on_outlined,
+              size: 10,
               color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+            Expanded(
+              child: Text(
+                '${product?.userAddressCity}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

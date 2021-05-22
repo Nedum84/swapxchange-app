@@ -19,15 +19,13 @@ class Auth {
       } else if (appUser.address!.isEmpty) {
         Get.to(() => GrantPermission(), transition: Transition.leftToRight);
       } else {
-        Get.offAll(() => Dashboard(), transition: Transition.leftToRight);
+        Get.to(() => Dashboard(), transition: Transition.leftToRight); //remove later...
+        // Get.offAll(() => Dashboard(), transition: Transition.leftToRight);
       }
     }
   }
 
-  static void authenticateUser(
-      {required User user,
-      required Function onDone,
-      required Function(String error) onError}) async {
+  static void authenticateUser({required User user, required Function onDone, required Function(String error) onError}) async {
     _authRepo.addDataToDb(
       firebaseUser: user,
       onSuccess: (appUser, tokens) {

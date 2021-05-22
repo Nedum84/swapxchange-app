@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
-import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/models/product_model2.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 
 class PostsController extends GetxController {
-  List<Product> postsList = [];
+  List<Product2> postsList = [];
   bool isLoading = true;
   @override
   void onInit() {
     RepoProduct.getProducts(
       onSuccess: (posts) {
-        postsList.addAll(posts);
+        // postsList.addAll(posts);
         isLoading = false;
         update();
       },

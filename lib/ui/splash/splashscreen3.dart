@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/product_controller.dart';
-import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/models/product_model2.dart';
 import 'package:swapxchange/ui/components/loading_overlay.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -46,14 +46,12 @@ class SplashScreen extends StatelessWidget {
             ),
             Obx(
               //Obx is very similar to GetX except 'lighter' so no parameters for init, dispose, etc
-              () => Text(
-                  'Loading: ${Get.find<ProductController>().isLoading.value}'),
+              () => Text('Loading: ${Get.find<ProductController>().isLoading.value}'),
             ),
             RaisedButton(
               child: Text("Inc Count1"),
               onPressed: () {
-                Get.find<ProductController>()
-                    .increment(); //using Get.find locates the controller that was created in 'init' in GetX
+                Get.find<ProductController>().increment(); //using Get.find locates the controller that was created in 'init' in GetX
               },
             ),
             RaisedButton(
@@ -75,17 +73,16 @@ class SplashScreen extends StatelessWidget {
 
 class PostsListItem extends StatelessWidget {
   // Product product = Get.find<Product>();
-  final Product product;
+  final Product2 product;
   final int index;
 
-  const PostsListItem({Key? key, required this.product, required this.index})
-      : super(key: key);
+  const PostsListItem({Key? key, required this.product, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       key: UniqueKey(),
-      onDismissed: (direction){
+      onDismissed: (direction) {
         print(direction);
       },
       child: InkWell(

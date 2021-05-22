@@ -13,13 +13,12 @@ class UserPrefs {
   static String USER_TOKENS = "UserTokens";
 
   // user id
-  void setUID({required String userId}) async {
-    // SharedPreferences _prefs = await  SharedPreferences.getInstance();
-    (await _prefs).setString(USER_ID, userId);
+  void setUID({required int userId}) async {
+    (await _prefs).setInt(USER_ID, userId);
   }
 
-  Future<String?> getUID() async {
-    return (await _prefs).getString(USER_ID);
+  Future<int?> getUID() async {
+    return (await _prefs).getInt(USER_ID);
   }
 
   // all the user details

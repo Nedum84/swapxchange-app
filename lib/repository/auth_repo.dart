@@ -19,22 +19,43 @@ class AuthRepo {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static final CollectionReference _userCollection =
-      _firestore.collection(FirebaseCollection.USERS_COLLECTION);
+  static final CollectionReference _userCollection = _firestore.collection(FirebaseCollection.USERS_COLLECTION);
 
   User? getCurrentUser() => _auth.currentUser ?? null;
 
-  Future<AppUser> getUserDetails({String? userUId}) async {
-    //if empty return current user id or use the specified user id to fetch the details
-    String uid;
-    if (userUId == null || userUId.isEmpty) {
-      uid = getCurrentUser()!.uid;
-    } else {
-      uid = userUId;
-    }
+  static void refreshMe({
+    required Function(AppUser? appUser) onSuccess,
+    required Function(dynamic er) onError,
+  }) async {
+    //Register/Update on the server
+    await ApiClient.request().get('users/me').then((res) {
+      try {
+        AppUser appUser = AppUser.fromMap(res.data["data"]["user"]);
+        return appUser;
+      } catch (e) {
+        onError(e);
+      }
+    }).catchError((error) {
+      onError(catchErrors(error));
+    });
+  }
 
-    DocumentSnapshot documentSnapshot = await _userCollection.doc(uid).get();
-    return AppUser.fromMap(documentSnapshot.data()!);
+  static void getUserDetails({
+    required userId,
+    required Function(AppUser? appUser) onSuccess,
+    required Function(dynamic er) onError,
+  }) async {
+    //Register/Update on the server
+    await ApiClient.request().get('/users/user/$userId').then((res) {
+      try {
+        AppUser appUser = AppUser.fromMap(res.data["data"]["user"]);
+        return appUser;
+      } catch (e) {
+        onError(e);
+      }
+    }).catchError((error) {
+      onError(catchErrors(error));
+    });
   }
 
   void facebookSignIn({
@@ -44,16 +65,13 @@ class AuthRepo {
     required Function() onFailed,
   }) async {
     try {
-      final LoginResult facebookLoginResult =
-          await FacebookAuth.instance.login();
+      final LoginResult facebookLoginResult = await FacebookAuth.instance.login();
       switch (facebookLoginResult.status) {
         case LoginStatus.success:
           AccessToken facebookAccessToken = facebookLoginResult.accessToken!;
           // Create a credential from the access token
-          AuthCredential authCredential =
-              FacebookAuthProvider.credential(facebookAccessToken.token);
-          final User fbUser =
-              (await _auth.signInWithCredential(authCredential)).user!;
+          AuthCredential authCredential = FacebookAuthProvider.credential(facebookAccessToken.token);
+          final User fbUser = (await _auth.signInWithCredential(authCredential)).user!;
           loginSuccess(fbUser);
           break;
         case LoginStatus.cancelled:
@@ -96,8 +114,7 @@ class AuthRepo {
 
     void codeSent(String verificationId, code) => onCodeSent(verificationId);
 
-    void codeAutoRetrievalTimeout(String verificationId) =>
-        onCodeAutoRetrievalTimeout(verificationId);
+    void codeAutoRetrievalTimeout(String verificationId) => onCodeAutoRetrievalTimeout(verificationId);
 
     _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -118,14 +135,12 @@ class AuthRepo {
     ); // All the callbacks are above
   }
 
-  Future<User?> verifyOTP(
-      {required String otpCode, required String verificationId}) async {
+  Future<User?> verifyOTP({required String otpCode, required String verificationId}) async {
     String smsCode = otpCode;
 
     /// when used different phoneNumber other than the current (running) device
     /// we need to use OTP to get `phoneAuthCredential` which is inturn used to signIn/login
-    final phoneAuthCredential = PhoneAuthProvider.credential(
-        verificationId: verificationId, smsCode: smsCode);
+    final phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
 
     try {
       final authSignIn = await _auth.signInWithCredential(phoneAuthCredential);
@@ -153,8 +168,7 @@ class AuthRepo {
       addressLat: "",
       addressLong: "",
       deviceToken: "",
-      onlineStatus:
-          EnumToString.convertToString(OnlineStatus.ONLINE).toLowerCase(),
+      onlineStatus: EnumToString.convertToString(OnlineStatus.ONLINE).toLowerCase(),
       userAppVersion: "1.1.2",
       lastLogin: DateTime.now(),
     );
@@ -165,6 +179,9 @@ class AuthRepo {
         if (res != null) {
           appUser = AppUser.fromMap(res.data["data"]["user"]);
           tokens = Tokens.fromMap(res.data["data"]["tokens"]);
+
+          //--> remove later
+          onSuccess(appUser, tokens);
         }
       } catch (e) {
         onError(e);
@@ -174,17 +191,17 @@ class AuthRepo {
       return;
     });
 
-    //Register/update on firebase
-    try {
-      await _userCollection
-          .doc(firebaseUser.uid)
-          .set(appUser.toMap())
-          .then((value) => onSuccess(appUser, tokens))
-          .catchError((error) => onError(error))
-          .timeout(Duration(seconds: 5));
-    } catch (e) {
-      onError(e);
-    }
+    // Register/update on firebase
+    // try {
+    //   await _userCollection
+    //       .doc(firebaseUser.uid)
+    //       .set(appUser.toMap())
+    //       .then((value) => onSuccess(appUser, tokens))
+    //       .catchError((error) => onError(error))
+    //       .timeout(Duration(seconds: 5));
+    // } catch (e) {
+    //   onError(e);
+    // }
   }
 
   //Update Address & return new Appuser data
@@ -206,25 +223,18 @@ class AuthRepo {
     }).then((res) {
       try {
         appUser = AppUser.fromMap(res.data["data"]["user"]);
+        //Update on firebase
+        try {
+          _userCollection.doc(appUser.uid).set(appUser.toMap()).then((value) => {onSuccess(appUser)}).catchError((error) => onError(error)).timeout(Duration(seconds: 5));
+        } catch (e) {
+          onError(e);
+        }
       } catch (e) {
         onError(e);
       }
     }).catchError((error) {
       onError(catchErrors(error));
-      return;
     });
-
-    //Update on firebase
-    try {
-      await _userCollection
-          .doc(appUser.uid)
-          .set(appUser.toMap())
-          .then((value) => onSuccess(appUser))
-          .catchError((error) => onError(error))
-          .timeout(Duration(seconds: 5));
-    } catch (e) {
-      onError(e);
-    }
   }
 
   void updateUserDetails({
@@ -235,9 +245,7 @@ class AuthRepo {
     late final AppUser u;
 
     //Update on the server
-    await ApiClient.request()
-        .patch('/users', data: appUser.toMap())
-        .then((res) {
+    await ApiClient.request().patch('/users', data: appUser.toMap()).then((res) {
       try {
         print(res.statusMessage);
         print(res.data);
@@ -255,11 +263,7 @@ class AuthRepo {
     });
 
     //Update on firebase
-    _userCollection
-        .doc(getCurrentUser()!.uid)
-        .update(u.toMap())
-        .then((value) => onSuccess(u))
-        .catchError(onError);
+    _userCollection.doc(getCurrentUser()!.uid).update(u.toMap()).then((value) => onSuccess(u)).catchError(onError);
   }
 
   void signOut(BuildContext context) async {
@@ -274,14 +278,12 @@ class AuthRepo {
     Get.offAll(() => Login(), transition: Transition.cupertinoDialog);
   }
 
-  void setOnlineStatus(
-      {required String userId, required OnlineStatus userState}) {
+  void setOnlineStatus({required String userId, required OnlineStatus userState}) {
     _userCollection.doc(userId).update({
       "state": EnumToString.convertToString(userState).toLowerCase(),
     });
   }
 
   //for online/offline presence
-  Stream<DocumentSnapshot> getUserStream({required String uid}) =>
-      _userCollection.doc(uid).snapshots();
+  Stream<DocumentSnapshot> getUserStream({required String uid}) => _userCollection.doc(uid).snapshots();
 }

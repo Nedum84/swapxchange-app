@@ -55,30 +55,29 @@ class _GrantPermissionState extends State<GrantPermission> {
           List<Placemark> addresses = await placemarkFromCoordinates(
               position.latitude, position.longitude);
 
-          print(addresses.first.toJson());
-          print(addresses.first.locality);
-          print(addresses.first.subLocality);
-          print(addresses.first.subAdministrativeArea);
-          print(addresses.first.isoCountryCode);
-          var address = addresses.first;
+          var placeMark = addresses.first;
+          String address =
+              "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
+
+          // address =
+          //     "${placeMark.name}, ${placeMark.subLocality}, ${placeMark.locality}, ${placeMark.administrativeArea} ${placeMark.postalCode}, ${placeMark.country}";
 
           _authRepo.updateAddress(
-              address: address.name!,
+              address: address,
               address_lat: position.latitude,
               address_long: position.longitude,
-              state: address.subLocality!,
+              state: placeMark.subLocality!,
               onSuccess: (appUser) {
-                print(appUser!.toMap());
-                // controller.animateToPage(_curStep + 1,
-                //     duration: const Duration(milliseconds: 400),
-                //     curve: Curves.easeInOut);
+                controller.animateToPage(_curStep + 1,
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut);
               },
               onError: (er) {
                 AlertUtils.toast("$er");
               });
           setState(() => _isLoading = false);
         }).catchError((e) {
-          print(e);
+          AlertUtils.toast(e);
           setState(() => _isLoading = false);
         });
       } else {
@@ -89,8 +88,7 @@ class _GrantPermissionState extends State<GrantPermission> {
     });
   }
 
-  _grantFileAccess() {
-    Get.snackbar('Hey mamn!!', 'Hello world. How far ni....isBlank');
+  _gotoDashboard() {
     Get.to(() => Dashboard());
   }
 
@@ -123,7 +121,7 @@ class _GrantPermissionState extends State<GrantPermission> {
                     "You definitely have unnecessary stuff. Offer it to users and get what you dream of. Browse items available for swap and make a deal. "
                     "So money is no longer needed.",
                 button: PrimaryButton(
-                  onClick: () => _grantFileAccess(),
+                  onClick: () => _gotoDashboard(),
                   btnText: "Great, I\'m in",
                   bgColor: KColors.SECONDARY,
                   textColor: KColors.TEXT_COLOR_DARK,

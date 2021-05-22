@@ -1,113 +1,51 @@
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
+import 'package:swapxchange/repository/dio/error_catch.dart';
 
 class RepoProduct extends ApiClient {
-  //Request token for cancelling requests...
-  var token = CancelToken();
+  static Future<Product?> getById({required int productId}) async {
+    Response response = await ApiClient.request().get('/products/$productId');
 
-  Future<void> getProductById() async {
-    Response response = await ApiClient.request().get('path');
-  }
+    if (response.statusCode == 200) {
+      return Product.fromMap(response.data["data"]["product"]);
+    }
 
-  //with cancelRequestToken
-  Future<void> getProductById2() async {
-    Dio client = await ApiClient.request();
-
-    Response response = await client.get('path', cancelToken: token);
-  }
-
-  _post() async {
-    var response = await ApiClient.request().post(
-      '/test',
-      data: {'id': 12, 'name': 'wendu'},
-      onReceiveProgress: _onReceiveProgress,
-      onSendProgress: _onSendProgress,
-      options: _dioOptions,
-    );
-    // response.data;
-  }
-
-  _onReceiveProgress(received, total) {}
-  _onSendProgress(sent, total) {}
-  late Options _dioOptions;
-
-  void downloadFile(String publishSubject) {
-    ApiClient.request().download('urlOfFileToDownload', 'dir/filename',
-        onReceiveProgress: (received, total) {
-      int percentage = ((received / total) * 100).floor();
-    });
+    return null;
   }
 
   static void getProducts({
-    Function()? beforeSend,
     required Function(List<Product> data) onSuccess,
     required Function(ErrorResponse error) onError,
   }) async {
-    if (beforeSend != null) beforeSend();
-    ApiClient.request().get('/posts').then((res) {
+    ApiClient.request().get('/products/all').then((response) {
       try {
-        if (res != null && onSuccess != null) {
-          onSuccess(
-              (res.data as List).map((data) => Product.fromMap(data)).toList());
+        if (response.data != null) {
+          var items = response.data["data"]["products"];
+
+          var list = (items as List).map((data) => Product.fromMap(data)).toList();
+          onSuccess(list);
         }
       } catch (e) {
         print(e);
         onSuccess([]);
       }
     }).catchError((error) {
-      var errResponse = ErrorResponse(message: null, type: 0);
-      if (error is DioError) {
-        DioError dioError = error;
-        switch (dioError.type) {
-          case DioErrorType.connectTimeout:
-            errResponse.message = "Connection timeout";
-            errResponse.type = 1;
-            break;
-          case DioErrorType.cancel:
-            errResponse.message = "Request cancelled";
-            break;
-          case DioErrorType.sendTimeout:
-            errResponse.message = "Request send time out";
-            break;
-          case DioErrorType.receiveTimeout:
-            errResponse.message = "Request receive timeout";
-            break;
-          case DioErrorType.response:
-            errResponse.message = dioError.message;
-            break;
-          case DioErrorType.other:
-            errResponse.message = "Network timeout::ERR" + dioError.message;
-            errResponse.error = dioError.error;
-            errResponse.response = dioError.response;
-            break;
-        }
-      }
-      if (onError != null) onError(errResponse);
+      onError(catchErrors(error));
     });
   }
 
-  void fetch() async {
-    Response<ResponseBody> rs;
-    rs = await Dio().get<ResponseBody>(
-      'url',
-      options: Options(
-          responseType: ResponseType.stream), // set responseType to `stream`
-    );
-    print(rs.data!.stream);
+  static Future<List<Product>?> findAll({limit, offset}) async {
+    Response response = await ApiClient.request().get('/products/all/$offset/$limit');
+
+    print(response.data);
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
   }
-}
-
-class ErrorResponse {
-  String? message;
-  int type;
-  dynamic? error;
-  Response? response;
-
-  ErrorResponse({
-    required this.message,
-    required this.type,
-    this.error,
-    this.response,
-  });
 }

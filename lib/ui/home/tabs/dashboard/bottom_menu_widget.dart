@@ -22,20 +22,16 @@ class BottomMenuWidget extends StatelessWidget {
 
     switch (bottomMenuItem) {
       case BottomMenuItem.HOME:
-        pageViewController.animateToPage(0,
-            duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+        pageViewController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
         break;
       case BottomMenuItem.CHAT:
-        pageViewController.animateToPage(1,
-            duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+        pageViewController.animateToPage(1, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
         break;
       case BottomMenuItem.SAVED:
-        pageViewController.animateToPage(2,
-            duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+        pageViewController.animateToPage(2, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
         break;
       default:
-        pageViewController.animateToPage(3,
-            duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+        pageViewController.animateToPage(3, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
         break;
     }
   }
@@ -44,35 +40,31 @@ class BottomMenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // return Container();
     return GetBuilder<BottomMenuController>(
-        init: BottomMenuController(),
-        builder: (bottomMenuProvider) {
-          return InkWell(
-            onTap: () => setMenu(),
-            child: Container(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    icon,
-                    color: (bottomMenuProvider.bottomMenuItem == bottomMenuItem)
-                        ? KColors.TEXT_COLOR_MEDIUM
-                        : Colors.black12,
+      init: BottomMenuController(),
+      builder: (bottomMenuProvider) {
+        return InkWell(
+          onTap: () => setMenu(),
+          child: Container(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: (bottomMenuProvider.bottomMenuItem == bottomMenuItem) ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
+                ),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: (bottomMenuProvider.bottomMenuItem == bottomMenuItem) ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
                   ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color:
-                          (bottomMenuProvider.bottomMenuItem == bottomMenuItem)
-                              ? KColors.TEXT_COLOR_MEDIUM
-                              : Colors.black12,
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

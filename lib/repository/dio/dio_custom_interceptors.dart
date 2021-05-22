@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
-// import 'package:get/get.dart';
+import 'package:get/get.dart' as GetX;
 import 'package:swapxchange/models/tokens.dart';
+import 'package:swapxchange/ui/auth/login.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/user_prefs.dart';
 
 class DioCustomInterceptors extends Interceptor {
@@ -29,27 +31,6 @@ class DioCustomInterceptors extends Interceptor {
     customHeaders["Authorization"] = "Bearer ${tokens?.access?.token}";
     options.headers.addAll(customHeaders);
 
-    // if (tokens == null) {
-    //   print('no token，request token firstly...');
-    //   dio.lock();
-    //   tokenDio.post('/token/refresh', data: {
-    //     "refresh_token": tokens.refresh.token,
-    //   }).then((d) async {
-    //     print(d.data);
-    //     Tokens tks = Tokens.fromMap(d.data["data"]["tokens"]);
-    //     //Set tokens...
-    //     UserPrefs.setTokens(tokens: tks);
-    //
-    //     // continue request...
-    //     options.headers['Authorization'] = "Bearer ${tks.access.token}";
-    //     handler.next(options);
-    //   }).catchError((error, stackTrace) {
-    //     handler.reject(error, true);
-    //   }).whenComplete(() => dio.unlock()); // unlock the dio
-    // } else {
-    //   options.headers['Authorization'] = "Bearer ${tokens.access.token}";
-    //   return handler.next(options);
-    // }
     return super.onRequest(options, handler);
   }
 
@@ -72,39 +53,29 @@ class DioCustomInterceptors extends Interceptor {
     if (dioError.response?.statusCode == 401) {
       Tokens? tokens = await UserPrefs.getTokens();
       if (tokens?.refresh == null) {
-        print('kkkkkkkkkkkk---');
-        // Get.offAll(()=>Login());
+        AlertUtils.toast('Your session has expired. Login again');
+        GetX.Get.offAll(() => Login());
         return handler.next(dioError);
       }
+      //request options...
       var options = dioError.response!.requestOptions;
-      // If the token has been updated, repeat directly.
-      if (tokens?.access?.token != options.headers['refresh_token']) {
-        options.headers['Authorization'] = "Bearer ${tokens?.access?.token}";
-        //repeat
-        dio.fetch(options).then(
-          (r) => handler.resolve(r),
-          onError: (e) {
-            handler.reject(e);
-          },
-        );
-        return;
-      }
+      var baseUrl = dioError.response!.requestOptions.baseUrl;
       // update token and repeat
       // Lock to block the incoming request until the token updated
       dio.lock();
       dio.interceptors.requestLock.lock();
       dio.interceptors.responseLock.lock();
       dio.interceptors.errorLock.lock();
-      await tokenDio.post('/token/refresh', data: {
+      await tokenDio.post('${baseUrl}token/refresh', data: {
         "refresh_token": tokens?.refresh?.token,
       }).then((d) {
-        print('kkkkkkkkkkkk');
-        print(d.data);
+        if (d.statusCode != 200 || !d.data['success']) {
+          return handler.reject(dioError);
+        }
         Tokens tks = Tokens.fromMap(d.data["data"]["tokens"]);
         //Set tokens...
         UserPrefs.setTokens(tokens: tks);
-
-        // continue request...
+        // Attach token...
         options.headers['Authorization'] = "Bearer ${tks.access!.token}";
       }).whenComplete(() {
         dio.unlock();
@@ -112,13 +83,15 @@ class DioCustomInterceptors extends Interceptor {
         dio.interceptors.requestLock.unlock();
         dio.interceptors.errorLock.unlock();
       }).then((e) {
-        //repeat
+        // Repeat request...
         dio.fetch(options).then(
           (r) => handler.resolve(r),
           onError: (e) {
             handler.reject(e);
           },
         );
+      }).catchError((er) {
+        handler.reject(dioError);
       });
       return;
     }

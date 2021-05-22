@@ -1,16 +1,14 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:get/get.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/repository/dio/error_catch.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 
 class ProductController extends GetxController {
+  static ProductController to = Get.find();
+  final int pageSize = 10;
   RxList<Product> productList = <Product>[].obs;
-  // List<Product> postsList = List<Product>().obs;
   RxBool isLoading = true.obs;
-  Rx<ErrorResponse> apiError =
-      ErrorResponse(message: 'Internet error', type: 0).obs;
+  Rx<ErrorResponse> apiError = ErrorResponse(message: 'Internet error', type: 0).obs;
 
   @override
   void onInit() {
@@ -19,32 +17,20 @@ class ProductController extends GetxController {
   }
 
   void updateProduct(int index, Product p) {
-    var product = productList.firstWhere((element) => element.id == p.id);
-
-    var product2 = productList[index];
-    product.userId = Random().nextInt(123434343);
-    product.title = "You manh ${product.userId}";
+    var index = productList.indexWhere((element) => element.productId == p.productId);
+    // productList[index] = p;
+    productList[index].productName = "You manh ${p.userId}";
     productList.refresh();
     // update(); // ← rebuilds any GetBuilder<TabX> widget
   }
 
-  StreamController<List<Product>> _streamController =
-      StreamController<List<Product>>();
-  @override
-  onClose() {
-    _streamController.sink;
-  }
-
   fetchProducts() {
-    productList.bindStream(_streamController.stream);
-
     isLoading(true);
     RepoProduct.getProducts(
-      onSuccess: (posts) {
+      onSuccess: (products) {
         // productList.addAll(posts);
-        productList(posts);
-        isLoading.value = false;
-        // isLoading(false);
+        productList(products);
+        isLoading(false);
       },
       onError: (error) {
         isLoading.value = false;
@@ -54,7 +40,9 @@ class ProductController extends GetxController {
     );
   }
 
-  RxInt _inc = 2.obs;
-  int get inc => _inc.value;
-  void increment() => _inc++;
+  Future<List<Product>> fetchAll({int offset = 0, int limit = 10}) async {
+    var items = await RepoProduct.findAll(offset: offset, limit: limit);
+    if (items!.length == 0) [];
+    return (items);
+  }
 }
