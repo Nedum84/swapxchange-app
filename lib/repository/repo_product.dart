@@ -38,7 +38,77 @@ class RepoProduct extends ApiClient {
   static Future<List<Product>?> findAll({limit, offset}) async {
     Response response = await ApiClient.request().get('/products/all/$offset/$limit');
 
-    print(response.data);
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
+  }
+
+  //--> Find by Sub Category
+  static Future<List<Product>?> findBySubCategory({required int subCatId, limit, offset, filter}) async {
+    final filters = (filter == null) ? "newest" : "$filter";
+    Response response = await ApiClient.request().get('/products/subcategory/$subCatId/$offset/$limit/$filters');
+
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
+  }
+
+  //--> Find by Category
+  static Future<List<Product>?> findByCategory({required int catId, limit, offset}) async {
+    Response response = await ApiClient.request().get('/products/category/$catId/$offset/$limit');
+
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
+  }
+
+  //--> Find My Products
+  static Future<List<Product>?> findMyProducts({limit = 1000, offset = 0}) async {
+    Response response = await ApiClient.request().get('/products/me/$offset/$limit');
+
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
+  }
+
+  //--> Find by User's ID
+  static Future<List<Product>?> findByUserId({required int userId, filters = "all", limit = 1000, offset = 0}) async {
+    Response response = await ApiClient.request().get('/products/user/$userId/$filters/$offset/$limit');
+
+    if (response.statusCode == 200) {
+      var items = response.data["data"]["products"];
+
+      var list = (items as List).map((data) => Product.fromMap(data)).toList();
+      return list;
+    }
+
+    return null;
+  }
+
+  //--> Find Exchange Options fo a given product
+  static Future<List<Product>?> findExchangeOptions({required int productId, limit = 1000, offset = 0}) async {
+    Response response = await ApiClient.request().get('/products/exchange/$productId/$offset/$limit');
+
     if (response.statusCode == 200) {
       var items = response.data["data"]["products"];
 

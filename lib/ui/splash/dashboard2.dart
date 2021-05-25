@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swapxchange/ui/components/custom_keep_alive_page.dart';
-import 'package:swapxchange/ui/home/tabs/chat/chat_list.dart';
+import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list.dart';
 import 'package:swapxchange/ui/home/tabs/home/home.dart';
 import 'package:swapxchange/ui/home/tabs/profile/profile.dart';
 import 'package:swapxchange/ui/home/tabs/saved/saved_product.dart';

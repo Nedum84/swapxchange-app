@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/ui/home/category/browse_category.dart';
 import 'package:swapxchange/ui/home/category/view_single_category.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -7,6 +9,12 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class TopDeals extends StatelessWidget {
+  final catController = CategoryController.to;
+
+  _goto(Category category) {
+    Get.to(() => ViewSingleCategory(category: category));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,15 +29,25 @@ class TopDeals extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CategoryBtn(
-              title: 'Phone',
-              onClick: () => Get.to(() => ViewSingleCategory()),
+            Expanded(
+              child: CategoryBtn(
+                title: catController.categoryList[0].categoryName ?? "",
+                onClick: () => _goto(catController.categoryList[0]),
+              ),
             ),
-            CategoryBtn(
-              title: 'Cars',
+            Expanded(
+              child: CategoryBtn(
+                title: catController.categoryList[1].categoryName ?? "",
+                onClick: () => _goto(catController.categoryList[1]),
+              ),
             ),
-            CategoryBtn(title: 'Electronics'),
-            SeeAllBtn(title: 'See All'),
+            Expanded(
+              child: CategoryBtn(
+                title: catController.categoryList[2].categoryName ?? "",
+                onClick: () => _goto(catController.categoryList[2]),
+              ),
+            ),
+            Expanded(child: SeeAllBtn(title: 'See All')),
           ],
         )
       ],
@@ -69,9 +87,7 @@ class CategoryBtn extends StatelessWidget {
               borderRadius: BorderRadius.circular(50),
               boxShadow: showShadow ? [Constants.SHADOW] : [],
               border: Border.all(
-                color: textColor != null
-                    ? KColors.TEXT_COLOR_LIGHT.withOpacity(.2)
-                    : Colors.transparent,
+                color: textColor != null ? KColors.TEXT_COLOR_LIGHT.withOpacity(.2) : Colors.transparent,
               ),
             ),
             child: ClipRRect(
@@ -87,9 +103,7 @@ class CategoryBtn extends StatelessWidget {
           SizedBox(height: 4),
           Text(
             title,
-            style: StyleNormal.copyWith(
-                color: textColor != null ? textColor : KColors.TEXT_COLOR,
-                fontSize: textSize ?? 14),
+            style: StyleNormal.copyWith(color: textColor != null ? textColor : KColors.TEXT_COLOR, fontSize: textSize ?? 14),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           )
@@ -107,8 +121,7 @@ class SeeAllBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() => BrowseCategory(),
-          transition: Transition.cupertinoDialog),
+      onTap: () => Get.to(() => BrowseCategory(), transition: Transition.cupertinoDialog),
       child: Column(
         children: [
           Container(

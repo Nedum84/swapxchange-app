@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:swapxchange/models/category_model.dart';
+
 class Product {
   Product({
     this.productId,
@@ -17,10 +19,12 @@ class Product {
     this.userAddressCity,
     this.userAddressLat,
     this.userAddressLong,
+    this.distance,
     this.createdAt,
     this.updatedAt,
     this.images,
     this.user,
+    this.suggestions,
   });
 
   final int? productId;
@@ -38,10 +42,12 @@ class Product {
   final String? userAddressCity;
   final String? userAddressLat;
   final String? userAddressLong;
+  final double? distance;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final List<ProductImage>? images;
   final Poster? user;
+  final List<Category>? suggestions;
 
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
@@ -63,10 +69,11 @@ class Product {
         userAddressCity: json["user_address_city"],
         userAddressLat: json["user_address_lat"],
         userAddressLong: json["user_address_long"],
+        distance: double.parse(json["distance"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         images: List<ProductImage>.from(jsonDecode(json["images"]).map((x) => ProductImage.fromMap(x))),
-        // images: jsonDecode(json['images']).map<ProductImage>((j) => ProductImage.fromJson(j)).toList(),
+        suggestions: List<Category>.from(jsonDecode(json["suggestions"]).map((x) => Category.fromMap(x))),
         user: Poster.fromMap(jsonDecode(json["user"])),
       );
 
@@ -86,9 +93,11 @@ class Product {
         "user_address_city": userAddressCity,
         "user_address_lat": userAddressLat,
         "user_address_long": userAddressLong,
+        "distance": distance,
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
         "images": List<dynamic>.from(images!.map((x) => x.toMap())),
+        "suggestions": List<dynamic>.from(suggestions!.map((x) => x.toMap())),
         "user": user!.toMap(),
       };
 }
@@ -102,7 +111,7 @@ class ProductImage {
   });
 
   final int? id;
-  final String? productId;
+  final int? productId;
   final String? imagePath;
   final int? idx;
 

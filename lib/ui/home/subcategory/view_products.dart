@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
-import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
@@ -13,44 +13,45 @@ import 'package:swapxchange/ui/widgets/no_data_found.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
-class ViewSingleCategory extends StatefulWidget {
-  final Category category;
-  const ViewSingleCategory({Key? key, required this.category}) : super(key: key);
+class ViewSubCatProducts extends StatefulWidget {
+  final SubCategory subcategory;
+  const ViewSubCatProducts({Key? key, required this.subcategory}) : super(key: key);
 
   @override
-  _ViewSingleCategoryState createState() => _ViewSingleCategoryState();
+  _ViewSubCatProductsState createState() => _ViewSubCatProductsState();
 }
 
-class _ViewSingleCategoryState extends State<ViewSingleCategory> {
+class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
   SubCategoryController subCategoryController = SubCategoryController.to;
   bool isLoading = false;
   int limit = 10;
   int offset = 0;
   List<Product> products = [];
-  List<SubCategory> subCategoryList = [];
-  SubCategory? selectedSubCategory;
+  List<String> filters = [];
+  String selectedFilter = SearchFilters.NEWEST;
 
   ScrollController? controller = ScrollController(keepScrollOffset: true);
 
   @override
   void initState() {
+    _setFilters();
     _fetchProducts();
     super.initState();
   }
 
-  _setSubCategoryList() async {
-    final getList = await subCategoryController.fetchByCategoryId(catId: widget.category.categoryId!);
-    setState(() {
-      selectedSubCategory = getList[0];
-      subCategoryList = getList;
-    });
+  _setFilters() {
+    filters = [
+      SearchFilters.NEWEST,
+      SearchFilters.OLDEST,
+      SearchFilters.PRICE_HIGH,
+      SearchFilters.PRICE_LOW,
+    ];
   }
 
   _fetchProducts() async {
     setState(() => isLoading = true);
     offset = products.length;
-    if (subCategoryList.length == 0) await _setSubCategoryList(); //Fetch subcategory list(s before proceeding...
-    final items = await RepoProduct.findBySubCategory(subCatId: selectedSubCategory!.subCategoryId!, offset: offset, limit: limit);
+    final items = await RepoProduct.findBySubCategory(subCatId: widget.subcategory.subCategoryId!, offset: offset, limit: limit, filter: selectedFilter);
     if (items!.isNotEmpty) products.addAll(items);
 
     setState(() => isLoading = false);
@@ -64,24 +65,24 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
         padding: EdgeInsets.all(Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
         child: Column(
           children: [
-            CustomAppbar(title: widget.category.categoryName!),
+            CustomAppbar(title: widget.subcategory.subCategoryName!),
             Container(
               height: 40,
-              child: (subCategoryList.length == 0)
+              child: (filters.length == 0)
                   ? Container()
                   : ListView.separated(
-                      itemCount: subCategoryList.length,
+                      itemCount: filters.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        final subCat = subCategoryList[index];
+                        final filter = filters[index];
 
-                        Color textColor = selectedSubCategory == subCat ? KColors.PRIMARY : KColors.TEXT_COLOR.withOpacity(.6);
+                        Color textColor = selectedFilter == filter ? KColors.PRIMARY : KColors.TEXT_COLOR.withOpacity(.6);
                         return SearchFilterItem(
                           textColor: textColor,
-                          text: subCat.subCategoryName?.toUpperCase() ?? "",
+                          text: filter.toUpperCase().replaceAll('-', ' '),
                           onClick: () {
                             setState(() {
-                              selectedSubCategory = subCat;
+                              selectedFilter = filter;
                               products.clear();
                             });
                             _fetchProducts();

@@ -4,6 +4,7 @@ import 'colors.dart';
 
 class Constants {
   static final double PADDING = 16;
+  static final String AGORA_APP_ID = "18f66d8a4cf141c29daf271a39cf8fe2";
 
   static final SHADOW = BoxShadow(
     color: KColors.TEXT_COLOR_LIGHT,

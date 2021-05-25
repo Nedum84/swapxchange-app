@@ -33,6 +33,7 @@ class SubCategoryController extends GetxController {
       items = await RepoSubCategory.findByCategoryId(catId: catId);
     }
     if (items!.isNotEmpty) list = items;
+    update();
     return list;
   }
 

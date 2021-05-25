@@ -58,6 +58,17 @@ class AuthRepo {
     });
   }
 
+  static Future<AppUser?> findByUserId({required userId}) async {
+    final res = await ApiClient.request().get('/users/user/$userId');
+    if (res.statusCode == 200) {
+      try {
+        return AppUser.fromMap(res.data["data"]["user"]);
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+
   void facebookSignIn({
     required Function(User user) loginSuccess,
     required Function() onProgress,
@@ -285,5 +296,5 @@ class AuthRepo {
   }
 
   //for online/offline presence
-  Stream<DocumentSnapshot> getUserStream({required String uid}) => _userCollection.doc(uid).snapshots();
+  static Stream<DocumentSnapshot> getUserStream({required String uid}) => _userCollection.doc(uid).snapshots();
 }

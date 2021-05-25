@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/dio/error_catch.dart';
@@ -5,10 +6,13 @@ import 'package:swapxchange/repository/repo_product.dart';
 
 class ProductController extends GetxController {
   static ProductController to = Get.find();
-  final int pageSize = 10;
+  int offset = 0;
+  final int limit = 10;
   RxList<Product> productList = <Product>[].obs;
   RxBool isLoading = true.obs;
   Rx<ErrorResponse> apiError = ErrorResponse(message: 'Internet error', type: 0).obs;
+
+  ScrollController? controller = ScrollController();
 
   @override
   void onInit() {
@@ -16,11 +20,16 @@ class ProductController extends GetxController {
     super.onInit();
   }
 
-  void updateProduct(int index, Product p) {
+  void updateProduct(Product p) {
     var index = productList.indexWhere((element) => element.productId == p.productId);
-    // productList[index] = p;
-    productList[index].productName = "You manh ${p.userId}";
-    productList.refresh();
+    productList[index] = p;
+    // productList.refresh();
+    update(); // ← rebuilds any GetBuilder<TabX> widget
+
+    // --> OR
+    // var product = productList.firstWhere((element) => element.productId == p.productId);
+    // product.productName = "You manh... ${p.userId}";
+    // // productList.refresh();
     // update(); // ← rebuilds any GetBuilder<TabX> widget
   }
 
@@ -30,6 +39,7 @@ class ProductController extends GetxController {
       onSuccess: (products) {
         // productList.addAll(posts);
         productList(products);
+        update();
         isLoading(false);
       },
       onError: (error) {
@@ -40,9 +50,41 @@ class ProductController extends GetxController {
     );
   }
 
-  Future<List<Product>> fetchAll({int offset = 0, int limit = 10}) async {
+  void fetchAll() async {
+    isLoading(true);
+    offset = productList.value.length;
     var items = await RepoProduct.findAll(offset: offset, limit: limit);
-    if (items!.length == 0) [];
-    return (items);
+    if (items!.length != 0) {
+      productList.addAll(items);
+      update();
+    }
+    isLoading(false);
+  }
+
+  bool handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollEndNotification) {
+      if (!isLoading.value) {
+        if (controller!.position.extentAfter < 200) {
+          print("Frtching.......");
+          fetchAll();
+        }
+      }
+    }
+    return false;
+  }
+
+  bool onScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollEndNotification) {
+      final before = notification.metrics.extentBefore;
+      final max = notification.metrics.maxScrollExtent;
+
+      if (before == max) {
+        fetchAll();
+        // print('Load more nah!!!');
+        // load next page
+        // code here will be called only if scrolled to the very bottom
+      }
+    }
+    return false;
   }
 }

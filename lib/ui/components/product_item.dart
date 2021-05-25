@@ -4,23 +4,28 @@ import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
+import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class ProductItem extends StatelessWidget {
   final Product? product;
 
-  const ProductItem({Key? key, this.product}) : super(key: key);
+  const ProductItem({Key? key, required this.product}) : super(key: key);
+
+  _goto() {
+    Get.to(
+      () => ProductDetail(product: product!),
+      transition: Transition.topLevel,
+      // transition: Transition.zoom,
+      preventDuplicates: true,
+      duration: Duration(milliseconds: 600),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(
-        () => ProductDetail(),
-        transition: Transition.topLevel,
-        // transition: Transition.zoom,
-        preventDuplicates: true,
-        duration: Duration(milliseconds: 600),
-      ),
+      onTap: _goto,
       child: Container(
         padding: EdgeInsets.all(Constants.PADDING / 2),
         margin: EdgeInsets.all(4),
@@ -44,7 +49,7 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Text(
-              "${product!.productName}",
+              "${product!.productId}. ${product!.productName}",
               style: StyleProductTitle,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -54,7 +59,7 @@ class ProductItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '₦${product!.price}',
+                    '₦${Helpers.formatMoney(cash: product!.price!, withDot: false)}',
                     style: StyleProductPrice,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

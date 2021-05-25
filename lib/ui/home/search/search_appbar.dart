@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class SearchAppBar extends StatelessWidget {
+  ProductSearchController searchController = ProductSearchController.to;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,8 +20,9 @@ class SearchAppBar extends StatelessWidget {
           ),
           Expanded(
             child: TextField(
-              // controller: phoneNumberController,
-              // focusNode: textFieldFocusPhone,
+              // controller: TextEditingController()..text = searchController.queryString.value,
+              // controller: searchController.textController,
+              focusNode: searchController.textFieldFocus,
               keyboardType: TextInputType.text,
               maxLines: 1,
               autofocus: true,
@@ -42,9 +46,14 @@ class SearchAppBar extends StatelessWidget {
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.all(0).copyWith(left: 16),
               ),
+              onChanged: (newString) => searchController.setQueryString(newString),
             ),
           ),
           InkWell(
+            onTap: () {
+              searchController.resetList(true);
+              searchController.fetchProducts();
+            },
             child: Icon(
               Icons.search,
               color: KColors.TEXT_COLOR,

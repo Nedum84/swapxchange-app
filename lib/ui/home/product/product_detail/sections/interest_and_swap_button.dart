@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/ui/home/tabs/home/top_deals.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class InterestAndSwapButton extends StatelessWidget {
+  final Product product;
+
+  const InterestAndSwapButton({Key? key, required this.product}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -11,18 +16,18 @@ class InterestAndSwapButton extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.separated(
-              itemCount: 3,
+              itemCount: product.suggestions!.length,
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
+                final cat = product.suggestions![index];
                 return CategoryBtn(
-                  title: 'Holy rock',
+                  title: '${cat.shortCatName()}',
                   size: 40,
                   textSize: 10,
                 );
               },
-              separatorBuilder: (BuildContext context, int index) =>
-                  SizedBox(width: 8),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 8),
             ),
           ),
           SizedBox(width: 12),

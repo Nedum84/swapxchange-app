@@ -6,14 +6,12 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 
-List<Product> productFromJson(String str) =>
-    List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
+List<Product2> productFromJson(String str) => List<Product2>.from(json.decode(str).map((x) => Product2.fromJson(x)));
 
-String productToJson(List<Product> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String productToJson(List<Product2> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Product {
-  Product({
+class Product2 {
+  Product2({
     this.id,
     this.brand,
     this.name,
@@ -57,7 +55,7 @@ class Product {
 
   var isFavorite = false.obs;
 
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
+  factory Product2.fromJson(Map<String, dynamic> json) => Product2(
         id: json["id"],
         brand: brandValues.map![json["brand"]],
         name: json["name"],
@@ -76,8 +74,7 @@ class Product {
         updatedAt: DateTime.parse(json["updated_at"]),
         productApiUrl: json["product_api_url"],
         apiFeaturedImage: json["api_featured_image"],
-        productColors: List<ProductColor>.from(
-            json["product_colors"].map((x) => ProductColor.fromJson(x))),
+        productColors: List<ProductColor>.from(json["product_colors"].map((x) => ProductColor.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -99,8 +96,7 @@ class Product {
         "updated_at": updatedAt!.toIso8601String(),
         "product_api_url": productApiUrl,
         "api_featured_image": apiFeaturedImage,
-        "product_colors":
-            List<dynamic>.from(productColors!.map((x) => x.toJson())),
+        "product_colors": List<dynamic>.from(productColors!.map((x) => x.toJson())),
       };
 }
 

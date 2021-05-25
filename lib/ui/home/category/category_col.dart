@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/ui/home/tabs/home/top_deals.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class CategoryCol extends StatelessWidget {
+  final List<Category> categories;
+  final Category selected;
+  final Function(Category category) onSelect;
+
+  const CategoryCol({Key? key, required this.categories, required this.selected, required this.onSelect}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Container(
         child: ListView.builder(
           padding: EdgeInsets.all(0),
-          itemCount: 10,
+          itemCount: categories.length,
           itemBuilder: (context, index) {
-            Color? txtColor =
-                index != 2 ? KColors.TEXT_COLOR.withOpacity(.2) : null;
+            final current = categories[index];
+            Color? txtColor = selected.categoryId != current.categoryId ? KColors.TEXT_COLOR.withOpacity(.2) : null;
             return Container(
               margin: EdgeInsets.only(bottom: 8),
               child: CategoryBtn(
                 textColor: txtColor,
-                showShadow: index != 2 ? false : true,
-                title: 'Agriculture',
+                showShadow: selected.categoryId != current.categoryId ? false : true,
+                title: current.categoryName!,
+                onClick: () => onSelect(current),
+                textSize: 12,
               ),
             );
           },
