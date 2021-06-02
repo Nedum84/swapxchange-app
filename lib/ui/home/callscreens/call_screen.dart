@@ -6,10 +6,13 @@ import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/call.dart';
 import 'package:swapxchange/repository/call_methods.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
+import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
 class CallScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class CallScreen extends StatefulWidget {
 
 class _CallScreenState extends State<CallScreen> {
   final CallMethods callMethods = CallMethods();
+  AppUser? currentUser = UserController.to.user;
 
   StreamSubscription? callStreamSubscription;
   RtcEngine? _engine;
@@ -44,6 +48,7 @@ class _CallScreenState extends State<CallScreen> {
   void dispose() {
     // clear users
     _users.clear();
+    callMethods.endCall(call: widget.call);
     // destroy sdk
     _engine?.leaveChannel();
     _engine?.destroy();
@@ -52,54 +57,40 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   Future<void> initializeAgora() async {
-    if (Constants.AGORA_APP_ID.isEmpty) {
-      setState(() {
-        _infoStrings.add(
-          'APP_ID missing, please provide your APP_ID in settings.dart',
-        );
-        _infoStrings.add('Agora Engine is not starting');
-      });
-      return;
-    }
-
     await _initAgoraRtcEngine();
-    _addAgoraEventHandlers();
-    await _engine?.enableWebSdkInteroperability(true);
+    this._addAgoraEventHandlers();
+    // await _engine?.enableWebSdkInteroperability(true);
     VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
     configuration.dimensions = VideoDimensions(1920, 1080);
     // await _engine?.setParameters('''{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}''');
     await _engine?.setVideoEncoderConfiguration(configuration);
-    await _engine?.joinChannel(null, widget.call.channelId!, null, 0);
+    // await _engine?.joinChannel(Constants.AGORA_TOKEN, widget.call.channelId!, null, currentUser!.userId ?? 0);
+    await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, widget.call.callUid!);
   }
 
   addPostFrameCallback() {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      AppUser? appUser = UserController.to.user;
-
-      callStreamSubscription = callMethods.callStream(uid: appUser!.uid!).listen((DocumentSnapshot ds) {
-        // defining the logic
-        // switch (ds.data) {
-        //   case null:
-        //     // snapshot is null which means that call is hanged and documents are deleted
-        //     Navigator.pop(context);
-        //     break;
-        //
-        //   default:
-        //     break;
-        // }
+      // snapshot is null which means that call is hanged and documents are deleted
+      callStreamSubscription = callMethods.callStream(uid: currentUser!.uid!).listen((DocumentSnapshot ds) async {
+        if (ds.data() == null || ds.data()!.isEmpty) {
+          AlertUtils.toast('Call ended.');
+          if (this.muted) Get.back();
+        }
       });
     });
   }
 
   /// Create agora sdk instance and initialize
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(Constants.AGORA_APP_ID);
+    // _engine = await RtcEngine.create(Constants.AGORA_APP_ID);
+    _engine = await RtcEngine.createWithConfig(RtcEngineConfig(Constants.AGORA_APP_ID));
     // if(widget.useVideo){
     //   await _engine?.enableVideo();
     // }else{
     //   await _engine?.disableVideo();
     //   await _engine?.enableAudio();
     // }
+    await _engine?.enableAudio();
     await _engine?.enableVideo();
     await _engine?.setChannelProfile(ChannelProfile.LiveBroadcasting);
     await _engine?.setClientRole(widget.clientRole);
@@ -109,6 +100,10 @@ class _CallScreenState extends State<CallScreen> {
   void _addAgoraEventHandlers() {
     _engine?.setEventHandler(RtcEngineEventHandler(
       error: (code) {
+        if (code.toString() == "ErrorCode.TokenExpired") {
+          AlertUtils.toast('Session time out.');
+          Get.back();
+        }
         setState(() {
           final info = 'onError: $code';
           _infoStrings.add(info);
@@ -285,12 +280,12 @@ class _CallScreenState extends State<CallScreen> {
             onPressed: _onToggleMute,
             child: Icon(
               muted ? Icons.mic : Icons.mic_off,
-              color: muted ? Colors.white : Colors.blueAccent,
+              color: muted ? Colors.white : KColors.PRIMARY,
               size: 20.0,
             ),
             shape: CircleBorder(),
             elevation: 2.0,
-            fillColor: muted ? Colors.blueAccent : Colors.white,
+            fillColor: muted ? KColors.PRIMARY : Colors.white,
             padding: const EdgeInsets.all(12.0),
           ),
           RawMaterialButton(
@@ -308,14 +303,14 @@ class _CallScreenState extends State<CallScreen> {
             ),
             shape: CircleBorder(),
             elevation: 2.0,
-            fillColor: Colors.redAccent,
+            fillColor: KColors.RED,
             padding: const EdgeInsets.all(15.0),
           ),
           RawMaterialButton(
             onPressed: _onSwitchCamera,
             child: Icon(
               Icons.switch_camera,
-              color: Colors.blueAccent,
+              color: KColors.PRIMARY,
               size: 20.0,
             ),
             shape: CircleBorder(),
@@ -328,15 +323,43 @@ class _CallScreenState extends State<CallScreen> {
     );
   }
 
+  _bgImage() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          Positioned(
+            top: 24,
+            left: 48,
+            right: 48,
+            bottom: 24,
+            child: Image.asset(
+              'images/logo.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(.85),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black26,
       body: Center(
         child: Stack(
           children: <Widget>[
+            _bgImage(),
             _viewRows(),
-            // _panel(),
+            _panel(),
             _toolbar(),
           ],
         ),

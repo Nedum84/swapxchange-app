@@ -19,19 +19,19 @@ class ProductChats {
   final int? offerProductId;
   final int? senderId;
   final int? receiverId;
-  final String? chatStatus;
+  final SwapStatus? chatStatus;
 
   factory ProductChats.fromJson(String str) => ProductChats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory ProductChats.fromMap(Map<String, dynamic> json) => ProductChats(
-        id: json["id"],
-        productId: json["product_id"],
-        offerProductId: json["offer_product_id"],
-        senderId: json["sender_id"],
-        receiverId: json["receiver_id"],
-        chatStatus: json["chat_status"],
+        id: int.parse(json["id"]),
+        productId: int.parse(json["product_id"]),
+        offerProductId: int.parse(json["offer_product_id"]),
+        senderId: int.parse(json["sender_id"]),
+        receiverId: int.parse(json["receiver_id"]),
+        chatStatus: ProductChats.statusToEnum(json["chat_status"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -40,6 +40,28 @@ class ProductChats {
         "offer_product_id": offerProductId,
         "sender_id": senderId,
         "receiver_id": receiverId,
-        "chat_status": chatStatus,
+        "chat_status": statusFromEnum(chatStatus!),
       };
+
+  static SwapStatus statusToEnum(String status) {
+    if (status == "open") {
+      return SwapStatus.OPEN;
+    } else if (status == "declined") {
+      return SwapStatus.DECLINED;
+    } else {
+      return SwapStatus.EXCHANGED;
+    }
+  }
+
+  String statusFromEnum(SwapStatus status) {
+    if (status == SwapStatus.OPEN) {
+      return "open";
+    } else if (status == SwapStatus.DECLINED) {
+      return "declined";
+    } else {
+      return "exchanged";
+    }
+  }
 }
+
+enum SwapStatus { OPEN, DECLINED, EXCHANGED }

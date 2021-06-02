@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
+import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
@@ -40,11 +41,11 @@ class ProductItem extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Image.asset(
-                  'images/logo.jpg',
+                child: CachedImage(
+                  '${product!.images!.first.imagePath}',
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  color: KColors.TEXT_COLOR_LIGHT.withOpacity(.2),
+                  // color: KColors.TEXT_COLOR_LIGHT.withOpacity(.2),
                 ),
               ),
             ),

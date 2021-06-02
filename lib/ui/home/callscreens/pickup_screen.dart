@@ -1,9 +1,11 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/models/call.dart';
 import 'package:swapxchange/repository/call_methods.dart';
 import 'package:swapxchange/ui/home/callscreens/call_screen.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/permissions.dart';
 
 class PickupScreen extends StatefulWidget {
@@ -65,7 +67,7 @@ class _PickupScreenState extends State<PickupScreen> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.call_end),
-                  color: Colors.redAccent,
+                  color: KColors.RED,
                   onPressed: () async {
                     isCallMissed = false;
                     await callMethods.endCall(call: widget.call).then((callEnded) {
@@ -76,18 +78,15 @@ class _PickupScreenState extends State<PickupScreen> {
                 SizedBox(width: 25),
                 IconButton(
                     icon: Icon(Icons.call),
-                    color: Colors.green,
+                    color: KColors.PRIMARY,
                     onPressed: () async {
                       isCallMissed = false;
                       // addToLocalStorage(callStatus: CALL_STATUS_RECEIVED);
                       await Permissions.cameraAndMicrophonePermissionsGranted()
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CallScreen(
-                                  call: widget.call,
-                                  clientRole: ClientRole.Audience,
-                                ),
+                          ? Get.to(
+                              () => CallScreen(
+                                call: widget.call,
+                                clientRole: ClientRole.Audience,
                               ),
                             )
                           : {};

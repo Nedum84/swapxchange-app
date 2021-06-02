@@ -78,8 +78,7 @@ class SecondaryButton extends StatelessWidget {
   final Function() onClick;
   final bool? isLoading;
 
-  const SecondaryButton({Key? key, required this.onClick, this.isLoading})
-      : super(key: key);
+  const SecondaryButton({Key? key, required this.onClick, this.isLoading}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -156,23 +155,25 @@ class ButtonSmall extends StatelessWidget {
   final Color? textColor;
   final double? radius;
   final double? py;
+  final double? px;
 
-  const ButtonSmall(
-      {Key? key,
-      required this.onClick,
-      required this.text,
-      this.bgColor,
-      this.textColor,
-      this.radius,
-      this.py})
-      : super(key: key);
+  const ButtonSmall({
+    Key? key,
+    required this.onClick,
+    required this.text,
+    this.bgColor,
+    this.textColor,
+    this.radius,
+    this.py,
+    this.px,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onClick,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: py ?? 4, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: py ?? 4, horizontal: px ?? 12),
         decoration: BoxDecoration(
           color: bgColor ?? KColors.SECONDARY,
           borderRadius: BorderRadius.circular(radius ?? 20),
@@ -194,12 +195,7 @@ class ButtonOutline extends StatelessWidget {
   final IconData icon;
   final Function() onClick;
 
-  const ButtonOutline(
-      {Key? key,
-      required this.title,
-      required this.icon,
-      required this.onClick})
-      : super(key: key);
+  const ButtonOutline({Key? key, required this.title, required this.icon, required this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -235,14 +231,7 @@ class ButtonOutline2 extends StatelessWidget {
   final double? py;
   final Function() onClick;
 
-  const ButtonOutline2(
-      {Key? key,
-      required this.title,
-      this.titleColor,
-      required this.onClick,
-      this.borderColor,
-      this.py})
-      : super(key: key);
+  const ButtonOutline2({Key? key, required this.title, this.titleColor, required this.onClick, this.borderColor, this.py}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -252,8 +241,7 @@ class ButtonOutline2 extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: py ?? 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(
-              color: borderColor ?? KColors.TEXT_COLOR_LIGHT2.withOpacity(.5)),
+          border: Border.all(color: borderColor ?? KColors.TEXT_COLOR_LIGHT2.withOpacity(.5)),
         ),
         child: Text(
           title,

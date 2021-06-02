@@ -36,8 +36,7 @@ class DioCustomInterceptors extends Interceptor {
 
   @override
   onResponse(Response response, ResponseInterceptorHandler handler) {
-    print(
-        'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
+    print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
     return super.onResponse(response, handler);
   }
 

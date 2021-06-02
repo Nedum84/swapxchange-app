@@ -96,10 +96,14 @@ class RepoProduct extends ApiClient {
     Response response = await ApiClient.request().get('/products/user/$userId/$filters/$offset/$limit');
 
     if (response.statusCode == 200) {
-      var items = response.data["data"]["products"];
+      try {
+        var items = response.data["data"]["products"];
 
-      var list = (items as List).map((data) => Product.fromMap(data)).toList();
-      return list;
+        var list = (items as List).map((data) => Product.fromMap(data)).toList();
+        return list;
+      } catch (e) {
+        print(e);
+      }
     }
 
     return null;

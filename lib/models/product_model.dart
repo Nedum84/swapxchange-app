@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:swapxchange/models/category_model.dart';
+import 'package:swapxchange/models/product_image.dart';
 
 class Product {
   Product({
@@ -36,7 +37,7 @@ class Product {
   final String? productDescription;
   final String? productSuggestion;
   final String? productCondition;
-  final int? productStatus;
+  final ProductStatus? productStatus;
   final int? userId;
   final String? userAddress;
   final String? userAddressCity;
@@ -63,13 +64,13 @@ class Product {
         productDescription: json["product_description"],
         productSuggestion: json["product_suggestion"],
         productCondition: json["product_condition"],
-        productStatus: int.parse(json["product_status"]),
+        productStatus: Product.statusToEnum(int.parse(json["product_status"])),
         userId: int.parse(json["user_id"]),
         userAddress: json["user_address"],
         userAddressCity: json["user_address_city"],
         userAddressLat: json["user_address_lat"],
         userAddressLong: json["user_address_long"],
-        distance: double.parse(json["distance"]),
+        distance: double.parse(json["distance"] ?? "0"),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         images: List<ProductImage>.from(jsonDecode(json["images"]).map((x) => ProductImage.fromMap(x))),
@@ -100,38 +101,34 @@ class Product {
         "suggestions": List<dynamic>.from(suggestions!.map((x) => x.toMap())),
         "user": user!.toMap(),
       };
-}
 
-class ProductImage {
-  ProductImage({
-    this.id,
-    this.productId,
-    this.imagePath,
-    this.idx,
-  });
+  static ProductStatus statusToEnum(int status) {
+    if (status == 1) {
+      return ProductStatus.UNPUBLISHED_PRODUCT_STATUS;
+    } else if (status == 2) {
+      return ProductStatus.PENDING_APPROVAL_PRODUCT_STATUS;
+    } else if (status == 3) {
+      return ProductStatus.ACTIVE_PRODUCT_STATUS;
+    } else if (status == 4) {
+      return ProductStatus.COMPLETED_PRODUCT_STATUS;
+    } else {
+      return ProductStatus.DELETED_PRODUCT_STATUS;
+    }
+  }
 
-  final int? id;
-  final int? productId;
-  final String? imagePath;
-  final int? idx;
-
-  factory ProductImage.fromJson(String str) => ProductImage.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory ProductImage.fromMap(Map<String, dynamic> json) => ProductImage(
-        id: json["id"],
-        productId: json["product_id"],
-        imagePath: json["image_path"],
-        idx: json["idx"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "product_id": productId,
-        "image_path": imagePath,
-        "idx": idx,
-      };
+  static int statusFromEnum(ProductStatus status) {
+    if (status == ProductStatus.UNPUBLISHED_PRODUCT_STATUS) {
+      return 1;
+    } else if (status == ProductStatus.PENDING_APPROVAL_PRODUCT_STATUS) {
+      return 2;
+    } else if (status == ProductStatus.ACTIVE_PRODUCT_STATUS) {
+      return 3;
+    } else if (status == ProductStatus.COMPLETED_PRODUCT_STATUS) {
+      return 4;
+    } else {
+      return 5;
+    }
+  }
 }
 
 class Poster {
@@ -168,4 +165,13 @@ class Poster {
         "address": address,
         "profile_photo": profilePhoto,
       };
+}
+
+//--> Product Status
+enum ProductStatus {
+  UNPUBLISHED_PRODUCT_STATUS,
+  PENDING_APPROVAL_PRODUCT_STATUS,
+  ACTIVE_PRODUCT_STATUS,
+  COMPLETED_PRODUCT_STATUS,
+  DELETED_PRODUCT_STATUS,
 }

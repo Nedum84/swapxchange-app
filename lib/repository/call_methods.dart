@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:swapxchange/models/call.dart';
+import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 
 class CallMethods {
@@ -34,5 +36,16 @@ class CallMethods {
       print(e);
       return false;
     }
+  }
+
+  static Future<String?> generateCallToken({required int uid, required channelName}) async {
+    final data = {"uid": uid, "channel_name": channelName};
+    Response response = await ApiClient.request().post('/agora/generatetoken', data: data);
+
+    if (response.statusCode == 200) {
+      return response.data["data"]["token"][0];
+    }
+
+    return null;
   }
 }

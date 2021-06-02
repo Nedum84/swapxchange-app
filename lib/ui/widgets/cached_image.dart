@@ -14,6 +14,7 @@ class CachedImage extends StatelessWidget {
   final double radius;
   final double? height;
   final double? width;
+  final Function()? onClick;
 
   final BoxFit fit;
   final ImagePlaceholder alt;
@@ -26,6 +27,7 @@ class CachedImage extends StatelessWidget {
     this.width,
     this.fit = BoxFit.cover,
     this.alt = ImagePlaceholder.NoImage,
+    this.onClick,
   });
 
   @override

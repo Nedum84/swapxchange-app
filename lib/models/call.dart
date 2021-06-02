@@ -6,6 +6,8 @@ class Call {
   String? receiverName;
   String? receiverPic;
   String? channelId;
+  String? callToken;
+  int? callUid;
   bool? hasDialled;
 
   Call({
@@ -16,6 +18,8 @@ class Call {
     this.receiverName,
     this.receiverPic,
     this.channelId,
+    this.callToken,
+    this.callUid,
     this.hasDialled,
   });
 
@@ -29,6 +33,8 @@ class Call {
     callMap["receiver_name"] = call.receiverName;
     callMap["receiver_pic"] = call.receiverPic;
     callMap["channel_id"] = call.channelId;
+    callMap["call_token"] = call.callToken;
+    callMap["call_uid"] = call.callUid;
     callMap["has_dialled"] = call.hasDialled;
     return callMap;
   }
@@ -41,6 +47,8 @@ class Call {
     this.receiverName = callMap["receiver_name"];
     this.receiverPic = callMap["receiver_pic"];
     this.channelId = callMap["channel_id"];
+    this.callToken = callMap["call_token"];
+    this.callUid = callMap["call_uid"];
     this.hasDialled = callMap["has_dialled"];
   }
 }

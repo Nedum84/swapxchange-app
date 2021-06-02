@@ -13,13 +13,13 @@ class ChatMessage {
     this.isRead = false,
   });
 
-  final String? id;
-  final int? senderId;
-  final int? receiverId;
+  String? id;
+  int? senderId;
+  int? receiverId;
   final String? type;
   String? message;
   String? photoUrl;
-  final int? timestamp;
+  int? timestamp;
   final int? productChatId;
   final bool isRead;
 

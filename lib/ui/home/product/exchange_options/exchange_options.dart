@@ -5,9 +5,11 @@ import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
+import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 import 'swap_suggestion.dart';
 
@@ -26,42 +28,37 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
   @override
   void initState() {
     super.initState();
-
     _myProduct = widget.myProduct;
   }
 
   _suggestSwap(Product? suggestedProduct) {
-    AlertUtils.confirm('Do you want to swap your ${_myProduct!.productName} with ${suggestedProduct!.productName}', title: 'Confirm', positiveBtnText: 'YES', context: context, okCallBack: () {
-      ProductChats productChats = ProductChats(
-        productId: suggestedProduct.productId,
-        senderId: _myProduct!.userId,
-        receiverId: suggestedProduct.userId,
-        offerProductId: _myProduct!.productId,
-        chatStatus: 'open',
-      );
-
-      RepoProductChats.createOne(productChats: productChats).then((productChats) {
-        if (productChats != null) {
-          AuthRepo.findByUserId(userId: suggestedProduct.userId).then((appUser) {
-            if (appUser != null) {
-              Get.to(() => ChatDetail(receiver: appUser));
-            } else {
-              AlertUtils.toast(
-                'User not be found',
-              );
-            }
-          });
-        } else {
-          AlertUtils.toast(
-            'Chat initialization failed. Try again later',
-          );
-        }
-      }).catchError((error) {
-        AlertUtils.toast(
-          'Chat initialization failed. Try again later',
+    AlertUtils.confirm(
+      'Do you want to swap your ${_myProduct!.productName} with ${suggestedProduct!.productName}',
+      title: 'Confirm',
+      positiveBtnText: 'YES',
+      context: context,
+      okCallBack: () async {
+        ProductChats productChats = ProductChats(
+          productId: suggestedProduct.productId,
+          senderId: _myProduct!.userId,
+          receiverId: suggestedProduct.userId,
+          offerProductId: _myProduct!.productId,
+          chatStatus: SwapStatus.OPEN,
         );
-      });
-    });
+
+        final addOrEdit = await RepoProductChats.createOne(productChats: productChats);
+        if (addOrEdit == null) {
+          AlertUtils.toast('Chat initialization failed. Try again later');
+        } else {
+          final poster = await AuthRepo.findByUserId(userId: suggestedProduct.userId);
+          if (poster == null) {
+            AlertUtils.toast('User not be found');
+          } else {
+            Get.to(() => ChatDetail(receiver: poster));
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -87,7 +84,6 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
                   "Exchange Options",
                   style: TextStyle(
                     color: KColors.TEXT_COLOR_DARK,
-                    // fontSize: 16.0,
                   ),
                 ),
               ),
@@ -103,7 +99,12 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
 
               var products = snapshot.data;
               if (products!.isEmpty) {
-                return Center(child: Text('No exchange found'));
+                return Center(
+                  child: Text(
+                    'No exchange found',
+                    style: StyleNormal.copyWith(fontSize: 16),
+                  ),
+                );
               }
 
               return ListView.builder(
@@ -121,30 +122,13 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
                             suggestedProduct: products[index],
                             openProduct: true,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _suggestSwap(products[index]);
-                            },
-                            child: Container(
-                              width: 150,
-                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: KColors.SECONDARY,
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                border: Border.all(
-                                  width: 2,
-                                  color: KColors.SECONDARY,
-                                ),
-                              ),
-                              child: Text(
-                                'Suggest swap',
-                                style: TextStyle(fontSize: 16, color: Colors.black),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
+                          SizedBox(height: 10),
+                          ButtonSmall(
+                            text: 'Suggest swap',
+                            py: 8,
+                            bgColor: KColors.PRIMARY,
+                            textColor: Colors.white.withOpacity(.8),
+                            onClick: () => _suggestSwap(products[index]),
                           ),
                         ],
                       ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/tokens.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
@@ -13,8 +14,11 @@ class Auth {
 
   static void redirect(Tokens? tokens, AppUser? appUser) {
     if (tokens != null) {
+      //--> Set up user on the controller
+      UserController.to.setUser(appUser!);
+      //-->Save tokens
       UserPrefs.setTokens(tokens: tokens);
-      if (appUser!.name!.isEmpty) {
+      if (appUser.name!.isEmpty) {
         Get.to(() => EnterName(), transition: Transition.leftToRight);
       } else if (appUser.address!.isEmpty) {
         Get.to(() => GrantPermission(), transition: Transition.leftToRight);

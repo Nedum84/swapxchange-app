@@ -264,7 +264,7 @@ packages:
       name: flutter_cache_manager
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   flutter_facebook_auth:
     dependency: "direct main"
     description:
@@ -598,12 +598,12 @@ packages:
     source: hosted
     version: "5.0.0"
   rxdart:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.26.0"
+    version: "0.27.0"
   shared_preferences:
     dependency: "direct main"
     description:
