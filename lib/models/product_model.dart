@@ -31,11 +31,11 @@ class Product {
   final int? productId;
   final String? orderId;
   String? productName;
-  final int? category;
-  final int? subCategory;
-  final int? price;
-  final String? productDescription;
-  final String? productSuggestion;
+  int? category;
+  int? subCategory;
+  int? price;
+  String? productDescription;
+  String? productSuggestion;
   final String? productCondition;
   final ProductStatus? productStatus;
   final int? userId;

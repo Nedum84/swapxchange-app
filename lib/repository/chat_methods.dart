@@ -44,7 +44,8 @@ class ChatMethods {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> fetchChatContacts3({required String chatId}) => _messageCollection.where(FirebaseCollection.CHAT_ID, isEqualTo: chatId).snapshots();
+  static Stream<QuerySnapshot> fetchChatList1({required int userId}) => _messageCollection.where(FirebaseCollection.SENDER_FIELD, isEqualTo: userId).snapshots();
+  static Stream<QuerySnapshot> fetchChatList2({required int userId}) => _messageCollection.where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: userId).snapshots();
 
   Stream<QuerySnapshot> fetchLastMessageBetween({required String chatId}) {
     return _messageCollection

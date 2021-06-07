@@ -11,7 +11,9 @@ class ProductImage {
   final int? id;
   final int? productId;
   final String? imagePath;
-  final int? idx;
+  int? idx;
+
+  bool isCurrent = false;
 
   factory ProductImage.fromJson(String str) => ProductImage.fromMap(json.decode(str));
 

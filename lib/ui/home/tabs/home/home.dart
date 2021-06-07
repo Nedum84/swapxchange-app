@@ -39,13 +39,13 @@ class Home extends StatelessWidget {
                         TopDeals(),
                         SizedBox(height: 16),
                         Text('Latest', style: H1Style),
-                        // InkWell(
-                        //   onTap: () => Get.back(),
-                        //   child: Text(
-                        //     'data',
-                        //     style: TextStyle(fontSize: 32),
-                        //   ),
-                        // ),
+                        InkWell(
+                          onTap: () => Get.back(),
+                          child: Text(
+                            'data',
+                            style: TextStyle(fontSize: 32),
+                          ),
+                        ),
                         SizedBox(height: 16),
                         LoadingOverlay(
                           isLoading: pController.isLoading.value,

@@ -1,55 +1,18 @@
-import 'package:async/async.dart' show StreamGroup;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/models/app_user.dart';
+import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/chat_methods.dart';
 import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 class ChatList extends StatelessWidget {
-  final Stream<QuerySnapshot> user = ChatMethods.fetchChats1(user1: 1, user2: 2);
-
-  final Stream<QuerySnapshot> cards = ChatMethods.fetchChats1(user1: 1, user2: 2);
-
-  _lkk() async {
-    List<Stream<QuerySnapshot>> streams = [];
-    streams.add(user);
-    streams.add(cards);
-    Stream<QuerySnapshot> results = StreamGroup.merge(streams);
-    await for (var res in results) {
-      res.docs.forEach((docResults) {
-        print(docResults.data);
-      });
-    }
-  }
-
-  _hhh() {
-    CombineLatestStream.list([user, cards]).listen((data) {
-      var one = data.elementAt(0);
-      var ytwo = data.elementAt(1);
-      var three = data.elementAt(2);
-    });
-  }
-
-  Widget ioi() {
-    final combinedStrems = Rx.combineLatest2(user, cards, (a, b) => a != null || b != null);
-
-    return StreamBuilder(
-        // stream: CombineLatestStream.list([
-        //   user,
-        //   cards,
-        // ]),
-        stream: combinedStrems,
-        builder: (context, snapshot) {
-          // final data0 = snapshot.data![0];
-          // final data1 = snapshot.data[1];
-
-          return Container();
-        });
-  }
+  AppUser? user = UserController.to.user;
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +33,57 @@ class ChatList extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.all(Constants.PADDING),
-                itemCount: 50,
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ChatListItem();
+              child: StreamBuilder<QuerySnapshot>(
+                stream: ChatMethods.fetchChatList1(userId: user!.userId!),
+                builder: (context, snapshot1) {
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: ChatMethods.fetchChatList2(userId: user!.userId!),
+                    builder: (context, snapshot2) {
+                      if (!snapshot1.hasData || !snapshot2.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      final data1 = snapshot1.data!.docs;
+                      final data2 = snapshot2.data!.docs;
+                      if (data1.isEmpty && data2.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "You've got no conversation yet",
+                            style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK),
+                          ),
+                        );
+                      }
+
+                      List<ChatMessage> chatMessages = [];
+                      for (var message in data1.reversed) {
+                        ChatMessage msg = ChatMessage.fromMap(message.data());
+                        chatMessages.add(msg);
+                      }
+                      for (var message in data2.reversed) {
+                        ChatMessage msg = ChatMessage.fromMap(message.data());
+                        chatMessages.add(msg);
+                      }
+                      chatMessages.sort((a, b) => b.timestamp!.compareTo(a.timestamp!)); //desc
+
+                      // //---> ASC
+                      // categoryList.value.sort((a, b) => a.categoryId!.compareTo(b.categoryId!));
+                      // //---> DESC
+                      // categoryList.value.sort((a, b) => b.categoryId!.compareTo(a.categoryId!));
+                      // categoryList.value.sortedAscBy((it) => it.categoryId!);
+                      // categoryList.value.sortedDescBy((it) => it.categoryId!);
+
+                      return ListView.separated(
+                        padding: EdgeInsets.all(Constants.PADDING),
+                        itemCount: chatMessages.length,
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return ChatListItem(chatMessage: chatMessages[index]);
+                        },
+                        separatorBuilder: (BuildContext context, int index) => SizedBox(height: Constants.PADDING),
+                      );
+                    },
+                  );
                 },
-                separatorBuilder: (BuildContext context, int index) => SizedBox(height: Constants.PADDING),
               ),
             )
           ],

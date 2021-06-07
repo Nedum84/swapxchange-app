@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:swapxchange/models/product_model2.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoProduct extends ApiClient {

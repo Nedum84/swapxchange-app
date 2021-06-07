@@ -25,7 +25,7 @@ class SavedProduct extends StatelessWidget {
                 onPressed: () => null,
               ),
             ),
-            NoProductWidget(),
+            NoProductWidget(title: "No product found"),
             // Expanded(
             //   child: Container(
             //     padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
@@ -52,6 +52,10 @@ class SavedProduct extends StatelessWidget {
 }
 
 class NoProductWidget extends StatelessWidget {
+  final String title;
+
+  const NoProductWidget({Key? key, required this.title}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -62,7 +66,7 @@ class NoProductWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'No product found',
+              title,
               style: H1Style.copyWith(
                 fontSize: 18,
                 color: KColors.TEXT_COLOR_DARK.withOpacity(.9),

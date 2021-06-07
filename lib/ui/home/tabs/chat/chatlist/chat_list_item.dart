@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/ui/home/tabs/home/home_app_bar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
-import 'package:swapxchange/utils/strings.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class ChatListItem extends StatelessWidget {
+  final ChatMessage chatMessage;
+
+  const ChatListItem({Key? key, required this.chatMessage}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -64,7 +68,7 @@ class ChatListItem extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      lorem.substring(0, 100),
+                      "${chatMessage.message}",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: StyleNormal.copyWith(
