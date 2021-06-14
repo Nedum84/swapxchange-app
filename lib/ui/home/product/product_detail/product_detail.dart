@@ -41,8 +41,6 @@ class ProductDetail extends StatelessWidget {
           // Get.to(() => ChatDetail(receiver: poster));
         } else {
           final getRecent = await RepoProductChats.findRecentBwTwoUsers(secondUserId: product.userId!);
-          // print(getRecent!.toMap());
-          // return;
           if (getRecent == null || getRecent.productId != product.productId) {
             ProductChats productChats = ProductChats(
               productId: product.productId,

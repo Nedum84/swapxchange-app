@@ -4,6 +4,31 @@ import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/repository/dio/error_catch.dart';
 
 class RepoProduct extends ApiClient {
+  static Future<Product?> createProduct({required Product product}) async {
+    try {
+      Response response = await ApiClient.request().post('/products', data: product.toMap());
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Product.fromMap(response.data["data"]["product"]);
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  //--> Edit product
+  static Future<Product?> updateProduct({required Product product}) async {
+    try {
+      Response response = await ApiClient.request().patch('/products/${product.productId}', data: product.toMap());
+
+      if (response.statusCode == 200) {
+        return Product.fromMap(response.data["data"]["product"]);
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
   static Future<Product?> getById({required int productId}) async {
     Response response = await ApiClient.request().get('/products/$productId');
 

@@ -55,6 +55,12 @@ class Helpers {
     return formatter.format(dateTime);
   }
 
+  static String formatDateInt2(int date) {
+    DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(date);
+    var formatter = DateFormat("H:m:a");
+    return formatter.format(dateTime);
+  }
+
   static String genRandString({int length = 15}) {
     const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     Random _rnd = Random();

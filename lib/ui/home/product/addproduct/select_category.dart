@@ -1,66 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/ui/home/product/addproduct/widgets/bottomsheet_container.dart';
+import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 class SelectCategory extends StatelessWidget {
   final addController = AddProductController.to;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xff757575),
-      child: Container(
-        height: MediaQuery.of(context).size.height - 60,
-        padding: EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ListTile(
-              trailing: CircleAvatar(
-                backgroundColor: Colors.blueGrey.withOpacity(.1),
-                radius: 16,
-                child: IconButton(
-                  iconSize: 14,
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.close,
-                    color: Colors.grey,
-                  ),
+    return BottomSheetContainer(
+      title: 'Category',
+      child: Expanded(
+        child: ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: CategoryController.to.categoryList.length,
+          itemBuilder: (context, index) {
+            final cat = CategoryController.to.categoryList[index];
+            final isSelected = addController.category?.categoryId == cat.categoryId;
+
+            return ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {
+                addController.setCategory(cat);
+
+                Navigator.of(context).pop();
+              },
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                color: KColors.TEXT_COLOR_LIGHT,
+              ),
+              title: Text(
+                cat.categoryName ?? "",
+                style: StyleNormal.copyWith(
+                  fontSize: 16,
+                  color: isSelected ? KColors.TEXT_COLOR_DARK : KColors.TEXT_COLOR,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
-              title: Text('Select Category'),
-            ),
-            Divider(
-              thickness: 1,
-              color: Colors.blueGrey.withOpacity(.2),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: CategoryController.to.categoryList.length,
-                itemBuilder: (context, index) {
-                  final cat = CategoryController.to.categoryList[index];
-
-                  return ListTile(
-                    onTap: () {
-                      final product = addController.product;
-                      product.value.category = cat.categoryId;
-                      addController.category(cat);
-                      addController.updateProduct(product.value);
-                    },
-                    leading: Icon(Icons.category),
-                    title: Text(cat.categoryName ?? ""),
-                  );
-                },
-              ),
-            )
-          ],
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => Divider(color: KColors.TEXT_COLOR.withOpacity(.3)),
         ),
       ),
     );

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/enum/product_state.dart';
+import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 class TextFieldModal extends StatelessWidget {
   final ProductState productState;
@@ -17,21 +20,21 @@ class TextFieldModal extends StatelessWidget {
   void initialize() {
     textInputType = TextInputType.name;
     textInputTypeMaxLength = 1;
-    final product = addController.product.value;
+    final product = addController.product;
 
     switch (productState) {
       case ProductState.productName:
         title = 'Name your Offer';
-        textEditingController.text = product.productName!;
+        textEditingController.text = product!.productName!;
         break;
       case ProductState.price:
         title = 'Enter your price';
-        textEditingController.text = (product.price != null) ? product.price.toString() : '';
+        textEditingController.text = "${product!.price!}";
         textInputType = TextInputType.number;
         break;
       case ProductState.productDescription:
         title = 'Describe your product';
-        textEditingController.text = product.productDescription!;
+        textEditingController.text = product!.productDescription!;
         textInputType = TextInputType.text;
         textInputTypeMaxLength = 4;
         break;
@@ -61,14 +64,13 @@ class TextFieldModal extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.blueGrey,
+              style: H1Style.copyWith(
+                fontSize: 22.0,
               ),
             ),
+            SizedBox(height: 8),
             Divider(
-              thickness: 1,
-              color: Colors.blueGrey.withOpacity(.2),
+              color: KColors.TEXT_COLOR.withOpacity(.3),
             ),
             TextField(
               keyboardType: textInputType,
@@ -91,23 +93,20 @@ class TextFieldModal extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: KColors.PRIMARY,
               ),
-              child: FlatButton(
-                child: Text(
-                  'Continue',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-                onPressed: () {
+              child: PrimaryButton(
+                btnText: 'Continue',
+                onClick: () {
+                  final txt = textEditingController.text.toString().trim();
                   final product = addController.product;
                   if (productState == ProductState.productName) {
-                    product.value.productName = textEditingController.text;
+                    product!.productName = txt;
                   } else if (productState == ProductState.price) {
-                    product.value.price = int.parse(textEditingController.text);
+                    product!.price = int.tryParse(txt) ?? 0;
                   } else if (productState == ProductState.productDescription) {
-                    product.value.productDescription = textEditingController.text;
+                    product!.productDescription = txt;
                   }
-                  addController.updateProduct(product.value);
+                  addController.updateProduct(product!);
+                  Get.back();
                 },
               ),
             ),

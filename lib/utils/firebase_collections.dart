@@ -5,6 +5,7 @@ class FirebaseCollection {
   static final CHAT_ID = 'chat_id';
   static final SENDER_FIELD = 'sender_id';
   static final RECEIVER_FIELD = 'receiver_id';
+  static final IS_READ = 'is_read';
 
   static final USERS_COLLECTION = 'users';
   static final EMAIL_FIELD = 'email';

@@ -47,20 +47,41 @@ class ChatMethods {
   static Stream<QuerySnapshot> fetchChatList1({required int userId}) => _messageCollection.where(FirebaseCollection.SENDER_FIELD, isEqualTo: userId).snapshots();
   static Stream<QuerySnapshot> fetchChatList2({required int userId}) => _messageCollection.where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: userId).snapshots();
 
-  Stream<QuerySnapshot> fetchLastMessageBetween({required String chatId}) {
-    return _messageCollection
-        .where(FirebaseCollection.CHAT_ID, whereIn: [chatId])
-        .orderBy(
-          FirebaseCollection.TIMESTAMP_FIELD,
-          descending: true,
+  //Mark user's message as read when opens the chat detail
+  static markAsRead({required int secondUserId, required int myId}) async {
+    final unread = await _messageCollection
+        .where(
+          FirebaseCollection.SENDER_FIELD,
+          isEqualTo: secondUserId,
         )
-        .limit(1)
-        .snapshots();
+        .where(
+          FirebaseCollection.RECEIVER_FIELD,
+          isEqualTo: myId,
+        )
+        .where(
+          FirebaseCollection.IS_READ,
+          isEqualTo: false,
+        )
+        .get();
+
+    unread.docs.forEach((element) {
+      _messageCollection.doc(element.id).update({
+        FirebaseCollection.IS_READ: true,
+      });
+    });
   }
 
-  Stream<QuerySnapshot> fetchLastMessageBetween2({
-    required String senderId,
-    required String receiverId,
+  //Get user unread messages
+  static Stream<QuerySnapshot> getUnreadMessages({
+    required int secondUserId,
+    required int myId,
   }) =>
-      _messageCollection.where(FirebaseCollection.SENDER_FIELD, isEqualTo: senderId).where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: receiverId).orderBy(FirebaseCollection.TIMESTAMP_FIELD, descending: true).snapshots();
+      _messageCollection
+          .where(FirebaseCollection.SENDER_FIELD, isEqualTo: secondUserId)
+          .where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: myId)
+          .where(
+            FirebaseCollection.IS_READ,
+            isEqualTo: false,
+          )
+          .snapshots();
 }

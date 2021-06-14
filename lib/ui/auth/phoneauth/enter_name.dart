@@ -41,9 +41,7 @@ class _EnterNameState extends State<EnterName> {
     setState(() => _isLoading = true);
     try {
       _user = FirebaseAuth.instance.currentUser;
-      await _user!
-          .updateProfile(displayName: name)
-          .timeout(Duration(seconds: 5));
+      await _user!.updateProfile(displayName: name).timeout(Duration(seconds: 5));
       await _user?.reload().timeout(Duration(seconds: 5));
       _user = FirebaseAuth.instance.currentUser;
       //Auth User
@@ -90,8 +88,7 @@ class _EnterNameState extends State<EnterName> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                    border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: TextField(
@@ -114,8 +111,7 @@ class _EnterNameState extends State<EnterName> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                     ),
                   ),
                 ),

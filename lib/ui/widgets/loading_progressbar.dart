@@ -5,10 +5,7 @@ class LoadingSpinner extends StatelessWidget {
   final Color bgColor;
   final Color? spinnerColor;
   final Color? spinnerBgColor;
-  LoadingSpinner(
-      {this.bgColor = Colors.white10,
-      this.spinnerColor,
-      this.spinnerBgColor = Colors.black12});
+  LoadingSpinner({this.bgColor = Colors.white10, this.spinnerColor, this.spinnerBgColor = Colors.black12});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +15,7 @@ class LoadingSpinner extends StatelessWidget {
         backgroundColor: bgColor,
         child: CircularProgressIndicator(
           // value: 3,
-          valueColor:
-              AlwaysStoppedAnimation<Color>(spinnerColor ?? KColors.PRIMARY),
+          valueColor: AlwaysStoppedAnimation<Color>(spinnerColor ?? KColors.PRIMARY),
           backgroundColor: spinnerBgColor,
           strokeWidth: 4,
         ),
@@ -31,16 +27,15 @@ class LoadingSpinner extends StatelessWidget {
 class LoadingProgressMultiColor extends StatefulWidget {
   final String? title;
   final Color? txtColor;
+  final bool showBg;
 
-  LoadingProgressMultiColor({this.title, this.txtColor});
+  LoadingProgressMultiColor({this.title, this.txtColor, this.showBg = true});
 
   @override
-  _LoadingProgressMultiColorPageState createState() =>
-      _LoadingProgressMultiColorPageState();
+  _LoadingProgressMultiColorPageState createState() => _LoadingProgressMultiColorPageState();
 }
 
-class _LoadingProgressMultiColorPageState
-    extends State<LoadingProgressMultiColor> with TickerProviderStateMixin {
+class _LoadingProgressMultiColorPageState extends State<LoadingProgressMultiColor> with TickerProviderStateMixin {
   AnimationController? animationController;
 
   @override
@@ -52,8 +47,7 @@ class _LoadingProgressMultiColorPageState
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(duration: new Duration(seconds: 2), vsync: this);
+    animationController = AnimationController(duration: new Duration(seconds: 2), vsync: this);
     animationController?.repeat();
   }
 
@@ -68,7 +62,7 @@ class _LoadingProgressMultiColorPageState
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: Colors.white,
+              backgroundColor: widget.showBg ? Colors.white : Colors.transparent,
               child: CircularProgressIndicator(
                 strokeWidth: 5,
                 valueColor: animationController?.drive(ColorTween(

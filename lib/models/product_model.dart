@@ -26,6 +26,7 @@ class Product {
     this.images,
     this.user,
     this.suggestions,
+    this.uploadPrice,
   });
 
   final int? productId;
@@ -49,6 +50,7 @@ class Product {
   final List<ProductImage>? images;
   final Poster? user;
   final List<Category>? suggestions;
+  final double? uploadPrice;
 
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
@@ -76,6 +78,7 @@ class Product {
         images: List<ProductImage>.from(jsonDecode(json["images"]).map((x) => ProductImage.fromMap(x))),
         suggestions: List<Category>.from(jsonDecode(json["suggestions"]).map((x) => Category.fromMap(x))),
         user: Poster.fromMap(jsonDecode(json["user"])),
+        uploadPrice: double.parse(json["upload_price"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -88,18 +91,19 @@ class Product {
         "product_description": productDescription,
         "product_suggestion": productSuggestion,
         "product_condition": productCondition,
-        "product_status": productStatus,
+        "product_status": Product.statusFromEnum(productStatus!),
         "user_id": userId,
         "user_address": userAddress,
         "user_address_city": userAddressCity,
         "user_address_lat": userAddressLat,
         "user_address_long": userAddressLong,
         "distance": distance,
-        "created_at": createdAt!.toIso8601String(),
-        "updated_at": updatedAt!.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
         "images": List<dynamic>.from(images!.map((x) => x.toMap())),
         "suggestions": List<dynamic>.from(suggestions!.map((x) => x.toMap())),
-        "user": user!.toMap(),
+        "user": user?.toMap(),
+        "upload_price": uploadPrice,
       };
 
   static ProductStatus statusToEnum(int status) {

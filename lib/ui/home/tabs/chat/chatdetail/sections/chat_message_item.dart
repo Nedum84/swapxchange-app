@@ -65,7 +65,12 @@ class ChatMessageItem extends StatelessWidget {
         width: double.infinity,
         radius: 10,
         onClick: () => Get.to(
-          () => ViewImage(curStep: 0, imageProducts: [ProductImage(imagePath: message.photoUrl, productId: 0, id: 0, idx: 0)]),
+          () => ViewImage(
+            curStep: 0,
+            imageProducts: [
+              ProductImage(imagePath: message.photoUrl, productId: 0, id: 0, idx: 0),
+            ],
+          ),
         ),
       );
     else {

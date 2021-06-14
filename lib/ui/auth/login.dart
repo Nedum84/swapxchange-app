@@ -17,7 +17,22 @@ class _LoginState extends State<Login> {
   AuthRepo _authRepo = AuthRepo();
 
   _facebookSignIn() async {
-    setState(() => _isLoading = true);
+    // print('sdsds');
+    // User? user = _authRepo.getCurrentUser();
+    // if (user != null)
+    //   Auth.authenticateUser(
+    //     user: user,
+    //     onDone: () {
+    //       setState(() => _isLoading = false);
+    //     },
+    //     onError: (er) {
+    //       setState(() => _isLoading = false);
+    //       AlertUtils.toast("$er");
+    //     },
+    //   );
+    // return;
+
+    // setState(() => _isLoading = true);
 
     _authRepo.facebookSignIn(
       loginSuccess: (user) {
@@ -48,6 +63,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    // setState(() => _isLoading = false);
     return Scaffold(
       body: Container(
         color: Colors.white,

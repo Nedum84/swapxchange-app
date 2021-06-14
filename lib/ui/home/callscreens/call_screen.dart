@@ -64,8 +64,8 @@ class _CallScreenState extends State<CallScreen> {
     configuration.dimensions = VideoDimensions(1920, 1080);
     // await _engine?.setParameters('''{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}''');
     await _engine?.setVideoEncoderConfiguration(configuration);
-    // await _engine?.joinChannel(Constants.AGORA_TOKEN, widget.call.channelId!, null, currentUser!.userId ?? 0);
-    await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, widget.call.callUid!);
+    await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, currentUser!.userId ?? 0);
+    // await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, widget.call.callUid!);
   }
 
   addPostFrameCallback() {
@@ -74,7 +74,7 @@ class _CallScreenState extends State<CallScreen> {
       callStreamSubscription = callMethods.callStream(uid: currentUser!.uid!).listen((DocumentSnapshot ds) async {
         if (ds.data() == null || ds.data()!.isEmpty) {
           AlertUtils.toast('Call ended.');
-          if (this.muted) Get.back();
+          if (this.mounted) Get.back();
         }
       });
     });
@@ -92,8 +92,10 @@ class _CallScreenState extends State<CallScreen> {
     // }
     await _engine?.enableAudio();
     await _engine?.enableVideo();
+    // await _engine?.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    // await _engine?.setClientRole(widget.clientRole);
     await _engine?.setChannelProfile(ChannelProfile.LiveBroadcasting);
-    await _engine?.setClientRole(widget.clientRole);
+    await _engine?.setClientRole(ClientRole.Broadcaster);
   }
 
   /// Add agora event handlers
@@ -127,6 +129,7 @@ class _CallScreenState extends State<CallScreen> {
           final info = 'userJoined: $uid';
           _infoStrings.add(info);
           _users.add(uid);
+          remoteUid.add(uid);
         });
       },
       userOffline: (uid, elapsed) {
@@ -149,9 +152,9 @@ class _CallScreenState extends State<CallScreen> {
   /// Helper function to get list of native views
   List<Widget> _getRenderViews() {
     final List<StatefulWidget> list = [];
-    if (widget.clientRole == ClientRole.Broadcaster) {
-      list.add(RtcLocalView.SurfaceView());
-    }
+    // if (widget.clientRole == ClientRole.Broadcaster) {
+    list.add(RtcLocalView.SurfaceView());
+    // }
     _users.forEach((int uid) => list.add(RtcRemoteView.SurfaceView(uid: uid)));
     return list;
   }
@@ -190,14 +193,16 @@ class _CallScreenState extends State<CallScreen> {
         ));
       case 3:
         return Container(
-            child: Column(
-          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 3))],
-        ));
+          child: Column(
+            children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 3))],
+          ),
+        );
       case 4:
         return Container(
-            child: Column(
-          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 4))],
-        ));
+          child: Column(
+            children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 4))],
+          ),
+        );
       default:
     }
     return Container();
@@ -307,7 +312,7 @@ class _CallScreenState extends State<CallScreen> {
             padding: const EdgeInsets.all(15.0),
           ),
           RawMaterialButton(
-            onPressed: _onSwitchCamera,
+            onPressed: _switchCamera,
             child: Icon(
               Icons.switch_camera,
               color: KColors.PRIMARY,
@@ -350,6 +355,62 @@ class _CallScreenState extends State<CallScreen> {
     );
   }
 
+  bool isJoined = false, switchCamera = true, switchRender = true;
+  List<int> remoteUid = [];
+
+  _switchRender() {
+    AlertUtils.toast('Switched');
+    setState(() {
+      switchRender = !switchRender;
+      remoteUid = List.of(remoteUid.reversed);
+    });
+  }
+
+  _renderVideo() {
+    return Expanded(
+      child: Stack(
+        children: [
+          RtcLocalView.SurfaceView(),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.of(remoteUid.map(
+                  (e) => GestureDetector(
+                    onTap: this._switchRender,
+                    child: Container(
+                      width: 100,
+                      height: 120,
+                      padding: EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.red,
+                      ),
+                      child: RtcRemoteView.SurfaceView(
+                        uid: e,
+                      ),
+                    ),
+                  ),
+                )),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _switchCamera() {
+    _engine?.switchCamera().then((value) {
+      setState(() {
+        switchCamera = !switchCamera;
+      });
+    }).catchError((err) {
+      print('switchCamera $err');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -358,7 +419,8 @@ class _CallScreenState extends State<CallScreen> {
         child: Stack(
           children: <Widget>[
             _bgImage(),
-            _viewRows(),
+            // _viewRows(),
+            _renderVideo(),
             _panel(),
             _toolbar(),
           ],

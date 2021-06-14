@@ -37,7 +37,7 @@ final TextStyle StyleProductTitle = Default.copyWith(
 );
 
 final TextStyle StyleProductPrice = Default.copyWith(
-  color: KColors.TEXT_COLOR,
+  color: KColors.TEXT_COLOR_DARK,
   fontSize: 12,
   fontWeight: FontWeight.bold,
 );

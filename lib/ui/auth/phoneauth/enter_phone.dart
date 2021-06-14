@@ -26,8 +26,9 @@ class _EnterPhoneState extends State<EnterPhone> {
   @override
   void initState() {
     super.initState();
-    User user = _authRepo.getCurrentUser()!;
-    _authenticate(user);
+
+    User? user = _authRepo.getCurrentUser();
+    if (user != null) _authenticate(user);
   }
 
   _signInWithPhone() {
@@ -105,8 +106,7 @@ class _EnterPhoneState extends State<EnterPhone> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                    border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: TextField(
@@ -135,8 +135,7 @@ class _EnterPhoneState extends State<EnterPhone> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                     ),
                   ),
                 ),

@@ -23,6 +23,8 @@ class ChatMessage {
   final int? productChatId;
   final bool isRead;
 
+  int secondUserId = 0;
+
   factory ChatMessage.fromJson(String str) => ChatMessage.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());

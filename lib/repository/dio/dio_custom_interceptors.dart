@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as GetX;
 import 'package:swapxchange/models/tokens.dart';
@@ -22,7 +24,8 @@ class DioCustomInterceptors extends Interceptor {
     Tokens? tokens = await UserPrefs.getTokens();
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    options.baseUrl = 'http://127.0.0.1:8088/v1/';
+    options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
+    // options.baseUrl = 'http://127.0.0.1:8088/v1/';
     options.connectTimeout = 5000;
     options.receiveTimeout = 3000;
     // Transform response data to Json Map

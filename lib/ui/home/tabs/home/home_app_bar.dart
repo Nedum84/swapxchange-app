@@ -30,8 +30,7 @@ class MenuIcon extends StatelessWidget {
   final IconData icon;
   final Function() onClick;
 
-  const MenuIcon({Key? key, required this.icon, required this.onClick})
-      : super(key: key);
+  const MenuIcon({Key? key, required this.icon, required this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +51,7 @@ class MenuBadge extends StatelessWidget {
   final IconData icon;
   final Function() onClick;
 
-  const MenuBadge({Key? key, required this.icon, required this.onClick})
-      : super(key: key);
+  const MenuBadge({Key? key, required this.icon, required this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,13 +82,13 @@ class CustomBadge extends StatelessWidget {
   final String? text;
   final bool isRound;
   final Color? bgColor;
+  final double? py;
 
-  const CustomBadge({Key? key, this.text, this.isRound = false, this.bgColor})
-      : super(key: key);
+  const CustomBadge({Key? key, this.text, this.isRound = false, this.bgColor, this.py}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 4, horizontal: isRound ? 4 : 6),
+      padding: EdgeInsets.symmetric(vertical: py ?? 4, horizontal: isRound ? 4 : 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: bgColor ?? KColors.PRIMARY,

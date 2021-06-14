@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:swapxchange/ui/home/product/addproduct/widgets/bottomsheet_container.dart';
+import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 class ChooseImageFrom extends StatelessWidget {
   ChooseImageFrom({required this.imageSource});
@@ -8,43 +11,40 @@ class ChooseImageFrom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(40.00)),
-      ),
-      child: ListView(
-        physics: NeverScrollableScrollPhysics(),
+    return BottomSheetContainer(
+      title: 'Choose from',
+      sheetHeight: 250,
+      child: Column(
         children: [
           ListTile(
-            trailing: CircleAvatar(
-              backgroundColor: Colors.blueGrey.withOpacity(.1),
-              radius: 16,
-              child: IconButton(
-                iconSize: 14,
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.close,
-                  color: Colors.grey,
-                ),
+            leading: Icon(
+              Icons.photo_camera_back,
+              color: KColors.TEXT_COLOR_DARK,
+            ),
+            title: Text(
+              'Gallery',
+              style: StyleNormal.copyWith(
+                fontSize: 16,
+                color: KColors.TEXT_COLOR_DARK,
               ),
             ),
-            title: Text('Choose from'),
-          ),
-          ListTile(
-            leading: Icon(Icons.photo_camera_back),
-            title: Text('Gallery'),
             onTap: () {
               imageSource(ImageSource.gallery);
               Navigator.pop(context);
             },
           ),
           ListTile(
-            leading: Icon(Icons.photo_camera),
-            title: Text('Camera'),
+            leading: Icon(
+              Icons.photo_camera,
+              color: KColors.TEXT_COLOR_DARK,
+            ),
+            title: Text(
+              'Camera',
+              style: StyleNormal.copyWith(
+                fontSize: 16,
+                color: KColors.TEXT_COLOR_DARK,
+              ),
+            ),
             onTap: () {
               imageSource(ImageSource.camera);
               Navigator.pop(context);

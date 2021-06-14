@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
@@ -20,6 +19,7 @@ import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/swap_suggest_b
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/topbar_swap_suggestion.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/swap_with.dart';
 import 'package:swapxchange/ui/widgets/choose_image_from.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -62,6 +62,7 @@ class ChatDetailState extends State<ChatDetail> {
     _currentUser = UserController.to.user;
 
     _init();
+    _markAsRead();
   }
 
   _init() async {
@@ -91,6 +92,10 @@ class ChatDetailState extends State<ChatDetail> {
     }
   }
 
+  void _markAsRead() {
+    ChatMethods.markAsRead(secondUserId: _receiver.userId!, myId: _currentUser!.userId!);
+  }
+
   showKeyboard() => textFieldFocus.requestFocus();
 
   hideKeyboard() => textFieldFocus.unfocus();
@@ -116,43 +121,32 @@ class ChatDetailState extends State<ChatDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (showEmojiPicker) {
-          hideEmojiContainer();
-          return false;
-        } else {
-          Get.back();
-          return true;
-        }
-      },
-      child: PickupLayout(
-        scaffold: Scaffold(
-          backgroundColor: Color(0xffEEF2F4),
-          appBar: chatAppBar(receiverUser: _receiver, currentUser: _currentUser!),
-          body: Column(
-            children: <Widget>[
-              if (showActiveProduct)
-                TopbarSwapSuggestion(
-                  product: _product,
-                  offerProduct: _offerProduct,
-                ),
-              Flexible(
-                child: Stack(
-                  children: [
-                    ChatMessageList(currentUser: _currentUser!, receiverUser: _receiver),
-                    Visibility(
-                      visible: showSwapBtn,
-                      child: SwapSuggestBtn(
-                        onClick: _findExchangeOptions,
-                      ),
-                    )
-                  ],
-                ),
+    return PickupLayout(
+      scaffold: Scaffold(
+        backgroundColor: Color(0xffEEF2F4),
+        appBar: chatAppBar(receiverUser: _receiver, currentUser: _currentUser!),
+        body: Column(
+          children: <Widget>[
+            if (showActiveProduct)
+              TopbarSwapSuggestion(
+                product: _product,
+                offerProduct: _offerProduct,
               ),
-              chatControls(),
-            ],
-          ),
+            Flexible(
+              child: Stack(
+                children: [
+                  ChatMessageList(currentUser: _currentUser!, receiverUser: _receiver),
+                  Visibility(
+                    visible: showSwapBtn,
+                    child: SwapSuggestBtn(
+                      onClick: _findExchangeOptions,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            chatControls(),
+          ],
         ),
       ),
     );
@@ -195,7 +189,7 @@ class ChatDetailState extends State<ChatDetail> {
                   maxLines: null,
                   onTap: () => hideEmojiContainer(),
                   style: StyleNormal.copyWith(
-                    color: Colors.blueGrey,
+                    color: KColors.TEXT_COLOR,
                   ),
                   onChanged: (val) {
                     (val.length > 0 && val.trim() != "") ? setWritingTo(true) : setWritingTo(false);
@@ -203,7 +197,7 @@ class ChatDetailState extends State<ChatDetail> {
                   decoration: InputDecoration(
                     hintText: "Message ${_receiver.name!.split(" ")[0]}...",
                     hintStyle: StyleNormal.copyWith(
-                      color: KColors.WHITE_GREY,
+                      color: KColors.TEXT_COLOR_LIGHT,
                     ),
                     border: OutlineInputBorder(borderSide: BorderSide.none),
                     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -220,7 +214,7 @@ class ChatDetailState extends State<ChatDetail> {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onPressed: () => _showFileChooser(),
-                  icon: Icon(Icons.add_a_photo_sharp, color: Colors.blueGrey.withOpacity(.8)),
+                  icon: Icon(Icons.add_a_photo_sharp, color: KColors.TEXT_COLOR_DARK.withOpacity(.8)),
                 ),
           SizedBox(width: 5),
           isWriting
@@ -228,13 +222,13 @@ class ChatDetailState extends State<ChatDetail> {
                   margin: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: KColors.SECONDARY,
+                    color: KColors.PRIMARY,
                   ),
                   child: IconButton(
                     icon: Icon(
-                      Icons.send_sharp,
+                      Icons.send,
                       size: 18,
-                      color: KColors.TEXT_COLOR_DARK,
+                      color: Colors.white,
                     ),
                     onPressed: () => sendMessage(type: ChatMessageType.TEXT),
                   ))
@@ -271,7 +265,9 @@ class ChatDetailState extends State<ChatDetail> {
   void pickImage({required ImageSource source}) async {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
+      AlertUtils.showProgressDialog(title: null);
       final String? imgPath = await _storageMethods.uploadImageToStorage(selectedImage);
+      AlertUtils.hideProgressDialog();
       if (imgPath != "") {
         sendMessage(type: ChatMessageType.IMAGE, imagePath: imgPath);
       }

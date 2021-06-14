@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
+import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class TopbarSwapSuggestion extends StatelessWidget {
@@ -48,7 +49,7 @@ class TopbarSwapSuggestion extends StatelessWidget {
             padding: EdgeInsets.all(2.0),
             child: Icon(
               Icons.sync,
-              color: Colors.blueGrey.withOpacity(.5),
+              color: KColors.TEXT_COLOR_DARK.withOpacity(.5),
             ),
           ),
           Expanded(
@@ -71,7 +72,9 @@ class TopbarSwapSuggestion extends StatelessWidget {
                   Expanded(
                     child: Text(
                       offerProduct?.productName ?? '',
-                      style: StyleNormal.copyWith(fontSize: 12),
+                      style: StyleNormal.copyWith(
+                        fontSize: 12,
+                      ),
                     ),
                   )
                 ],

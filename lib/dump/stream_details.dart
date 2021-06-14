@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/chat_methods.dart';
 import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
@@ -76,7 +77,9 @@ class ChatList extends StatelessWidget {
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return ChatListItem();
+                  return ChatListItem(
+                    chatMessage: ChatMessage(),
+                  );
                 },
                 separatorBuilder: (BuildContext context, int index) => SizedBox(height: Constants.PADDING),
               ),

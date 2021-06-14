@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:swapxchange/models/product_image.dart';
+
 class ProductChats {
   ProductChats({
     this.id,
@@ -12,6 +14,8 @@ class ProductChats {
     this.senderId,
     this.receiverId,
     this.chatStatus,
+    this.productImages,
+    this.productOfferImages,
   });
 
   final int? id;
@@ -20,6 +24,8 @@ class ProductChats {
   final int? senderId;
   final int? receiverId;
   final SwapStatus? chatStatus;
+  final List<ProductImage>? productImages;
+  final List<ProductImage>? productOfferImages;
 
   factory ProductChats.fromJson(String str) => ProductChats.fromMap(json.decode(str));
 
@@ -32,6 +38,8 @@ class ProductChats {
         senderId: int.parse(json["sender_id"]),
         receiverId: int.parse(json["receiver_id"]),
         chatStatus: ProductChats.statusToEnum(json["chat_status"]),
+        productImages: List<ProductImage>.from(jsonDecode(json["product_images"]).map((x) => ProductImage.fromMap(x))),
+        productOfferImages: List<ProductImage>.from(jsonDecode(json["product_offer_images"]).map((x) => ProductImage.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -41,6 +49,8 @@ class ProductChats {
         "sender_id": senderId,
         "receiver_id": receiverId,
         "chat_status": statusFromEnum(chatStatus!),
+        "product_images": List<dynamic>.from(productImages?.map((x) => x.toMap()) ?? []),
+        "product_offer_images": List<dynamic>.from(productOfferImages?.map((x) => x.toMap()) ?? []),
       };
 
   static SwapStatus statusToEnum(String status) {

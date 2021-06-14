@@ -29,6 +29,12 @@ class _ViewImageState extends State<ViewImage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        toolbarHeight: 0,
+        brightness: Brightness.dark,
+        backgroundColor: Colors.black,
+        shadowColor: Colors.transparent,
+      ),
       body: Stack(
         children: [
           PageView.builder(
@@ -50,21 +56,22 @@ class _ViewImageState extends State<ViewImage> {
                   ),
                 );
               }),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: EdgeInsets.only(bottom: 30),
-              child: StepProgressView(
-                itemSize: widget.imageProducts.length,
-                width: MediaQuery.of(context).size.width,
-                curStep: _curStep,
-                activeColor: Colors.white,
-                // inActiveColor: Colors.black87.withOpacity(.3),
+          if (widget.imageProducts.length > 1)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 30),
+                child: StepProgressView(
+                  itemSize: widget.imageProducts.length,
+                  width: MediaQuery.of(context).size.width,
+                  curStep: _curStep,
+                  activeColor: Colors.white,
+                  // inActiveColor: Colors.black87.withOpacity(.3),
+                ),
               ),
             ),
-          ),
           Positioned(
-            top: 45,
+            // top: 45,
             left: 20,
             child: IconButton(
               onPressed: () => Navigator.pop(context),

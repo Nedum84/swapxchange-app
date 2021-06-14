@@ -70,12 +70,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
               icon: Icons.offline_share,
               bottomMenuItem: BottomMenuItem.CHAT,
             ),
-            BottomMenuWidget(
-              pageViewController: pageViewController,
-              title: 'Add',
-              icon: Icons.add,
-              bottomMenuItem: BottomMenuItem.ADD,
-            ),
+            AddMenuWidget(),
             BottomMenuWidget(
               pageViewController: pageViewController,
               title: 'Saved',

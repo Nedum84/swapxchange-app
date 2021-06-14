@@ -48,7 +48,9 @@ class ChatList extends StatelessWidget {
                         return Center(
                           child: Text(
                             "You've got no conversation yet",
-                            style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK),
+                            style: StyleNormal.copyWith(
+                              color: KColors.TEXT_COLOR_DARK,
+                            ),
                           ),
                         );
                       }
@@ -64,12 +66,17 @@ class ChatList extends StatelessWidget {
                       }
                       chatMessages.sort((a, b) => b.timestamp!.compareTo(a.timestamp!)); //desc
 
-                      // //---> ASC
-                      // categoryList.value.sort((a, b) => a.categoryId!.compareTo(b.categoryId!));
-                      // //---> DESC
-                      // categoryList.value.sort((a, b) => b.categoryId!.compareTo(a.categoryId!));
-                      // categoryList.value.sortedAscBy((it) => it.categoryId!);
-                      // categoryList.value.sortedDescBy((it) => it.categoryId!);
+                      chatMessages.forEach((element) {
+                        if (element.senderId == user!.userId) {
+                          element.secondUserId = element.receiverId!;
+                        } else {
+                          element.secondUserId = element.senderId!;
+                        }
+                      });
+
+                      //Distinct by the user ID
+                      final list = chatMessages.map((e) => e.secondUserId).toSet();
+                      chatMessages.retainWhere((element) => list.remove(element.secondUserId));
 
                       return ListView.separated(
                         padding: EdgeInsets.all(Constants.PADDING),
@@ -79,7 +86,7 @@ class ChatList extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return ChatListItem(chatMessage: chatMessages[index]);
                         },
-                        separatorBuilder: (BuildContext context, int index) => SizedBox(height: Constants.PADDING),
+                        separatorBuilder: (BuildContext context, int index) => SizedBox(height: Constants.PADDING / 2),
                       );
                     },
                   );

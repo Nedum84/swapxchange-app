@@ -10,25 +10,28 @@ import 'package:swapxchange/utils/helpers.dart';
 
 class AddProductController extends GetxController {
   static AddProductController to = Get.find();
-  Rx<Product> _product = Product().obs;
-  Rx<Category> category = Category().obs;
-  Rx<SubCategory> subCategory = SubCategory().obs;
-  RxList<ProductImage> imageList = <ProductImage>[].obs;
-  RxList<Category> suggestions = <Category>[].obs;
+  Product? _product;
+  Category? category;
+  SubCategory? subCategory;
+  List<ProductImage> imageList = <ProductImage>[];
+  List<Category> suggestions = <Category>[];
+  bool isEditing = false;
+  bool isLoading = false;
+  bool isAcceptedTerms = false;
 
-  Rx<Product> get product => _product;
+  Product? get product => _product;
 
   void initialize(Product product) async {
     //-> Category
     final Category? cat = await CategoryController.to.fetchById(catId: product.category!);
-    if (cat != null) category(cat);
+    if (cat != null) setCategory(cat);
     //--> Sub cat
     final SubCategory? subCat = await SubCategoryController.to.fetchById(subCatId: product.subCategory!);
-    if (subCat != null) subCategory(subCat);
+    if (subCat != null) setSubCategory(subCat);
     //--> Images
-    imageList(product.images);
+    if (product.images != null) setImgList(product.images!);
     //--> Set product
-    _product(product);
+    updateProduct(product);
   }
 
   void create() {
@@ -43,24 +46,84 @@ class AddProductController extends GetxController {
       price: 0,
       productStatus: ProductStatus.ACTIVE_PRODUCT_STATUS,
       images: [],
+      productName: "",
+      productDescription: "",
+      suggestions: [],
+      productSuggestion: "",
+      uploadPrice: 100,
     );
-    _product(product);
+    updateProduct(product);
   }
 
   void updateProduct(Product product) {
-    _product(product);
+    _product = product;
     update();
   }
 
-  Future<Product?> fetchById({required int catId}) async {
-    // Product? p;
-    // var item;
-    // item = categoryList.value.firstWhereOrNull((element) => element.categoryId == catId);
-    // if (item == null) {
-    //   item = await RepoAddProduct.getAddProductById(catId: catId);
-    // }
-    // if (item != null) category = item;
-    //
-    // return category;
+  void setImgList(List<ProductImage> pImg) {
+    imageList = pImg;
+    update();
+  }
+
+  //Update the product Images with the product ID
+  void updateImgWithProductId(Product product) {
+    List<ProductImage> newList = [];
+    imageList.forEach((element) {
+      element.productId = product.productId;
+      newList.add(element);
+    });
+    imageList = newList;
+    update();
+  }
+
+  void setCategory(Category cat) {
+    category = cat;
+    _product!.category = cat.categoryId;
+    setSubCategory(null);
+    update();
+  }
+
+  void setSubCategory(SubCategory? subCat) {
+    subCategory = subCat;
+    _product!.subCategory = subCat?.subCategoryId ?? 0;
+    update();
+  }
+
+  void setEditing(bool value) {
+    isEditing = value;
+    update();
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    update();
+  }
+
+  void setAcceptedTerm() {
+    isAcceptedTerms = !isAcceptedTerms;
+    update();
+  }
+
+  void updateSuggestions(Category category) {
+    bool isSelected = suggestions.indexWhere((element) => element.categoryId == category.categoryId) != -1;
+    if (isSelected) {
+      suggestions.removeWhere((element) => element.categoryId == category.categoryId);
+    } else {
+      suggestions.add(category);
+    }
+    final sugs = suggestions.map((e) => e.categoryId).toString().replaceAll("(", "").replaceAll(")", "");
+    _product!.productSuggestion = sugs;
+    update();
+  }
+
+  void reset() {
+    _product = null;
+    setEditing(false);
+    isAcceptedTerms = false;
+    category = null;
+    subCategory = null;
+    suggestions = [];
+    imageList = [];
+    setLoading(false);
   }
 }

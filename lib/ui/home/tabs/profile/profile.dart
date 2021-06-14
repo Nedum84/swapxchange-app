@@ -26,8 +26,7 @@ class Profile extends StatelessWidget {
                   Icons.settings,
                   color: KColors.TEXT_COLOR_DARK,
                 ),
-                onPressed: () => Get.to(() => Settings(),
-                    transition: Transition.rightToLeftWithFade),
+                onPressed: () => Get.to(() => Settings(), transition: Transition.rightToLeftWithFade),
               ),
             ),
             Expanded(
@@ -93,8 +92,10 @@ class Profile extends StatelessWidget {
                     icon: Icons.settings,
                     text: 'Get more coins',
                     showArrowRight: true,
-                    onClick: () => Get.to(() => Settings(),
-                        transition: Transition.rightToLeftWithFade,),
+                    onClick: () => Get.to(
+                      () => Settings(),
+                      transition: Transition.rightToLeftWithFade,
+                    ),
                   ),
                   ProfileItem(
                     icon: Icons.settings,
@@ -112,8 +113,10 @@ class Profile extends StatelessWidget {
                     icon: Icons.email,
                     text: 'My saved products',
                     showArrowRight: true,
-                    onClick: () => Get.to(() => HowToGetCoins(),
-                      transition: Transition.rightToLeftWithFade,),
+                    onClick: () => Get.to(
+                      () => HowToGetCoins(),
+                      transition: Transition.rightToLeftWithFade,
+                    ),
                   ),
                   ProfileItem(
                     icon: Icons.phone,
@@ -213,14 +216,7 @@ class ProfileItem extends StatelessWidget {
   final bool showArrowRight;
   final Function() onClick;
 
-  const ProfileItem(
-      {Key? key,
-      required this.text,
-      required this.icon,
-      this.showBottomBorder = false,
-      this.showArrowRight = true,
-      required this.onClick})
-      : super(key: key);
+  const ProfileItem({Key? key, required this.text, required this.icon, this.showBottomBorder = false, this.showArrowRight = true, required this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -231,17 +227,14 @@ class ProfileItem extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(color: KColors.TEXT_COLOR_LIGHT2.withOpacity(.12)),
-            bottom: BorderSide(
-                color: showBottomBorder
-                    ? KColors.TEXT_COLOR_LIGHT2.withOpacity(.12)
-                    : Colors.transparent),
+            bottom: BorderSide(color: showBottomBorder ? KColors.TEXT_COLOR_LIGHT2.withOpacity(.12) : Colors.transparent),
           ),
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: KColors.TEXT_COLOR.withOpacity(.8),
+              color: KColors.TEXT_COLOR.withOpacity(1),
             ),
             SizedBox(width: 8),
             Expanded(
@@ -249,8 +242,7 @@ class ProfileItem extends StatelessWidget {
                 text,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: StyleNormal.copyWith(
-                    color: KColors.TEXT_COLOR.withOpacity(.8)),
+                style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK),
               ),
             ),
             SizedBox(width: 4),

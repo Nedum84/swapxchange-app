@@ -9,7 +9,7 @@ class ProductImage {
   });
 
   final int? id;
-  final int? productId;
+  int? productId;
   final String? imagePath;
   int? idx;
 
@@ -20,10 +20,10 @@ class ProductImage {
   String toJson() => json.encode(toMap());
 
   factory ProductImage.fromMap(Map<String, dynamic> json) => ProductImage(
-        id: json["id"],
-        productId: int.parse(json["product_id"].toString()),
+        id: int.tryParse(json["id"].toString()),
+        productId: int.tryParse(json["product_id"].toString()),
         imagePath: json["image_path"],
-        idx: json["idx"],
+        idx: int.tryParse(json["idx"].toString()),
       );
 
   Map<String, dynamic> toMap() => {

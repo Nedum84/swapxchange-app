@@ -11,6 +11,7 @@ class PrimaryButton extends StatelessWidget {
   final Color? textColor;
   final Color? arrowColor;
   final bool? isLoading;
+  final double? width;
 
   const PrimaryButton({
     Key? key,
@@ -20,12 +21,14 @@ class PrimaryButton extends StatelessWidget {
     this.textColor,
     this.arrowColor,
     this.isLoading,
+    this.width,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => isLoading == true ? null : onClick(),
       child: Container(
+        width: width ?? double.infinity,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -132,19 +135,25 @@ class SecondaryButton extends StatelessWidget {
 
 class CustomBackButton extends StatelessWidget {
   final Color? color;
+  final bool isPositioned;
 
-  const CustomBackButton({Key? key, this.color}) : super(key: key);
+  const CustomBackButton({Key? key, this.color, this.isPositioned = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 60,
-      left: 24,
-      child: BackButton(
-        color: color ?? KColors.PRIMARY,
-        onPressed: () => Get.back(),
-      ),
-    );
+    return isPositioned
+        ? Positioned(
+            top: 60,
+            left: 24,
+            child: BackButton(
+              color: color ?? KColors.PRIMARY,
+              onPressed: () => Get.back(),
+            ),
+          )
+        : BackButton(
+            color: color ?? KColors.PRIMARY,
+            onPressed: () => Get.back(),
+          );
   }
 }
 

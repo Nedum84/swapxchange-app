@@ -46,18 +46,16 @@ class _GrantPermissionState extends State<GrantPermission> {
   }
 
   _grantLocationAccess() async {
+    _gotoDashboard();
+    return;
     setState(() => _isLoading = true);
     Permissions.locationPermission().then((isPermGranted) async {
       if (isPermGranted) {
-        await Geolocator.getCurrentPosition(
-                desiredAccuracy: LocationAccuracy.high)
-            .then((Position position) async {
-          List<Placemark> addresses = await placemarkFromCoordinates(
-              position.latitude, position.longitude);
+        await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((Position position) async {
+          List<Placemark> addresses = await placemarkFromCoordinates(position.latitude, position.longitude);
 
           var placeMark = addresses.first;
-          String address =
-              "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
+          String address = "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
 
           // address =
           //     "${placeMark.name}, ${placeMark.subLocality}, ${placeMark.locality}, ${placeMark.administrativeArea} ${placeMark.postalCode}, ${placeMark.country}";
@@ -68,16 +66,15 @@ class _GrantPermissionState extends State<GrantPermission> {
               address_long: position.longitude,
               state: placeMark.subLocality!,
               onSuccess: (appUser) {
-                controller.animateToPage(_curStep + 1,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut);
+                controller.animateToPage(_curStep + 1, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
               },
               onError: (er) {
                 AlertUtils.toast("$er");
               });
           setState(() => _isLoading = false);
         }).catchError((e) {
-          AlertUtils.toast(e);
+          print(e);
+          AlertUtils.toast('$e');
           setState(() => _isLoading = false);
         });
       } else {
@@ -94,6 +91,7 @@ class _GrantPermissionState extends State<GrantPermission> {
 
   @override
   Widget build(BuildContext context) {
+    // setState(() => _isLoading = false);
     return Scaffold(
       backgroundColor: Color(0xffffffff),
       body: Container(
@@ -105,8 +103,7 @@ class _GrantPermissionState extends State<GrantPermission> {
               return GrantPermContainer(
                 imageString: 'images/location_access.png',
                 textTitle: "Hi, Welcome!",
-                textDisplay:
-                    "SwapXchange.ng is a platform for exchange/swap. Open access to your location and we'll show interesting offers close to you.",
+                textDisplay: "SwapXchange.ng is a platform for exchange/swap. Open access to your location and we'll show interesting offers close to you.",
                 button: PrimaryButton(
                   onClick: () => _grantLocationAccess(),
                   btnText: 'Allow Access',
@@ -117,8 +114,7 @@ class _GrantPermissionState extends State<GrantPermission> {
               return GrantPermContainer(
                 imageString: 'images/file_access.png',
                 textTitle: "Let's Go",
-                textDisplay:
-                    "You definitely have unnecessary stuff. Offer it to users and get what you dream of. Browse items available for swap and make a deal. "
+                textDisplay: "You definitely have unnecessary stuff. Offer it to users and get what you dream of. Browse items available for swap and make a deal. "
                     "So money is no longer needed.",
                 button: PrimaryButton(
                   onClick: () => _gotoDashboard(),

@@ -52,6 +52,7 @@ class _PickupScreenState extends State<PickupScreen> {
               widget.call.callerPic!,
               isRound: true,
               radius: 180,
+              alt: ImagePlaceholder.User,
             ),
             SizedBox(height: 15),
             Text(
@@ -65,32 +66,40 @@ class _PickupScreenState extends State<PickupScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.call_end),
-                  color: KColors.RED,
-                  onPressed: () async {
-                    isCallMissed = false;
-                    await callMethods.endCall(call: widget.call).then((callEnded) {
-                      if (callEnded) Navigator.of(context).pop();
-                    }).catchError((e) => print(e));
-                  },
-                ),
-                SizedBox(width: 25),
-                IconButton(
-                    icon: Icon(Icons.call),
-                    color: KColors.PRIMARY,
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: KColors.TEXT_COLOR.withOpacity(.1),
+                  child: IconButton(
+                    icon: Icon(Icons.call_end),
+                    color: KColors.RED,
                     onPressed: () async {
                       isCallMissed = false;
-                      // addToLocalStorage(callStatus: CALL_STATUS_RECEIVED);
-                      await Permissions.cameraAndMicrophonePermissionsGranted()
-                          ? Get.to(
-                              () => CallScreen(
-                                call: widget.call,
-                                clientRole: ClientRole.Audience,
-                              ),
-                            )
-                          : {};
-                    }),
+                      await callMethods.endCall(call: widget.call).then((callEnded) {
+                        if (callEnded) Navigator.of(context).pop();
+                      }).catchError((e) => print(e));
+                    },
+                  ),
+                ),
+                SizedBox(width: 25),
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: KColors.TEXT_COLOR.withOpacity(.1),
+                  child: IconButton(
+                      icon: Icon(Icons.call),
+                      color: KColors.PRIMARY,
+                      onPressed: () async {
+                        isCallMissed = false;
+                        // addToLocalStorage(callStatus: CALL_STATUS_RECEIVED);
+                        await Permissions.cameraAndMicrophonePermissionsGranted()
+                            ? Get.to(
+                                () => CallScreen(
+                                  call: widget.call,
+                                  clientRole: ClientRole.Audience,
+                                ),
+                              )
+                            : {};
+                      }),
+                ),
               ],
             ),
           ],

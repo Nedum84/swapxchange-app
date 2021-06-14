@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
       ),
+      defaultTransition: Transition.rightToLeft,
       initialBinding: AllControllerBinding(),
       home: SplashScreen(),
       // home: Dashboard(),
