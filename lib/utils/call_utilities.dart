@@ -30,6 +30,7 @@ class CallUtils {
       channelId: channelName,
       callToken: callToken,
       callUid: callUid,
+      useVideo: useVideo,
     );
 
     bool callMade = await callMethods.makeCall(call: call);
@@ -40,11 +41,7 @@ class CallUtils {
       // enter log
       // LogRepository.addLogs(log);
 
-      Get.to(() => CallScreen(
-            call: call,
-            clientRole: ClientRole.Broadcaster,
-            useVideo: useVideo,
-          ));
+      Get.to(() => CallScreen(call: call, clientRole: ClientRole.Broadcaster));
     }
   }
 }

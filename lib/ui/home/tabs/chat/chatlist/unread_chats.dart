@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:swapxchange/repository/chat_methods.dart';
+import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/home/tabs/home/home_app_bar.dart';
 import 'package:swapxchange/utils/colors.dart';
 
@@ -16,7 +16,7 @@ class UnreadChats extends StatelessWidget {
       bottom: 3,
       right: 3,
       child: StreamBuilder<QuerySnapshot>(
-          stream: ChatMethods.getUnreadMessages(secondUserId: secondUserId, myId: myId),
+          stream: RepoChats.getUnreadMessages(secondUserId: secondUserId, myId: myId),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Container();

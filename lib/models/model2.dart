@@ -30,7 +30,7 @@ class Product2 {
     this.updatedAt,
     this.productApiUrl,
     this.apiFeaturedImage,
-    this.productColors,
+    // this.productColors,
   });
 
   int? id;
@@ -51,7 +51,7 @@ class Product2 {
   DateTime? updatedAt;
   String? productApiUrl;
   String? apiFeaturedImage;
-  List<ProductColor>? productColors;
+  // List<ProductColor>? productColors;
 
   var isFavorite = false.obs;
 
@@ -74,7 +74,7 @@ class Product2 {
         updatedAt: DateTime.parse(json["updated_at"]),
         productApiUrl: json["product_api_url"],
         apiFeaturedImage: json["api_featured_image"],
-        productColors: List<ProductColor>.from(json["product_colors"].map((x) => ProductColor.fromJson(x))),
+        // productColors: List<ProductColor>.from(json["product_colors"].map((x) => ProductColor.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -96,7 +96,7 @@ class Product2 {
         "updated_at": updatedAt!.toIso8601String(),
         "product_api_url": productApiUrl,
         "api_featured_image": apiFeaturedImage,
-        "product_colors": List<dynamic>.from(productColors!.map((x) => x.toJson())),
+        // "product_colors": List<dynamic>.from(productColors!.map((x) => x.toJson())),
       };
 }
 

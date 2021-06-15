@@ -22,7 +22,17 @@ class ChatMessageItem extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 2),
       child: Container(
-        child: chatMessage.type == ChatMessageType.PRODUCT_CHAT ? productWidget(chatMessage) : messageLayout(chatMessage),
+        child: chatMessage.type == ChatMessageType.PRODUCT_CHAT
+            ? productWidget(
+                chatMessage,
+              )
+            : chatMessage.type == ChatMessageType.MISSED_CALL
+                ? missedCallWidget(
+                    chatMessage,
+                  )
+                : messageLayout(
+                    chatMessage,
+                  ),
       ),
     );
   }
@@ -46,6 +56,23 @@ class ChatMessageItem extends StatelessWidget {
             chatMsg: chatMessage.message!,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget missedCallWidget(ChatMessage chatMessage) {
+    AppUser currentUser = UserController.to.user!;
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+      decoration: BoxDecoration(
+        color: Color(0xff273C52).withOpacity(.15),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Text(
+        chatMessage.senderId == currentUser.userId ? 'This user missed your call • ${Helpers.formatDateInt(chatMessage.timestamp!)}' : 'You missed a call from this user • ${Helpers.formatDateInt(chatMessage.timestamp!)}',
+        textAlign: TextAlign.center,
+        style: StyleNormal.copyWith(fontSize: 10, color: KColors.TEXT_COLOR_DARK),
       ),
     );
   }

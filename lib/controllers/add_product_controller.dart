@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/category_model.dart';
@@ -50,7 +51,7 @@ class AddProductController extends GetxController {
       productDescription: "",
       suggestions: [],
       productSuggestion: "",
-      uploadPrice: 100,
+      uploadPrice: CoinsController.uploadAmount.toDouble(),
     );
     updateProduct(product);
   }

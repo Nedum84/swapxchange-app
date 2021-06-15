@@ -10,7 +10,6 @@ import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
-import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/product/product_detail/sections/back_btn.dart';
@@ -34,7 +33,7 @@ class ProductDetail extends StatelessWidget {
     if (product.userId == currentUser.userId) {
       // ... open exchange options
     } else {
-      final poster = await AuthRepo.findByUserId(userId: product.userId);
+      final poster = await UserController.to.getUser(userId: product.userId);
       if (poster == null) {
       } else {
         if (gotoCall) {

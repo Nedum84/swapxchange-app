@@ -1,178 +1,113 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
-import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/enum/product_state.dart';
-import 'package:swapxchange/models/category_model.dart';
-import 'package:swapxchange/models/product_image.dart';
+import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/models/sub_category_model.dart';
+import 'package:swapxchange/repository/repo_product.dart';
+import 'package:swapxchange/repository/repo_product_image.dart';
+import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/home/product/addproduct/select_category.dart';
+import 'package:swapxchange/ui/home/product/addproduct/select_product_suggestion.dart';
+import 'package:swapxchange/ui/home/product/addproduct/select_sub_category.dart';
+import 'package:swapxchange/ui/home/product/addproduct/textfield_modal.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/image_listview.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/upload_home.dart';
+import 'package:swapxchange/ui/home/product/addproduct/widgets/accept_policy_widget.dart';
+import 'package:swapxchange/ui/home/product/addproduct/widgets/add_item.dart';
+import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/wallet/how_to_get_coins.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
+import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/image_upload_utilities.dart';
-import 'package:swopswap/enum/product_state.dart';
-import 'package:swopswap/extention/strings_extention.dart';
-import 'package:swopswap/models/category.dart';
-import 'package:swopswap/models/image_product.dart';
-import 'package:swopswap/models/product.dart';
-import 'package:swopswap/models/sub_category.dart';
-import 'package:swopswap/provider/product_provider.dart';
-import 'package:swopswap/provider/user_provider.dart';
-import 'package:swopswap/repository/category_methods.dart';
-import 'package:swopswap/repository/image_methods.dart';
-import 'package:swopswap/repository/product_methods.dart';
-import 'package:swopswap/screens/add_product/select_category.dart';
-import 'package:swopswap/screens/add_product/select_product_suggestion.dart';
-import 'package:swopswap/screens/add_product/select_sub_category.dart';
-import 'package:swopswap/screens/add_product/textfield_modal.dart';
-import 'package:swopswap/screens/add_product/upload/image_listview.dart';
-import 'package:swopswap/screens/add_product/upload/upload_home.dart';
-import 'package:swopswap/screens/view_product/view_product.dart';
-import 'package:swopswap/screens/widgets/loading_spinner.dart';
-import 'package:swopswap/utils/alert_utils.dart';
-import 'package:swopswap/utils/colors.dart';
-import 'package:swopswap/utils/image_upload_utilities.dart';
-import 'package:swopswap/utils/utilities.dart';
+import 'package:swapxchange/utils/styles.dart';
 
-class AddProduct extends StatefulWidget {
-  AddProduct({this.isEditing = false, this.product});
-
-  final bool isEditing;
-  final Product? product;
-
-  @override
-  _AddProductState createState() => _AddProductState();
-}
-
-class _AddProductState extends State<AddProduct> {
-  UserController userProvider = UserController.to;
-  Product? product;
-  AddProductController addController = AddProductController.to;
-  List<ProductImage> imageProducts = [];
-  Category _category;
-  SubCategory _subCategory;
-  List<Category> _productSuggestions = [];
-  bool _acceptedTerms = false;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  bool showSpinner = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initialize();
-  }
-
-  _initialize() async {
-    if (!widget.isEditing) {
-      addController.create();
-    } else {
-      addController.updateProduct(widget.product!);
-    }
-  }
-
+class AddProduct extends GetView<AddProductController> {
   void gotoImageUpload({bool showAddImageDialog = false}) async {
-    var newImgList = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UploadHome(
-          imageProducts: imageProducts,
-          showAddImageDialog: showAddImageDialog,
-        ),
-      ),
-    );
-    if (newImgList != null) {
-      setState(() {
-        imageProducts = newImgList;
-      });
-    }
+    Get.to(() => UploadHome(showAddImageDialog: showAddImageDialog));
   }
 
-  _validateDetails() async {
-    setState(() => showSpinner = true);
+  _validateAndSubmit() async {
+    final CoinsModel? myCoins = CoinsController.to.myCoins!;
 
-    if (imageProducts.length == 0) {
+    if (controller.imageList.length == 0) {
       _showError('Upload at least one photo of your product');
-    } else if (product.productName.isEmptyString()) {
+    } else if (controller.product!.productName!.isEmpty) {
       _showError('Enter your product name');
-    } else if (_category == null) {
+    } else if (controller.category == null) {
       _showError('Choose your product category');
-    } else if (_subCategory == null) {
+    } else if (controller.subCategory == null) {
       _showError('Choose your product sub category');
-    } else if (product.price == null || product.price == 0) {
+    } else if (controller.product!.price == null || controller.product!.price == 0) {
       _showError('Enter the price/value of your product');
-    } else if (!_acceptedTerms && !widget.isEditing) {
+    } else if (controller.suggestions.length == 0) {
+      _showError('Enter at least one suggestions');
+    } else if (!controller.isAcceptedTerms && !controller.isEditing) {
       _showError('You must accept our terms before publishing your product');
+    } else if (myCoins != null && myCoins.balance! < CoinsController.uploadAmount) {
+      AlertUtils.alert(
+        'Insufficient balance, You must have at least ${CoinsController.uploadAmount} Coins to upload a product',
+        title: 'Get Coins',
+        okBtnTxt: 'GET COINS',
+        okBtnCallback: () {
+          Get.to(() => HowToGetCoins());
+        },
+      );
     } else {
-      // if(await ImageMethods.uploadMultipleImageProduct(imageProducts: imageProducts)){
-      //   product.category = _category.categoryId;
-      //   product.subCategory = _subCategory.subCategoryId;
-      //   product.productSuggestion = _productSuggestions.map((e) => e.categoryId).toString();
-      //   product.timestamp = (!widget.isEditing)?DateTime.now().microsecondsSinceEpoch : product.timestamp;
-      //   product.userId = '698690cv';
-      //   ProductMethods.postProduct(product: product).then((value){
-      //     if(value) _showError('Successfully published your product');
-      //   }).catchError((er) => print(er));
-      // }
-
-      setState(() => showSpinner = true);
-      imageProducts.forEach((imageProduct) async {
-        ImageMethods.uploadSingleImageProduct(imageProduct: imageProduct).then((value) {
-          if (imageProducts.last == imageProduct) {
-            //Submit after the last Image upload
-            product.category = _category.categoryId;
-            product.subCategory = _subCategory.subCategoryId;
-            product.productSuggestion = (_productSuggestions.isNotEmpty) ? _productSuggestions.map((e) => e.categoryId).toString() : "";
-            product.timestamp = (!widget.isEditing) ? DateTime.now().microsecondsSinceEpoch : product.timestamp;
-            product.userId = userProvider.getUser.uid;
-            product.productDescription = (productProvider.product.productDescription.isEmptyString()) ? '' : productProvider.product.productDescription;
-            product.userAddress = userProvider.getUser.address;
-            product.userAddressLat = userProvider.getUser.addressLat;
-            product.userAddressLong = userProvider.getUser.addressLong;
-            product.productCondition = ProductCondition.FAIRLY_USED;
-            product.productStatus = ProductStatus.ACTIVE;
-
-            ProductMethods.postProduct(product: product).then((value) {
-              if (value) {
-                setState(() => showSpinner = false);
-
-                if (widget.isEditing) {
-                  AlertUtils.toast('Your product was successfully edited');
-                  Navigator.pop(context, product);
-                } else {
-                  AlertUtils.toast('Successfully published your product');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ViewProduct(
-                        product: product,
-                      ),
-                    ),
-                  );
-                }
-              }
-            }).catchError((er) {
-              print(er);
-              setState(() => showSpinner = false);
-            });
-          }
-        }).catchError((error) {
-          print('Error: ' + error.toString());
-          setState(() => showSpinner = false);
-        });
-      });
+      controller.setLoading(true);
+      if (controller.isEditing) {
+        final updateProduct = await RepoProduct.updateProduct(product: controller.product!);
+        if (updateProduct != null) {
+          controller.updateProduct(updateProduct);
+          _updateImages(updateProduct);
+        } else {
+          _showError("Error occurred! try again");
+        }
+      } else {
+        final createProduct = await RepoProduct.createProduct(product: controller.product!);
+        if (createProduct != null) {
+          controller.updateProduct(createProduct);
+          _updateImages(createProduct);
+        } else {
+          _showError("Error occurred! try again");
+        }
+      }
     }
   }
 
   _showError(String er) {
-    AlertUtils.alert(er, context: context);
-    setState(() => showSpinner = false);
+    AlertUtils.toast(er);
+    controller.setLoading(false);
+  }
+
+  _updateImages(Product product) async {
+    // update my balance
+    await CoinsController.to.getBalance();
+
+    controller.updateImgWithProductId(product);
+    //Iterate over the images
+    controller.imageList.forEach((pImg) async {
+      RepoProductImage.upsertProductImage(productImage: pImg).then((value) async {
+        if (controller.imageList.last == pImg) {
+          //redirect after the last Image upload & reset controller to defaults
+          controller.reset();
+          final newProduct = await RepoProduct.getById(productId: product.productId!);
+          if (controller.isEditing) {
+            AlertUtils.toast('Your product was successfully edited');
+            Get.back(result: newProduct, closeOverlays: true);
+          } else {
+            AlertUtils.toast('Successfully published your product');
+            Get.off(() => ProductDetail(product: newProduct!));
+          }
+        }
+      }).catchError((error) {
+        print('Error: ' + error.toString());
+        controller.setLoading(false);
+      });
+    });
   }
 
   Widget _suggestedList() {
@@ -181,13 +116,13 @@ class _AddProductState extends State<AddProduct> {
       height: 24,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: _productSuggestions.length,
+        itemCount: controller.suggestions.length,
         itemBuilder: (build, index) {
           return Container(
             padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
             margin: EdgeInsets.only(right: 4),
             decoration: BoxDecoration(color: Colors.grey.withOpacity(.3), borderRadius: BorderRadius.all(Radius.circular(12))),
-            child: Text(_productSuggestions[index].categoryName),
+            child: Text(controller.suggestions[index].categoryName!),
           );
         },
       ),
@@ -196,294 +131,136 @@ class _AddProductState extends State<AddProduct> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded),
-          color: Colors.blueGrey,
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          MaterialButton(
-            onPressed: () => _validateDetails(),
-            child: Row(
-              children: [
-                Text(
-                  'Publish',
-                  style: TextStyle(color: Colors.blueGrey),
-                ),
-                Icon(Icons.check, color: Colors.blueGrey)
-              ],
-            ),
-          )
-        ],
-        title: Center(
-          child: Text(
-            '${(widget.isEditing) ? 'Edit' : 'New'} Product',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.black,
+    // Get.back(closeOverlays: true);
+    return GetBuilder<AddProductController>(builder: (addController) {
+      // addController.setLoading(false);
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: CustomBackButton(
+            color: KColors.TEXT_COLOR_DARK,
+            isPositioned: false,
+          ),
+          title: Center(
+            child: Text(
+              '${(addController.isEditing) ? 'Edit' : 'New'} Product',
+              style: H1Style,
             ),
           ),
         ),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(0),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.blueGrey[100]!.withOpacity(0.6),
-        child: ListView(
-          children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              width: MediaQuery.of(context).size.width,
-              height: 120,
-              color: Colors.white,
-              child: ImageListView(
-                imageProducts: imageProducts,
-                onImageClick: (imageProduct) {
-                  imageProducts = ImageUploadUtilities.makeImageCurrent(imageProduct, imageProducts);
-                  gotoImageUpload(showAddImageDialog: false);
-                },
-                addImageClick: () => gotoImageUpload(showAddImageDialog: true),
-                showIndicator: false,
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showTextFieldModal(ProductState.productName),
-                title: Text('What do you want to swap?'),
-                subtitle: (!product.productName!.isEmptyString())
-                    ? Text(
-                        product.productName,
-                      )
-                    : null,
-                trailing: Icon(Icons.analytics_outlined, color: Colors.blueGrey[800]!.withOpacity(0.4)),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showSelectCategory(),
-                title: Text('Category'),
-                subtitle: (_category != null)
-                    ? Text(
-                        _category.categoryName!,
-                      )
-                    : null,
-                trailing: Icon(Icons.arrow_right_alt, color: Colors.blueGrey[800]!.withOpacity(0.4)),
-              ),
-            ),
-            SizedBox(
-              height: 1,
-            ),
-            Container(
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showSelectSubCategory(),
-                title: Text('Sub Category'),
-                subtitle: (_subCategory != null)
-                    ? Text(
-                        //only show when not empty(or 0)
-                        _subCategory.subCategoryName!,
-                      )
-                    : null,
-                trailing: Icon(Icons.arrow_right_alt, color: Colors.blueGrey[800]!.withOpacity(0.4)),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showTextFieldModal(ProductState.price),
-                title: Text('Price'),
-                subtitle: Text(
-                  'Provide a realistic price and we will suggest to you relevant offers for swap. The price won\'t be shown to anybody',
-                  style: TextStyle(fontSize: 10),
-                ),
-                trailing: Text(
-                  (product.price != 0 && product.price != null) ? '₦${product.price}' : '₦',
-                  style: TextStyle(color: Colors.blueGrey[800]!.withOpacity(0.4)),
+        body: Container(
+          padding: EdgeInsets.all(0),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: KColors.WHITE_GREY,
+          child: ListView(
+            children: [
+              Container(
+                padding: EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width,
+                height: 120,
+                color: Colors.white,
+                child: ImageListView(
+                  onImageClick: (imageProduct) {
+                    ImageUploadUtilities.makeImageCurrent(imageProduct);
+                    gotoImageUpload(showAddImageDialog: false);
+                  },
+                  addImageClick: () => gotoImageUpload(showAddImageDialog: true),
+                  showIndicator: false,
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showTextFieldModal(ProductState.productDescription),
-                title: Text('Describe your product'),
-                subtitle: Text(
-                  (!product.productDescription.isEmptyString()) ? product.productDescription : 'Eg. size, colour, age, etc.',
-                  style: TextStyle(fontSize: 13),
-                ),
-                trailing: Icon(Icons.arrow_drop_down_circle_outlined, color: Colors.blueGrey[800].withOpacity(0.4)),
+              SizedBox(height: 10),
+              AddItem(
+                onClick: () => showTextFieldModal(ProductState.productName),
+                title: 'PRODUCT NAME',
+                subtitle: addController.product?.productName,
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              color: Colors.white,
-              child: ListTile(
-                onTap: () => showProductSuggestions(),
-                title: Text('Send Suggestion'),
-                subtitle: (!_productSuggestions.isNotEmpty)
+              SizedBox(height: 10),
+              AddItem(
+                onClick: () => showTextFieldModal(ProductState.productDescription),
+                title: 'DESCRIPTION',
+                subtitle: (addController.product?.productDescription != null) ? addController.product!.productDescription : 'Eg. size, colour, age, etc.',
+              ),
+              SizedBox(height: 10),
+              AddItem(
+                onClick: () => showSelectCategory(),
+                title: 'CATEGORY',
+                subtitle: addController.category?.categoryName,
+              ),
+              SizedBox(height: 1),
+              AddItem(
+                onClick: () => showSelectSubCategory(),
+                title: 'SUBCATEGORY',
+                subtitle: addController.subCategory?.subCategoryName,
+              ),
+              SizedBox(height: 10),
+              AddItem(
+                onClick: () => showTextFieldModal(ProductState.price),
+                title: 'PRODUCT VALUE',
+                subtitle: 'Provide a realistic price and we will suggest to you relevant offers for swap. The price won\'t be shown to anybody',
+                trailing: '₦${Helpers.formatMoney(cash: addController.product?.price ?? 0, withDot: false)}',
+                subtitleFont: 10,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              AddItem(
+                onClick: () => showProductSuggestions(),
+                title: 'SWAP SUGGESTIONS',
+                subtitle2: (!addController.suggestions.isNotEmpty)
                     ? Text(
                         'Choose what you would like to exchange your product for',
                         style: TextStyle(fontSize: 13),
                       )
                     : _suggestedList(),
-                trailing: Icon(Icons.margin, color: Colors.blueGrey[800].withOpacity(0.4)),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            if (!widget.isEditing)
-              ListTile(
-                leading: Checkbox(
-                  activeColor: kColorAccent,
-                  value: _acceptedTerms,
-                  onChanged: (newVal) {
-                    setState(() {
-                      _acceptedTerms = !_acceptedTerms;
-                    });
-                  },
-                ),
-                title: Text.rich(
-                  TextSpan(
-                    text: 'By publishing your product, you agree to our ',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: 'Ad submission rule',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                          )),
-                      TextSpan(text: ' and ', style: TextStyle()),
-                      TextSpan(
-                          text: 'Prohibited Products',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                          )),
-                      // can add more TextSpans here...
-                    ],
-                  ),
-                  style: TextStyle(
-                      // color: kColorAsh
-                      ),
-                ),
+              SizedBox(height: 10),
+              AddItem(
+                onClick: () => Get.to(() => HowToGetCoins()),
+                title: 'AVAILABLE COINS',
+                subtitle: 'This upload will deduct ${CoinsController.uploadAmount} coins from your balance.',
+                subtitleFont: 10,
+                trailing: '${CoinsController.to.myCoins!.balance} Coins',
               ),
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: GestureDetector(
-                onTap: () => _validateDetails(),
-                child: Container(
+              SizedBox(height: 10),
+              AcceptPolicyWidget(),
+              SizedBox(height: 10),
+              Center(
+                child: PrimaryButton(
+                  onClick: _validateAndSubmit,
+                  btnText: 'Publish',
+                  isLoading: controller.isLoading,
                   width: 250,
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(25.00)),
-                    color: kColorPrimary,
-                  ),
-                  child: Text(
-                    'Publish',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                    ),
-                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
+              SizedBox(height: 20),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void showTextFieldModal(ProductState productState) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => SingleChildScrollView(
-                child: Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: TextFieldModal(productState: productState),
-            )));
+    Get.bottomSheet(SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.only(bottom: Get.mediaQuery.viewInsets.bottom),
+        child: TextFieldModal(productState: productState),
+      ),
+    ));
   }
 
   void showSelectCategory() {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => SelectCategory(
-              currentCategory: _category,
-              selectedCategory: (selectedCategory) {
-                setState(() {
-                  _category = selectedCategory;
-                  _subCategory = null;
-                });
-                Navigator.of(context).pop();
-              },
-            ));
+    Get.bottomSheet(SelectCategory());
   }
 
   void showSelectSubCategory() {
-    if (_category == null) return;
-
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => SelectSubCategory(
-              currentCategory: _category,
-              currentSubCategory: _subCategory,
-              selectedSubCategory: (selectedSubCategory) {
-                setState(() {
-                  _subCategory = selectedSubCategory;
-                });
-                Navigator.of(context).pop();
-              },
-            ));
+    if (controller.category == null) return;
+    Get.bottomSheet(SelectSubCategory());
   }
 
   //My suggestions
   void showProductSuggestions() {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => SelectProductSuggestion(
-              productSuggestions: _productSuggestions,
-              updatedSuggestions: (suggestions) {
-                setState(() {
-                  _productSuggestions = suggestions; //Optional since the original list send to the dialog is being update real time
-                });
-                Navigator.of(context).pop();
-              },
-            ));
+    Get.bottomSheet(SelectProductSuggestion());
   }
 }

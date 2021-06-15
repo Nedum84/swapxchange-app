@@ -49,6 +49,25 @@ class Helpers {
     return formatter.format(date);
   }
 
+  static String formatDate2(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+
+    final hourFormat = DateFormat("H:m:a").format(date);
+    final dateToCheck = date;
+    final aDate = DateTime(dateToCheck.year, dateToCheck.month, dateToCheck.day);
+    if (aDate == today) {
+      return "Today at $hourFormat";
+    } else if (aDate == yesterday) {
+      return "Yesterday at $hourFormat";
+    } else {
+      var formatter = DateFormat("EEEE MMM, dd H:m:a");
+      return formatter.format(date);
+    }
+  }
+
   static String formatDateInt(int date) {
     DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(date);
     var formatter = DateFormat("H:m:a MMM, dd");

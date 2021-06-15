@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
@@ -50,7 +50,7 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
         if (addOrEdit == null) {
           AlertUtils.toast('Chat initialization failed. Try again later');
         } else {
-          final poster = await AuthRepo.findByUserId(userId: suggestedProduct.userId);
+          final poster = await UserController.to.getUser(userId: suggestedProduct.userId);
           if (poster == null) {
             AlertUtils.toast('User not be found');
           } else {

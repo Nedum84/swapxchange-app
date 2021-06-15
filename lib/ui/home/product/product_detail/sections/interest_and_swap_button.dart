@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/home/product/exchange_options/exchange_options.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/swap_with.dart';
 import 'package:swapxchange/ui/home/tabs/home/top_deals.dart';
@@ -21,7 +20,7 @@ class InterestAndSwapButton extends StatelessWidget {
       // ... open exchange options
       Get.to(() => ExchangeOptions(myProduct: product), preventDuplicates: true);
     } else {
-      final pPoster = await AuthRepo.findByUserId(userId: product.userId!);
+      final pPoster = await UserController.to.getUser(userId: product.userId!);
       if (pPoster == null) {
         AlertUtils.toast('User not found');
         return;

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/call.dart';
+import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
+import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 
 class CallMethods {
@@ -28,13 +31,35 @@ class CallMethods {
   }
 
   Future<bool> endCall({required Call call}) async {
+    final getCall = await callCollection.doc(call.callerId).get();
+    if (getCall.data() != null) {
+      //there's an incoming call
+      Call call = Call.fromMap(getCall.data()!);
+      if (call.isMissedCall! && call.callerId == UserController.to.user!.uid) {
+        addMissedCall(posterUid: call.receiverId!);
+      }
+    }
+
     try {
       await callCollection.doc(call.callerId).delete();
       await callCollection.doc(call.receiverId).delete();
       return true;
     } catch (e) {
-      print(e);
+      print('$e');
       return false;
+    }
+  }
+
+  //Add Missed call to chat
+  addMissedCall({required String posterUid}) async {
+    final poster = await UserController.to.getUser(userId: posterUid);
+    if (poster != null) {
+      ChatMessage chatMsg = ChatMessage(
+        receiverId: poster.userId,
+        type: ChatMessageType.MISSED_CALL,
+        message: "Missed Call", //Real time update
+      );
+      ChatDetailState.addMessageToDb(chatMsg);
     }
   }
 
@@ -47,5 +72,10 @@ class CallMethods {
     }
 
     return null;
+  }
+
+  void markMissedCall({required Call call, bool isMissedCall = false}) async {
+    callCollection.doc(call.receiverId).update({'is_missed_call': isMissedCall});
+    callCollection.doc(call.callerId).update({'is_missed_call': isMissedCall});
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
-import 'package:swapxchange/repository/chat_methods.dart';
+import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -22,22 +22,15 @@ class ChatList extends StatelessWidget {
           children: [
             DashboardCustomAppbar(
               title: 'Chats',
-              actionBtn: IconButton(
-                constraints: BoxConstraints(),
-                padding: EdgeInsets.all(0),
-                icon: Icon(
-                  Icons.phone,
-                  color: KColors.TEXT_COLOR_DARK,
-                ),
-                onPressed: () => null,
-              ),
+              icon: Icons.phone,
+              iconClick: () => null,
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: ChatMethods.fetchChatList1(userId: user!.userId!),
+                stream: RepoChats.fetchChatList1(userId: user!.userId!),
                 builder: (context, snapshot1) {
                   return StreamBuilder<QuerySnapshot>(
-                    stream: ChatMethods.fetchChatList2(userId: user!.userId!),
+                    stream: RepoChats.fetchChatList2(userId: user!.userId!),
                     builder: (context, snapshot2) {
                       if (!snapshot1.hasData || !snapshot2.hasData) {
                         return Center(child: CircularProgressIndicator());

@@ -30,9 +30,9 @@ class UserController extends GetxController {
     );
   }
 
-  Future<AppUser?> getUser(int userId) async {
+  Future<AppUser?> getUser({var userId}) async {
     AppUser? user;
-    user = users.firstWhereOrNull((element) => element.userId == userId);
+    user = users.firstWhereOrNull((element) => element.userId == userId || element.uid == userId);
     if (user == null) {
       user = await AuthRepo.findByUserId(userId: userId);
       //Update the users repo

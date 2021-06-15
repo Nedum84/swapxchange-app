@@ -7,7 +7,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final CollectionReference _messageCollection = _firestore.collection(FirebaseCollection.CHATS_COLLECTION);
 final CollectionReference _usersCollection = _firestore.collection(FirebaseCollection.USERS_COLLECTION);
 
-class ChatMethods {
+class RepoChats {
   static Future<void> addMessageToDb(ChatMessage chatMessage) {
     return _messageCollection.add(chatMessage.toMap());
   }
@@ -48,7 +48,7 @@ class ChatMethods {
   static Stream<QuerySnapshot> fetchChatList2({required int userId}) => _messageCollection.where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: userId).snapshots();
 
   //Mark user's message as read when opens the chat detail
-  static markAsRead({required int secondUserId, required int myId}) async {
+  static void markAsRead({required int secondUserId, required int myId}) async {
     final unread = await _messageCollection
         .where(
           FirebaseCollection.SENDER_FIELD,

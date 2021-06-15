@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
-import 'package:swapxchange/repository/chat_methods.dart';
+import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/chat_message_item.dart';
 
 class ChatMessageList extends StatelessWidget {
@@ -14,14 +14,16 @@ class ChatMessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: ChatMethods.fetchChats1(user1: currentUser.userId!, user2: receiverUser.userId!),
+      stream: RepoChats.fetchChats1(user1: currentUser.userId!, user2: receiverUser.userId!),
       builder: (context, snapshot1) {
         return StreamBuilder<QuerySnapshot>(
-          stream: ChatMethods.fetchChats2(user1: currentUser.userId!, user2: receiverUser.userId!),
+          stream: RepoChats.fetchChats2(user1: currentUser.userId!, user2: receiverUser.userId!),
           builder: (context, snapshot2) {
             if (!snapshot1.hasData || !snapshot2.hasData) {
               return Center(child: CircularProgressIndicator());
             }
+            //Mark chats as read
+            RepoChats.markAsRead(secondUserId: receiverUser.userId!, myId: currentUser.userId!);
 
             final data1 = snapshot1.data!.docs;
             final data2 = snapshot2.data!.docs;

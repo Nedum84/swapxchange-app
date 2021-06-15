@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class DashboardCustomAppbar extends StatelessWidget {
   final String title;
-  final Widget? actionBtn;
+  final IconData? icon;
+  final Function()? iconClick;
 
-  const DashboardCustomAppbar({Key? key, required this.title, this.actionBtn})
-      : super(key: key);
+  const DashboardCustomAppbar({Key? key, required this.title, this.icon, this.iconClick}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,7 +21,14 @@ class DashboardCustomAppbar extends StatelessWidget {
               style: H1Style,
             ),
           ),
-          actionBtn ?? Container()
+          if (icon != null)
+            InkWell(
+              onTap: () => print('cxcxcx----'),
+              child: Icon(
+                icon,
+                color: KColors.TEXT_COLOR_DARK,
+              ),
+            )
         ],
       ),
     );

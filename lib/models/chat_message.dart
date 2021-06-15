@@ -58,4 +58,5 @@ class ChatMessageType {
   static const String TEXT = "text";
   static const String IMAGE = "image";
   static const String PRODUCT_CHAT = "productChat";
+  static const String MISSED_CALL = "missedCall";
 }

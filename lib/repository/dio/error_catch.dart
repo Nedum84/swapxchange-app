@@ -3,9 +3,9 @@ import 'package:dio/dio.dart';
 dynamic catchErrors(error) {
   dynamic resp;
   try {
-    resp = error.response?.data!["message"] ?? error;
+    resp = error?.response?.data!["message"] ?? '$error';
   } catch (e) {
-    resp = error.response?.data!;
+    resp = error?.response?.data ?? '$error';
   }
   return (resp);
 }

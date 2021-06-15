@@ -29,6 +29,7 @@ class ChatListItem extends StatelessWidget {
     } else {
       msg = chatMessage.message!;
     }
+
     return msg;
   }
 
@@ -57,7 +58,7 @@ class ChatListItem extends StatelessWidget {
   }
 
   _getToChat(UserController userController) async {
-    final poster = await userController.getUser(chatMessage.secondUserId);
+    final poster = await userController.getUser(userId: chatMessage.secondUserId);
     if (poster != null) {
       Get.to(() => ChatDetail(receiver: poster));
     } else {
@@ -128,7 +129,7 @@ class ChatListItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           FutureBuilder<AppUser?>(
-                              future: userController.getUser(chatMessage.secondUserId),
+                              future: userController.getUser(userId: chatMessage.secondUserId),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
                                   return Container();

@@ -1,10 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/models/coins_model.dart';
+import 'package:swapxchange/repository/paystack_repo.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-class BuyCoins extends StatelessWidget {
+class BuyCoins extends StatefulWidget {
+  @override
+  _BuyCoinsState createState() => _BuyCoinsState();
+}
+
+class _BuyCoinsState extends State<BuyCoins> {
+  int selectedAmount = CoinsController.coins1000Price;
+  final plugin = PaystackPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    plugin.initialize(publicKey: Constants.PAYSTACK_PUBLIC_KEY);
+  }
+
+  _chargeCard() async {
+    final user = UserController.to.user!;
+    String paymentReference = PaystackRepo.genPaymentReference(
+      noOfCoins: _getCoinsFromAmount(selectedAmount),
+      userId: user.userId!,
+    );
+    Charge charge = Charge()
+      ..amount = selectedAmount * 100 //convert to kobo
+      // ..amount = 20*100//convert to kobo
+      ..reference = paymentReference
+      ..email = user.email ?? "demo@swapxchange.ng";
+    CheckoutResponse response = await plugin.checkout(
+      context,
+      method: CheckoutMethod.card,
+      charge: charge,
+    );
+    if (response.status == true) {
+      AlertUtils.showProgressDialog();
+      bool isVerify = await PaystackRepo.verifyOnServer(reference: response.reference!);
+      if (isVerify) {
+        _buyCoins(reference: response.reference!);
+      } else {
+        AlertUtils.hideProgressDialog();
+        AlertUtils.showCustomDialog(context, body: 'Payment Verification Error, Contact support for further assistance with reference:${response.reference}.');
+      }
+    } else {
+      AlertUtils.showCustomDialog(context, fromTop: false, body: response.message);
+    }
+  }
+
+  //--> Purchase coins fromt the server
+  _buyCoins({required String reference}) async {
+    AlertUtils.showProgressDialog();
+    final addCoins = await CoinsController.to.addCoin(
+      amount: _getCoinsFromAmount(selectedAmount),
+      methodOfSub: MethodOfSubscription.PURCHASE,
+      ref: reference,
+    );
+    AlertUtils.hideProgressDialog();
+    if (addCoins != null) {
+      AlertUtils.alert(
+        'You have successfully purchased ${_getCoinsFromAmount(selectedAmount)} coins. Keep shopping/swapping at swapXchange.',
+        title: 'Success!!',
+      );
+    }
+  }
+
+  _changeSelAmount(int amount) {
+    setState(() => selectedAmount = amount);
+  }
+
+  int _getCoinsFromAmount(int amount) {
+    if (amount == CoinsController.coins500Price) {
+      return 500;
+    } else if (amount == CoinsController.coins1000Price) {
+      return 1000;
+    } else {
+      return 5000;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,36 +114,39 @@ class BuyCoins extends StatelessWidget {
           Row(
             children: [
               CoinBox(
-                amount: '200',
+                amount: '${CoinsController.coins500Price}',
                 imgSrc: 'images/logo.jpg',
-                noOfCoins: '100',
+                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins500Price)}',
                 titleColor: KColors.TEXT_COLOR,
-                borderColor: KColors.WHITE_GREY2,
+                borderColor: (selectedAmount == CoinsController.coins500Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
+                onClick: () => _changeSelAmount(CoinsController.coins500Price),
               ),
               SizedBox(width: 4),
               CoinBox(
-                amount: '500',
+                amount: '${CoinsController.coins1000Price}',
                 imgSrc: 'images/logo.jpg',
-                noOfCoins: '800',
+                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins1000Price)}',
                 percentOff: '5',
                 titleColor: Colors.black,
-                borderColor: KColors.PRIMARY,
+                borderColor: (selectedAmount == CoinsController.coins1000Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
+                onClick: () => _changeSelAmount(CoinsController.coins1000Price),
               ),
               SizedBox(width: 4),
               CoinBox(
-                amount: '12000',
+                amount: '${CoinsController.coins5000Price}',
                 imgSrc: 'images/logo.jpg',
-                noOfCoins: '30000',
+                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins5000Price)}',
                 percentOff: '25',
                 titleColor: KColors.TEXT_COLOR,
-                borderColor: KColors.WHITE_GREY2,
+                borderColor: (selectedAmount == CoinsController.coins5000Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
+                onClick: () => _changeSelAmount(CoinsController.coins5000Price),
               ),
             ],
           ),
           SizedBox(height: 16),
           ButtonSmall(
-            onClick: () => null,
-            text: 'Buy 100 coins',
+            onClick: _chargeCard,
+            text: 'Buy ${_getCoinsFromAmount(selectedAmount)} coins',
             textColor: Colors.white,
             bgColor: KColors.PRIMARY,
             radius: 8,
@@ -81,69 +165,73 @@ class CoinBox extends StatelessWidget {
   final String? percentOff;
   final Color titleColor;
   final Color? borderColor;
+  final Function() onClick;
 
-  const CoinBox(
-      {Key? key,
-      required this.imgSrc,
-      required this.noOfCoins,
-      required this.amount,
-      this.percentOff,
-      required this.titleColor,
-      this.borderColor})
-      : super(key: key);
+  const CoinBox({
+    Key? key,
+    required this.imgSrc,
+    required this.noOfCoins,
+    required this.amount,
+    this.percentOff,
+    required this.titleColor,
+    this.borderColor,
+    required this.onClick,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       flex: 1,
-      child: Container(
-        padding:
-            EdgeInsets.symmetric(vertical: Constants.PADDING, horizontal: 4),
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: borderColor ?? KColors.TEXT_COLOR_LIGHT2,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(6)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              imgSrc,
-              width: 40,
-            ),
-            SizedBox(height: 6),
-            Text(
-              noOfCoins,
-              style: H2Style.copyWith(color: titleColor),
-            ),
-            SizedBox(height: 2),
-            Text(
-              'coins',
-              style: StyleNormal.copyWith(
-                fontSize: 12,
-                color: KColors.TEXT_COLOR_LIGHT2,
+      child: InkWell(
+        onTap: onClick,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: Constants.PADDING, horizontal: 4),
+          decoration: BoxDecoration(
+              border: Border.all(
+                color: borderColor ?? KColors.TEXT_COLOR_LIGHT2,
+                width: 1,
               ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              '₦$amount.00',
-              style: StyleNormal.copyWith(
-                color: titleColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+              borderRadius: BorderRadius.circular(6)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imgSrc,
+                width: 40,
               ),
-            ),
-            SizedBox(height: 6),
-            Text(
-              percentOff != null ? 'SAVE $percentOff%' : '',
-              style: StyleNormal.copyWith(
-                fontSize: 10,
-                color: KColors.PRIMARY,
+              SizedBox(height: 6),
+              Text(
+                noOfCoins,
+                style: H2Style.copyWith(color: titleColor),
               ),
-            ),
-          ],
+              SizedBox(height: 2),
+              Text(
+                'coins',
+                style: StyleNormal.copyWith(
+                  fontSize: 12,
+                  color: KColors.TEXT_COLOR_LIGHT2,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '₦$amount.00',
+                style: StyleNormal.copyWith(
+                  color: titleColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                percentOff != null ? 'SAVE $percentOff%' : '',
+                style: StyleNormal.copyWith(
+                  fontSize: 10,
+                  color: KColors.PRIMARY,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

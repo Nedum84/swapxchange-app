@@ -108,14 +108,20 @@ class CachedImage extends StatelessWidget {
                           fit: fit,
                           httpHeaders: {'Authorization': "Bearer $token"},
                           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => _altWidget(),
+                          errorWidget: (context, url, error) {
+                            return Image.network(
+                              imageUrl!,
+                              fit: fit,
+                              headers: {'Authorization': "Bearer $token"},
+                            );
+                          },
                         );
                 }),
           ),
         ),
       );
     } catch (e) {
-      print(e);
+      // print(e);
       return _altWidget();
     }
   }

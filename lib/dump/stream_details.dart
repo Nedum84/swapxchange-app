@@ -4,16 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:swapxchange/models/chat_message.dart';
-import 'package:swapxchange/repository/chat_methods.dart';
+import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
-import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
 class ChatList extends StatelessWidget {
-  final Stream<QuerySnapshot> user = ChatMethods.fetchChats1(user1: 1, user2: 2);
+  final Stream<QuerySnapshot> user = RepoChats.fetchChats1(user1: 1, user2: 2);
 
-  final Stream<QuerySnapshot> cards = ChatMethods.fetchChats1(user1: 1, user2: 2);
+  final Stream<QuerySnapshot> cards = RepoChats.fetchChats1(user1: 1, user2: 2);
 
   _lkk() async {
     List<Stream<QuerySnapshot>> streams = [];
@@ -60,15 +59,8 @@ class ChatList extends StatelessWidget {
           children: [
             DashboardCustomAppbar(
               title: 'Chats',
-              actionBtn: IconButton(
-                constraints: BoxConstraints(),
-                padding: EdgeInsets.all(0),
-                icon: Icon(
-                  Icons.phone,
-                  color: KColors.TEXT_COLOR_DARK,
-                ),
-                onPressed: () => null,
-              ),
+              icon: Icons.phone,
+              iconClick: () => null,
             ),
             Expanded(
               child: ListView.separated(

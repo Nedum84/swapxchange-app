@@ -5,26 +5,43 @@ import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class AlertUtils {
-  static void alert(String content, {required BuildContext context, String? title}) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: (title != null) ? Text(title) : Container(),
-            content: Text(content),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
+  static void alert(String content, {String? title, String? okBtnTxt, Function()? okBtnCallback}) {
+    Get.dialog(AlertDialog(
+      title: (title != null) ? Text(title) : Container(),
+      content: Text(content),
+      actions: <Widget>[
+        MaterialButton(
+          child: Text(
+            "OK",
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        if (okBtnTxt != null)
+          MaterialButton(
+            child: Text(
+              "$okBtnTxt ",
+            ),
+            onPressed: () {
+              Get.back();
+              okBtnCallback!();
+            },
+          )
+      ],
+    ));
   }
 
-  static confirm(String content, {required BuildContext context, String? title, String positiveBtnText = 'OK', String negativeBtnText = 'CANCEL', Function? okCallBack, bool fromTop = true, bool expandHeight = false}) {
+  static confirm(
+    String content, {
+    required BuildContext context,
+    String? title,
+    String positiveBtnText = 'OK',
+    String negativeBtnText = 'CANCEL',
+    Function? okCallBack,
+    bool fromTop = true,
+    bool expandHeight = false,
+  }) {
     showGeneralDialog(
       // barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),

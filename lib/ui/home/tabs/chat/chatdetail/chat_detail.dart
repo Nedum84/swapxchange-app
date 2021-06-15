@@ -8,7 +8,7 @@ import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
-import 'package:swapxchange/repository/chat_methods.dart';
+import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
@@ -93,7 +93,7 @@ class ChatDetailState extends State<ChatDetail> {
   }
 
   void _markAsRead() {
-    ChatMethods.markAsRead(secondUserId: _receiver.userId!, myId: _currentUser!.userId!);
+    RepoChats.markAsRead(secondUserId: _receiver.userId!, myId: _currentUser!.userId!);
   }
 
   showKeyboard() => textFieldFocus.requestFocus();
@@ -189,7 +189,7 @@ class ChatDetailState extends State<ChatDetail> {
                   maxLines: null,
                   onTap: () => hideEmojiContainer(),
                   style: StyleNormal.copyWith(
-                    color: KColors.TEXT_COLOR,
+                    color: KColors.TEXT_COLOR_DARK,
                   ),
                   onChanged: (val) {
                     (val.length > 0 && val.trim() != "") ? setWritingTo(true) : setWritingTo(false);
@@ -259,7 +259,7 @@ class ChatDetailState extends State<ChatDetail> {
     message.id = DateTime.now().microsecondsSinceEpoch.toString();
     message.senderId = UserController.to.user!.userId;
     message.timestamp = Timestamp.now().microsecondsSinceEpoch;
-    ChatMethods.addMessageToDb(message);
+    RepoChats.addMessageToDb(message);
   }
 
   void pickImage({required ImageSource source}) async {

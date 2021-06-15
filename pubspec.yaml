@@ -100,6 +100,7 @@ dependencies:
   collection: ^1.15.0
   infinite_scroll_pagination: ^3.0.1
   rxdart: ^0.27.0
+  flutter_paystack: ^1.0.5+1
 
 
 

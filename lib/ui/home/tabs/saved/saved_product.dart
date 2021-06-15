@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
+import 'package:swapxchange/ui/home/product/addproduct/add_product.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -15,15 +17,8 @@ class SavedProduct extends StatelessWidget {
           children: [
             DashboardCustomAppbar(
               title: 'Saved Products',
-              actionBtn: IconButton(
-                constraints: BoxConstraints(),
-                padding: EdgeInsets.all(0),
-                icon: Icon(
-                  Icons.post_add,
-                  color: KColors.TEXT_COLOR_DARK,
-                ),
-                onPressed: () => null,
-              ),
+              icon: Icons.post_add,
+              iconClick: () => Get.to(() => AddProduct()),
             ),
             NoProductWidget(title: "No product found"),
             // Expanded(
