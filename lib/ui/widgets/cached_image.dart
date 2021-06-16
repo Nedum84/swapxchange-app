@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:swapxchange/models/tokens.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -37,9 +38,9 @@ class CachedImage extends StatelessWidget {
     Widget altView;
 
     switch (this.alt) {
-      case ImagePlaceholder.NoImage:
-        altView = Container();
-        break;
+      // case ImagePlaceholder.NoImage:
+      //   altView = Container();
+      //   break;
       case ImagePlaceholder.User:
         altView = ClipRRect(
           borderRadius: BorderRadius.circular(isRound ? 50 : radius),
@@ -70,10 +71,12 @@ class CachedImage extends StatelessWidget {
             width: isRound ? radius : width,
             color: KColors.TEXT_COLOR.withOpacity(.1),
             padding: EdgeInsets.all(2),
-            child: Text(
-              'LOADING',
-              style: StyleNormal.copyWith(
-                color: Colors.black26,
+            child: Center(
+              child: Text(
+                'LOADING...',
+                style: StyleNormal.copyWith(
+                  color: Colors.black26,
+                ),
               ),
             ),
           ),
@@ -93,30 +96,51 @@ class CachedImage extends StatelessWidget {
           width: isRound ? radius : width,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(isRound ? 50 : radius),
-            child: FutureBuilder<Tokens?>(
-                future: UserPrefs.getTokens(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
+            child: FutureBuilder(
+              future: Future.wait([
+                UserPrefs.getTokens(),
+                FacebookAuth.instance.accessToken,
+              ]),
+              builder: (context, snapshots) {
+                if (!snapshots.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-                  final token = snapshot.data?.access?.token;
-                  return imageUrl == null || imageUrl!.isEmpty
-                      ? _altWidget()
-                      : CachedNetworkImage(
-                          imageUrl: imageUrl!,
-                          fit: fit,
-                          httpHeaders: {'Authorization': "Bearer $token"},
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) {
-                            return Image.network(
-                              imageUrl!,
-                              fit: fit,
-                              headers: {'Authorization': "Bearer $token"},
-                            );
-                          },
-                        );
-                }),
+                String? imgUrl = imageUrl;
+
+                final data = snapshots.data! as List;
+                final tokens = data[0] as Tokens;
+                AccessToken? fbToken;
+                if (data.length > 1 && imageUrl!.contains('facebook')) {
+                  fbToken = data[1] as AccessToken;
+                  imgUrl = '$imageUrl?type=large&access_token=${fbToken.token}';
+                }
+                imgUrl = imgUrl!.replaceAll('http://10.0.2.2', 'http://127.0.0.1');
+
+                final token = tokens.access?.token;
+                return imgUrl == null || imgUrl.isEmpty
+                    ? _altWidget()
+                    : imageUrl!.contains('facebook.com')
+                        ? Image.network(
+                            imgUrl,
+                            fit: fit,
+                            headers: {'Authorization': "Bearer $token"},
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: imgUrl,
+                            fit: fit,
+                            httpHeaders: {'Authorization': "Bearer $token"},
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) {
+                              return Image.network(
+                                imgUrl ?? "",
+                                fit: fit,
+                                headers: {'Authorization': "Bearer $token"},
+                              );
+                            },
+                          );
+              },
+            ),
           ),
         ),
       );

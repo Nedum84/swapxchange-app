@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -19,7 +20,7 @@ class InviteFriends extends StatelessWidget {
       child: Column(
         children: [
           Image.asset(
-            'images/logo.jpg',
+            'images/invitation.png',
             width: 60,
           ),
           SizedBox(height: 16),
@@ -35,7 +36,7 @@ class InviteFriends extends StatelessWidget {
           ),
           SizedBox(height: 16),
           ButtonSmall(
-            onClick: () => null,
+            onClick: () => Share.share(Constants.SHARE_CONTENT, subject: 'Share via'),
             text: 'Invite friends',
             // textColor: Colors.white,
             // bgColor: KColors.PRIMARY,

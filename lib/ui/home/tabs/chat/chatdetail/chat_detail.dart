@@ -266,7 +266,7 @@ class ChatDetailState extends State<ChatDetail> {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: null);
-      final String? imgPath = await _storageMethods.uploadImageToStorage(selectedImage);
+      final String? imgPath = await _storageMethods.uploadFile(selectedImage);
       AlertUtils.hideProgressDialog();
       if (imgPath != "") {
         sendMessage(type: ChatMessageType.IMAGE, imagePath: imgPath);

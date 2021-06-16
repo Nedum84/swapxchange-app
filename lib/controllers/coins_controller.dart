@@ -40,4 +40,14 @@ class CoinsController extends GetxController {
     _myCoins = coinsModel;
     update();
   }
+
+  static int getCoinsFromAmount(int amount) {
+    if (amount == coins500Price) {
+      return 500;
+    } else if (amount == coins1000Price) {
+      return 1000;
+    } else {
+      return 5000;
+    }
+  }
 }

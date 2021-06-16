@@ -256,13 +256,10 @@ class AuthRepo {
     late final AppUser u;
 
     //Update on the server
-    await ApiClient.request().patch('/users', data: appUser.toMap()).then((res) {
+    await ApiClient.request().patch('/users/me', data: appUser.toMap()).then((res) {
       try {
-        print(res.statusMessage);
-        print(res.data);
         if (res != null) {
-          u = AppUser.fromMap(res.data.data.user);
-          // onSuccess(AppUser.fromMap(res.data.data.user));
+          u = AppUser.fromMap(res.data["data"]["user"]);
         }
       } catch (e) {
         print(e);

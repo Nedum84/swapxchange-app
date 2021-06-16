@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/change_location.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/editprofile.dart';
+import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -11,101 +13,105 @@ class Settings extends StatelessWidget {
     return Scaffold(
       // backgroundColor: Colors.white,
       backgroundColor: KColors.WHITE_GREY2,
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              shadowColor: Colors.transparent,
-              backgroundColor: KColors.WHITE_GREY2,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios_sharp),
-                onPressed: () => Navigator.pop(context),
-                color: KColors.TEXT_COLOR_DARK,
-              ),
-              expandedHeight: 150.0,
-              floating: false,
-              pinned: true,
-              // centerTitle: false,
-              // title: Text(
-              //   'User',
-              //   style: TextStyle(color: KColors.TEXT_COLOR),
-              // ),
-              flexibleSpace: FlexibleSpaceBar(
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            shadowColor: Colors.transparent,
+            backgroundColor: KColors.WHITE_GREY2,
+            pinned: true,
+            expandedHeight: 200,
+            stretch: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios_sharp),
+              onPressed: () => Navigator.pop(context),
+              color: KColors.TEXT_COLOR_DARK,
+            ),
+            flexibleSpace: GetBuilder<UserController>(builder: (userController) {
+              return FlexibleSpaceBar(
                 centerTitle: false,
                 title: Text(
                   "User Settings",
                   style: H1Style,
                 ),
-              ),
-            ),
-          ];
-        },
-        body: ListView(
-          children: [
-            CustomTile(
-              title: 'Edit Profile',
-              onClick: () => Get.to(
-                () => EditProfile(),
-                transition: Transition.cupertinoDialog,
-              ),
-            ),
-            CustomTile(
-              title: 'Change Location',
-              onClick: () => Get.to(
-                () => ChangeLocation(),
-                transition: Transition.cupertinoDialog,
-              ),
-            ),
-            CustomTile(
-              title: 'Blocked Users',
-              onClick: () => null,
-            ),
-            CustomTile(
-              title: 'Notification',
-              onClick: () => null,
-              trailing: Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'On',
-                      style: StyleNormal.copyWith(color: KColors.PRIMARY),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: KColors.TEXT_COLOR.withOpacity(.3),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 32),
-            CustomTile(
-              title: 'Terms & conditions',
-              onClick: () => null,
-            ),
-            CustomTile(
-              title: 'Privacy policy',
-              onClick: () => null,
-            ),
-            SizedBox(height: 32),
-            Container(
-              color: Colors.white,
-              child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                title: Text(
-                  'Log out',
-                  textAlign: TextAlign.center,
-                  style: StyleNormal.copyWith(
-                    color: KColors.RED,
+                background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
+                    ? Container()
+                    : CachedImage(
+                        userController.user!.profilePhoto,
+                        fit: BoxFit.cover,
+                      ),
+              );
+            },),
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                CustomTile(
+                  title: 'Edit Profile',
+                  onClick: () => Get.to(
+                    () => EditProfile(),
+                    transition: Transition.cupertinoDialog,
                   ),
                 ),
-              ),
+                CustomTile(
+                  title: 'Change Location',
+                  onClick: () => Get.to(
+                    () => ChangeLocation(),
+                    transition: Transition.cupertinoDialog,
+                  ),
+                ),
+                CustomTile(
+                  title: 'Blocked Users',
+                  onClick: () => null,
+                ),
+                CustomTile(
+                  title: 'Notification',
+                  onClick: () => null,
+                  trailing: Container(
+                    width: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'On',
+                          style: StyleNormal.copyWith(color: KColors.PRIMARY),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: KColors.TEXT_COLOR.withOpacity(.3),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 32),
+                CustomTile(
+                  title: 'Terms & conditions',
+                  onClick: () => null,
+                ),
+                CustomTile(
+                  title: 'Privacy policy',
+                  onClick: () => null,
+                ),
+                SizedBox(height: 32),
+                Container(
+                  color: Colors.white,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    title: Text(
+                      'Log out',
+                      textAlign: TextAlign.center,
+                      style: StyleNormal.copyWith(
+                        color: KColors.RED,
+                      ),
+                    ),
+                  ),
+                ),
+                SwapVersion()
+              ],
             ),
-            SwapVersion()
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -116,9 +122,7 @@ class CustomTile extends StatelessWidget {
   final Function() onClick;
   final Widget? trailing;
 
-  const CustomTile(
-      {Key? key, required this.title, required this.onClick, this.trailing})
-      : super(key: key);
+  const CustomTile({Key? key, required this.title, required this.onClick, this.trailing}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

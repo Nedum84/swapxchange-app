@@ -42,9 +42,10 @@ class ProductItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: CachedImage(
-                  '${product!.images!.first.imagePath}',
+                  product!.images!.length > 0 ? '${product!.images!.first.imagePath}' : "",
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  alt: ImagePlaceholder.NoImage,
                   // color: KColors.TEXT_COLOR_LIGHT.withOpacity(.2),
                 ),
               ),

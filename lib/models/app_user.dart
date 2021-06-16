@@ -26,15 +26,15 @@ class AppUser {
 
   final int? userId;
   final String? uid;
-  final String? name;
-  final String? email;
-  final String? mobileNumber;
-  final String? address;
-  final String? addressLat;
-  final String? addressLong;
-  final String? state;
-  final String? profilePhoto;
-  final String? deviceToken;
+  String? name;
+  String? email;
+  String? mobileNumber;
+  String? address;
+  String? addressLat;
+  String? addressLong;
+  String? state;
+  String? profilePhoto;
+  String? deviceToken;
   final String? onlineStatus;
   final String? userAppVersion;
   final DateTime? lastLogin;

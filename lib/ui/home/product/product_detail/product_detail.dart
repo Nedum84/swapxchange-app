@@ -17,6 +17,7 @@ import 'package:swapxchange/ui/home/product/product_detail/sections/interest_and
 import 'package:swapxchange/ui/home/product/product_detail/sections/save_btn.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/ui/widgets/view_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
@@ -105,10 +106,11 @@ class ProductDetail extends StatelessWidget {
                 Stack(
                   children: [
                     CachedImage(
-                      '${product.images!.first.imagePath}',
+                      product.images!.length > 0 ? '${product.images!.first.imagePath}' : "",
                       width: double.infinity,
                       height: Get.size.height / 3,
                       fit: BoxFit.cover,
+                      onClick: () => Get.to(() => ViewImage(imageProducts: product.images!)),
                     ),
                   ],
                 ),

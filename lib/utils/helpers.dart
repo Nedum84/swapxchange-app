@@ -68,6 +68,14 @@ class Helpers {
     }
   }
 
+  //Returns true if date is today
+  static bool isToday(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final aDate = DateTime(date.year, date.month, date.day);
+    return aDate == today;
+  }
+
   static String formatDateInt(int date) {
     DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(date);
     var formatter = DateFormat("H:m:a MMM, dd");

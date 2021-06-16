@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/repo_coins.dart';
@@ -28,6 +29,24 @@ class WalletHistory extends StatelessWidget {
 }
 
 class SubPage extends StatelessWidget {
+  String _itemImage(LastCredit lastCredit) {
+    if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins500Price)) {
+      return 'images/coins1.png';
+    } else if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins1000Price)) {
+      return 'images/coins2.png';
+    } else if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins5000Price)) {
+      return 'images/coins3.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.DAILY_OPENING) {
+      return 'images/coins.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.REGISTRATION) {
+      return 'images/coins3.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.WATCH_VIDEO) {
+      return 'images/coins_icon.png';
+    } else {
+      return 'images/coins.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<CoinsModel?>(
@@ -48,7 +67,8 @@ class SubPage extends StatelessWidget {
               final item = data.meta?[index];
 
               return HistoryItem(
-                imgSrc: 'images/logo.jpg',
+                // imgSrc: _itemImage(item!),
+                imgSrc: 'images/coins_icon.png',
                 title: '${LastCredit.statusFromEnum2(item!.methodOfSubscription!)}',
                 amount: '${item.amount}',
                 subTitle: '${Helpers.formatDate2(item.createdAt!)}',
@@ -92,10 +112,10 @@ class HistoryItem extends StatelessWidget {
           fontSize: 12,
         ),
       ),
-      leading: Icon(
-        Icons.monochrome_photos,
-        size: 32,
-        color: KColors.TEXT_COLOR,
+      leading: Image.asset(
+        '$imgSrc',
+        width: 32,
+        // color: KColors.TEXT_COLOR,
       ),
       trailing: Text(
         isCredit ? '+$amount' : '-$amount',

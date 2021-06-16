@@ -22,8 +22,8 @@ class WalletBalance extends StatelessWidget {
         child: Row(
           children: [
             Image.asset(
-              'images/logo.jpg',
-              width: 40,
+              'images/coins_icon.png',
+              width: 32,
             ),
             SizedBox(width: 6),
             Column(

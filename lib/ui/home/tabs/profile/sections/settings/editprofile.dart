@@ -1,22 +1,113 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/models/app_user.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/components/custom_appbar.dart';
 import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/ui/widgets/choose_image_from.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
+import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class EditProfile extends StatelessWidget {
-  TextEditingController fullnameController = TextEditingController();
-  FocusNode textFieldFocusName = FocusNode();
+  AppUser user = UserController.to.user!;
+  TextEditingController nameController = TextEditingController(text: UserController.to.user!.name ?? "");
+  TextEditingController emailController = TextEditingController(text: UserController.to.user!.email ?? "");
+  TextEditingController phoneController = TextEditingController(text: UserController.to.user!.mobileNumber ?? "");
+
+  _update() async {
+    final name = nameController.text.toString().trim();
+    final email = emailController.text.toString().trim();
+    final phone = phoneController.text.toString().trim();
+
+    var nameSplit = name.split(' ');
+    if (name.isEmpty) {
+      AlertUtils.toast('Enter your name');
+    } else if (nameSplit.length < 2 || nameSplit[1].isEmpty) {
+      AlertUtils.toast('Enter your full name');
+    } else if (email.isEmpty) {
+      AlertUtils.toast('Enter your email address');
+    } else if (phone.isEmpty && FirebaseAuth.instance.currentUser!.providerData[0].providerId != "phone") {
+      AlertUtils.toast('Enter your phone number');
+    } else {
+      AppUser cUser = user;
+      cUser.email = email;
+      cUser.mobileNumber = phone;
+      cUser.name = name;
+
+      AlertUtils.showProgressDialog(title: null);
+      AuthRepo().updateUserDetails(
+        appUser: cUser,
+        onSuccess: (appUser) {
+          AlertUtils.hideProgressDialog();
+          if (appUser != null) {
+            UserController.to.setUser(appUser);
+            AlertUtils.toast('Profile details saved successfully');
+          }
+        },
+        onError: (er) {
+          AlertUtils.hideProgressDialog();
+          AlertUtils.alert('$er');
+          print("$er");
+        },
+      );
+    }
+  }
+
+  void selectImage(ImageSource source) async {
+    File? selectedImage = await Helpers.pickImage(source: source);
+    if (selectedImage != null) {
+      AlertUtils.showProgressDialog(title: 'Updating photo...');
+      String? imgUrl = await RepoStorage().uploadFile(selectedImage);
+      if (imgUrl != null) {
+        // AuthRepo().getCurrentUser()!.updateProfile(photoURL: imgUrl); //Adding to the authentication table
+        AppUser cUser = UserController.to.user!;
+        cUser.profilePhoto = imgUrl;
+        AuthRepo().updateUserDetails(
+          appUser: cUser,
+          onSuccess: (appUser) {
+            AlertUtils.hideProgressDialog();
+            if (appUser != null) {
+              UserController.to.setUser(appUser);
+              AlertUtils.toast('Profile photo saved successfully');
+            }
+          },
+          onError: (er) {
+            AlertUtils.hideProgressDialog();
+            AlertUtils.alert('$er');
+            print("$er");
+          },
+        );
+      } else {
+        AlertUtils.toast('Error occurred while uploading your image.');
+      }
+    }
+  }
+
+  _showFileChooser() {
+    Get.bottomSheet(
+      ChooseImageFrom(
+        imageSource: (source) => selectImage(source),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Get.back();
     return Scaffold(
       backgroundColor: KColors.WHITE_GREY2,
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: Constants.PADDING)
-            .copyWith(top: context.mediaQueryPadding.top),
+        padding: EdgeInsets.symmetric(vertical: Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
         child: Column(
           children: [
             Padding(
@@ -24,7 +115,7 @@ class EditProfile extends StatelessWidget {
               child: CustomAppbar(
                 title: '',
                 actionBtn: ButtonSmall(
-                  onClick: () => print('Hey'),
+                  onClick: _update,
                   text: 'update',
                   bgColor: KColors.PRIMARY,
                   textColor: Colors.white,
@@ -43,29 +134,35 @@ class EditProfile extends StatelessWidget {
                           boxShadow: [Constants.SHADOW],
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            'images/swapx.jpeg',
-                            width: 70,
-                            height: 70,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        child: GetBuilder<UserController>(builder: (userController) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: CachedImage(
+                              userController.user!.profilePhoto,
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.cover,
+                              alt: ImagePlaceholder.User,
+                            ),
+                          );
+                        }),
                       ),
                       Positioned(
                         top: 0,
                         right: 0,
                         left: 0,
                         bottom: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(.5),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Icon(
-                            Icons.add_a_photo_outlined,
-                            color: Colors.white30,
+                        child: InkWell(
+                          onTap: _showFileChooser,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(.3),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Icon(
+                              Icons.add_a_photo_outlined,
+                              color: Colors.white30,
+                            ),
                           ),
                         ),
                       )
@@ -74,13 +171,11 @@ class EditProfile extends StatelessWidget {
                   SizedBox(height: 32),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                      border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                       color: Colors.white,
                     ),
                     child: TextField(
-                      controller: fullnameController,
-                      focusNode: textFieldFocusName,
+                      controller: nameController,
                       keyboardType: TextInputType.name,
                       maxLines: 1,
                       textAlign: TextAlign.center,
@@ -101,8 +196,7 @@ class EditProfile extends StatelessWidget {
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                            left: 8, bottom: 2, top: 2, right: 8),
+                        contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                       ),
                     ),
                   ),
@@ -115,11 +209,11 @@ class EditProfile extends StatelessWidget {
                   SizedBox(height: 32),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                      border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                       color: Colors.white,
                     ),
                     child: TextField(
+                      controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       maxLines: 1,
                       textAlign: TextAlign.center,
@@ -140,8 +234,7 @@ class EditProfile extends StatelessWidget {
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                            left: 8, bottom: 2, top: 2, right: 8),
+                        contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                       ),
                     ),
                   ),
@@ -151,6 +244,49 @@ class EditProfile extends StatelessWidget {
                       color: KColors.TEXT_COLOR_LIGHT,
                     ),
                   ),
+                  if (FirebaseAuth.instance.currentUser!.providerData[0].providerId != "phone")
+                    Column(
+                      children: [
+                        SizedBox(height: 32),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                            color: Colors.white,
+                          ),
+                          child: TextField(
+                            controller: phoneController,
+                            keyboardType: TextInputType.emailAddress,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: KColors.TEXT_COLOR_DARK,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            cursorColor: Colors.blueGrey,
+                            decoration: InputDecoration(
+                              hintText: 'Phone number',
+                              hintStyle: StyleNormal.copyWith(
+                                color: KColors.TEXT_COLOR,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'Phone number',
+                          style: StyleNormal.copyWith(
+                            color: KColors.TEXT_COLOR_LIGHT,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

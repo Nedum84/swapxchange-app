@@ -39,7 +39,9 @@ class _UploadHomeState extends State<UploadHome> {
   void selectImage(ImageSource source) async {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
+      AlertUtils.showProgressDialog(title: null);
       String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
+      AlertUtils.hideProgressDialog();
       if (imgUrl != null) {
         final imgP = ProductImage(
           id: 0,

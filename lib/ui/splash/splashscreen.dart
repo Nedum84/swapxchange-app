@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/login.dart';
@@ -29,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _initialize() async {
     Get.put(CategoryController());
     Get.put(SubCategoryController());
+    CoinsController.to.getBalance();
     await Future.delayed(Duration(seconds: 5));
     // final u = _authRepo.getCurrentUser();
     // if (u == null) {
