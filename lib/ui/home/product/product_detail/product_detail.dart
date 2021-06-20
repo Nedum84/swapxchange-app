@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/streams.dart';
+import 'package:share/share.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
@@ -26,7 +27,6 @@ import 'package:swapxchange/utils/styles.dart';
 
 class ProductDetail extends StatelessWidget {
   final Product product;
-
   const ProductDetail({Key? key, required this.product}) : super(key: key);
 
   _getPoster({gotoCall = false}) async {
@@ -211,18 +211,19 @@ class ProductDetail extends StatelessWidget {
                             flex: 1,
                             child: ButtonOutline2(
                               title: 'Share product',
-                              onClick: () => null,
+                              onClick: () => Share.share(Constants.SHARE_CONTENT, subject: 'Share via'),
                             ),
                           ),
                           SizedBox(width: 8),
-                          Expanded(
-                            flex: 1,
-                            child: ButtonOutline2(
-                              titleColor: KColors.RED,
-                              title: 'Report this',
-                              onClick: () => null,
+                          if (product.userId != UserController.to.user!.userId)
+                            Expanded(
+                              flex: 1,
+                              child: ButtonOutline2(
+                                titleColor: KColors.RED,
+                                title: 'Report this',
+                                onClick: () => null,
+                              ),
                             ),
-                          ),
                         ],
                       )
                     ],
@@ -232,7 +233,7 @@ class ProductDetail extends StatelessWidget {
             ),
           ),
           ProductDetailBackBtn(),
-          SaveBtn(),
+          if (product.userId != UserController.to.user!.userId!) SaveBtn(product: product),
         ],
       ),
     );

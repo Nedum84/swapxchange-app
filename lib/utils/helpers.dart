@@ -110,4 +110,10 @@ class Helpers {
 
     return formatted;
   }
+
+  static String getAddressCity({required String address}) {
+    var breakAddr = address.split(',');
+    var length = breakAddr.length;
+    return (length > 3) ? breakAddr[length - 3] : breakAddr[length - 2];
+  }
 }

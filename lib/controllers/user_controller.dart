@@ -12,10 +12,12 @@ class UserController extends GetxController {
 
   AppUser? get user => _appUser;
 
-  void setUser(AppUser appUser) {
+  void setUser(
+    AppUser appUser,
+  ) {
     _appUser = appUser;
 
-    UserPrefs().setUID(userId: _appUser!.userId!); //Saving user details to share prefs
+    UserPrefs.setUID(userId: _appUser!.userId!); //Saving user details to share prefs
     update();
   }
 

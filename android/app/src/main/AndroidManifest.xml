@@ -18,7 +18,12 @@
     <application
         android:label="swapxchange"
         android:networkSecurityConfig="@xml/network_security_config"
+        ndroid:label="SwapXchange"
         android:icon="@mipmap/ic_launcher">
+
+<!--        Google maps-->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB2SmVI9__vmGe8LQmVhKtXgYwT88rRepQ"/>
 
         <!--        facebook init starts-->
         <meta-data android:name="com.facebook.sdk.ApplicationId"

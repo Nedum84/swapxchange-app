@@ -25,4 +25,9 @@ class RepoStorage {
     final ref = firestore.refFromURL(filePath);
     return await ref.delete().then((value) => true).catchError((e) => false);
   }
+
+  Future<bool> updateFile(String filePath, File file) async {
+    final ref = firestore.refFromURL(filePath);
+    return await ref.putFile(file).then((value) => true).catchError((e) => false);
+  }
 }

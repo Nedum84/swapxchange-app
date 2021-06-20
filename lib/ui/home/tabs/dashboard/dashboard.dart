@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/bottom_menu_controller.dart';
 import 'package:swapxchange/enum/bottom_menu_item.dart';
 import 'package:swapxchange/ui/components/custom_keep_alive_page.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list.dart';
@@ -16,8 +17,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
-  PageController pageViewController = PageController(initialPage: 0);
-
   @override
   void initState() {
     super.initState();
@@ -43,7 +42,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
       body: Container(
         padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
         child: PageView(
-          controller: pageViewController,
+          controller: Get.find<BottomMenuController>().pageViewController,
           physics: NeverScrollableScrollPhysics(),
           children: [
             CustomKeepAlivePage(child: Home()),
@@ -59,26 +58,22 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             BottomMenuWidget(
-              pageViewController: pageViewController,
               title: 'Home',
               icon: Icons.dashboard,
               bottomMenuItem: BottomMenuItem.HOME,
             ),
             BottomMenuWidget(
-              pageViewController: pageViewController,
               title: 'Chat',
               icon: Icons.offline_share,
               bottomMenuItem: BottomMenuItem.CHAT,
             ),
             AddMenuWidget(),
             BottomMenuWidget(
-              pageViewController: pageViewController,
               title: 'Saved',
               icon: Icons.chat_outlined,
               bottomMenuItem: BottomMenuItem.SAVED,
             ),
             BottomMenuWidget(
-              pageViewController: pageViewController,
               title: 'Profile',
               icon: Icons.favorite_rounded,
               bottomMenuItem: BottomMenuItem.PROFILE,

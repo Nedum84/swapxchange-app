@@ -17,6 +17,10 @@ class InterestAndSwapButton extends StatelessWidget {
   _findExchangeOptions(BuildContext context) async {
     final AppUser currentUser = UserController.to.user!;
     if (product.userId == currentUser.userId) {
+      if (product.productStatus == ProductStatus.BLOCKED_PRODUCT_STATUS || product.productStatus == ProductStatus.COMPLETED_PRODUCT_STATUS) {
+        AlertUtils.alert('It seems you have either sold this product or it has been taken down. Contact support for more info.', title: 'Action not successful');
+        return;
+      }
       // ... open exchange options
       Get.to(() => ExchangeOptions(myProduct: product), preventDuplicates: true);
     } else {

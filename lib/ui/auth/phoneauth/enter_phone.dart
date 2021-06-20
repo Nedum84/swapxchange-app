@@ -71,7 +71,7 @@ class _EnterPhoneState extends State<EnterPhone> {
   }
 
   _authenticate(User user) {
-    Auth.authenticateUser(
+    AuthUtils.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);

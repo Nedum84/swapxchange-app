@@ -238,9 +238,18 @@ class ButtonOutline2 extends StatelessWidget {
   final Color? titleColor;
   final Color? borderColor;
   final double? py;
+  final double? radius;
   final Function() onClick;
 
-  const ButtonOutline2({Key? key, required this.title, this.titleColor, required this.onClick, this.borderColor, this.py}) : super(key: key);
+  const ButtonOutline2({
+    Key? key,
+    required this.title,
+    this.titleColor,
+    required this.onClick,
+    this.borderColor,
+    this.py,
+    this.radius,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +258,7 @@ class ButtonOutline2 extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: py ?? 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(radius ?? 4),
           border: Border.all(color: borderColor ?? KColors.TEXT_COLOR_LIGHT2.withOpacity(.5)),
         ),
         child: Text(

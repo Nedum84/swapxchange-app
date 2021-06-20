@@ -40,10 +40,11 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
 
   _setSubCategoryList() async {
     final getList = await subCategoryController.fetchByCategoryId(catId: widget.category.categoryId!);
-    setState(() {
-      selectedSubCategory = getList[0];
-      subCategoryList = getList;
-    });
+    if (getList.length > 0)
+      setState(() {
+        selectedSubCategory = getList[0];
+        subCategoryList = getList;
+      });
   }
 
   _fetchProducts() async {

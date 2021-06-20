@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/controllers/my_product_controller.dart';
 import 'package:swapxchange/enum/product_state.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/models/product_model.dart';
@@ -92,14 +93,17 @@ class AddProduct extends GetView<AddProductController> {
     controller.imageList.forEach((pImg) async {
       RepoProductImage.upsertProductImage(productImage: pImg).then((value) async {
         if (controller.imageList.last == pImg) {
-          //redirect after the last Image upload & reset controller to defaults
-          controller.reset();
           final newProduct = await RepoProduct.getById(productId: product.productId!);
           if (controller.isEditing) {
+            MyProductController.to.updateProduct(newProduct!);
             AlertUtils.toast('Your product was successfully edited');
+            //redirect after the last Image upload & reset controller to defaults
+            controller.reset();
             Get.back(result: newProduct, closeOverlays: true);
           } else {
             AlertUtils.toast('Successfully published your product');
+            //redirect after the last Image upload & reset controller to defaults
+            controller.reset();
             Get.off(() => ProductDetail(product: newProduct!));
           }
         }
@@ -215,13 +219,14 @@ class AddProduct extends GetView<AddProductController> {
                     : _suggestedList(),
               ),
               SizedBox(height: 10),
-              AddItem(
-                onClick: () => Get.to(() => HowToGetCoins()),
-                title: 'AVAILABLE COINS',
-                subtitle: 'This upload will deduct ${CoinsController.uploadAmount} coins from your balance.',
-                subtitleFont: 10,
-                trailing: '${CoinsController.to.myCoins!.balance} Coins',
-              ),
+              if (!addController.isEditing)
+                AddItem(
+                  onClick: () => Get.to(() => HowToGetCoins()),
+                  title: 'AVAILABLE COINS',
+                  subtitle: 'This upload will deduct ${CoinsController.uploadAmount} coins from your balance.',
+                  subtitleFont: 10,
+                  trailing: '${CoinsController.to.myCoins!.balance} Coins',
+                ),
               SizedBox(height: 10),
               AcceptPolicyWidget(),
               SizedBox(height: 10),

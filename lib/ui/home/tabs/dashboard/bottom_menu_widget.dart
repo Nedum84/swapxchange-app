@@ -9,37 +9,13 @@ import 'package:swapxchange/utils/colors.dart';
 class BottomMenuWidget extends StatelessWidget {
   final IconData icon;
   final String title;
-  final PageController pageViewController;
   final BottomMenuItem bottomMenuItem;
 
   BottomMenuWidget({
     required this.title,
     required this.icon,
     required this.bottomMenuItem,
-    required this.pageViewController,
   });
-
-  void setMenu() {
-    Get.find<BottomMenuController>().onChangeMenu(bottomMenuItem);
-
-    switch (bottomMenuItem) {
-      case BottomMenuItem.HOME:
-        pageViewController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.CHAT:
-        pageViewController.animateToPage(1, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.SAVED:
-        pageViewController.animateToPage(2, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.ADD:
-        Get.to(() => AddProduct());
-        break;
-      default:
-        pageViewController.animateToPage(3, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +24,7 @@ class BottomMenuWidget extends StatelessWidget {
       init: BottomMenuController(),
       builder: (bottomMenuProvider) {
         return InkWell(
-          onTap: () => setMenu(),
+          onTap: () => bottomMenuProvider.onChangeMenu(bottomMenuItem),
           child: Container(
             padding: EdgeInsets.all(8),
             child: Column(

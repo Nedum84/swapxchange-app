@@ -14,9 +14,7 @@ class VerifyOtp extends StatefulWidget {
   final String phoneVerificationId;
   final String phoneNo;
 
-  VerifyOtp(
-      {Key? key, required this.phoneVerificationId, required this.phoneNo})
-      : super(key: key);
+  VerifyOtp({Key? key, required this.phoneVerificationId, required this.phoneNo}) : super(key: key);
 
   @override
   _VerifyOtpState createState() => _VerifyOtpState();
@@ -91,8 +89,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
     }
 
     setState(() => _isLoading = true);
-    var user = await _authRepo.verifyOTP(
-        otpCode: otpCode, verificationId: _phoneVerificationId!);
+    var user = await _authRepo.verifyOTP(otpCode: otpCode, verificationId: _phoneVerificationId!);
     if (user == null) {
       AlertUtils.toast('Incorrect OTP entered');
       setState(() => _isLoading = false);
@@ -102,7 +99,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   }
 
   _authenticate(User user) {
-    Auth.authenticateUser(
+    AuthUtils.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);
@@ -137,8 +134,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                    border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: TextField(
@@ -161,8 +157,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                     ),
                   ),
                 ),

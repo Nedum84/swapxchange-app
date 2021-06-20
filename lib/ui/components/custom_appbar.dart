@@ -7,8 +7,7 @@ class CustomAppbar extends StatelessWidget {
   final String title;
   final Widget? actionBtn;
 
-  const CustomAppbar({Key? key, required this.title, this.actionBtn})
-      : super(key: key);
+  const CustomAppbar({Key? key, required this.title, this.actionBtn}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,14 +18,14 @@ class CustomAppbar extends StatelessWidget {
             onTap: () => Get.back(),
             child: Icon(
               Icons.arrow_back_ios_outlined,
-              color: KColors.TEXT_COLOR,
+              color: KColors.TEXT_COLOR_DARK,
             ),
           ),
           SizedBox(width: 8),
           Expanded(
             child: Text(
               title,
-              style: H2Style,
+              style: H1Style.copyWith(fontSize: 18),
             ),
           ),
           actionBtn ?? Container()

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/privacy/privacy.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/change_location.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/editprofile.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/terms.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -27,21 +29,23 @@ class Settings extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               color: KColors.TEXT_COLOR_DARK,
             ),
-            flexibleSpace: GetBuilder<UserController>(builder: (userController) {
-              return FlexibleSpaceBar(
-                centerTitle: false,
-                title: Text(
-                  "User Settings",
-                  style: H1Style,
-                ),
-                background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
-                    ? Container()
-                    : CachedImage(
-                        userController.user!.profilePhoto,
-                        fit: BoxFit.cover,
-                      ),
-              );
-            },),
+            flexibleSpace: GetBuilder<UserController>(
+              builder: (userController) {
+                return FlexibleSpaceBar(
+                  centerTitle: false,
+                  title: Text(
+                    "User Settings",
+                    style: H1Style,
+                  ),
+                  background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
+                      ? Container()
+                      : CachedImage(
+                          userController.user!.profilePhoto,
+                          fit: BoxFit.cover,
+                        ),
+                );
+              },
+            ),
           ),
           SliverToBoxAdapter(
             child: Column(
@@ -57,7 +61,6 @@ class Settings extends StatelessWidget {
                   title: 'Change Location',
                   onClick: () => Get.to(
                     () => ChangeLocation(),
-                    transition: Transition.cupertinoDialog,
                   ),
                 ),
                 CustomTile(
@@ -87,11 +90,11 @@ class Settings extends StatelessWidget {
                 SizedBox(height: 32),
                 CustomTile(
                   title: 'Terms & conditions',
-                  onClick: () => null,
+                  onClick: () => Get.to(() => TermsAndConditions()),
                 ),
                 CustomTile(
                   title: 'Privacy policy',
-                  onClick: () => null,
+                  onClick: () => Get.to(() => Privacy()),
                 ),
                 SizedBox(height: 32),
                 Container(

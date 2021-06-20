@@ -13,7 +13,7 @@ class UserPrefs {
   static String USER_TOKENS = "UserTokens";
 
   // user id
-  void setUID({required int userId}) async {
+  static void setUID({required int userId}) async {
     (await _prefs).setInt(USER_ID, userId);
   }
 

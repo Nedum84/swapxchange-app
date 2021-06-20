@@ -36,7 +36,6 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
       'Do you want to swap your ${_myProduct!.productName} with ${suggestedProduct!.productName}',
       title: 'Confirm',
       positiveBtnText: 'YES',
-      context: context,
       okCallBack: () async {
         ProductChats productChats = ProductChats(
           productId: suggestedProduct.productId,

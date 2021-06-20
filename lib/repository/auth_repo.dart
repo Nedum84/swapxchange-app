@@ -12,6 +12,7 @@ import 'package:swapxchange/repository/dio/error_catch.dart';
 import 'package:swapxchange/ui/auth/login.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 import 'package:swapxchange/utils/prefs_app_user.dart';
+import 'package:swapxchange/utils/user_prefs.dart';
 
 class AuthRepo {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -121,8 +122,6 @@ class AuthRepo {
       print(error);
     }
 
-    ;
-
     void codeSent(String verificationId, code) => onCodeSent(verificationId);
 
     void codeAutoRetrievalTimeout(String verificationId) => onCodeAutoRetrievalTimeout(verificationId);
@@ -168,7 +167,7 @@ class AuthRepo {
     required Function(dynamic er) onError,
   }) async {
     Tokens? tokens;
-    AppUser appUser = AppUser(
+    AppUser? appUser = AppUser(
       uid: firebaseUser.uid,
       email: firebaseUser.email,
       mobileNumber: firebaseUser.phoneNumber,
@@ -190,9 +189,7 @@ class AuthRepo {
         if (res != null) {
           appUser = AppUser.fromMap(res.data["data"]["user"]);
           tokens = Tokens.fromMap(res.data["data"]["tokens"]);
-
-          //--> remove later
-          onSuccess(appUser, tokens);
+          if (tokens != null) UserPrefs.setTokens(tokens: tokens!);
         }
       } catch (e) {
         onError(e);
@@ -203,16 +200,18 @@ class AuthRepo {
     });
 
     // Register/update on firebase
-    // try {
-    //   await _userCollection
-    //       .doc(firebaseUser.uid)
-    //       .set(appUser.toMap())
-    //       .then((value) => onSuccess(appUser, tokens))
-    //       .catchError((error) => onError(error))
-    //       .timeout(Duration(seconds: 5));
-    // } catch (e) {
-    //   onError(e);
-    // }
+    try {
+      await _userCollection
+          .doc(firebaseUser.uid)
+          .set(appUser!.toMap())
+          .then(
+            (value) => onSuccess(appUser, tokens),
+          )
+          .catchError((error) => onError(error))
+          .timeout(Duration(seconds: 5));
+    } catch (e) {
+      onError(e);
+    }
   }
 
   //Update Address & return new Appuser data

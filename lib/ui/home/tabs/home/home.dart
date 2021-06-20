@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:swapxchange/controllers/product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/ui/components/loading_overlay.dart';
@@ -14,6 +18,40 @@ import 'home_app_bar.dart';
 class Home extends StatelessWidget {
   final UserController userController = UserController.to;
   final ProductController productController = ProductController.to;
+
+  Future download2() async {
+    // Get.back();
+    Dio dio = Dio();
+    String url = "https://i.stack.imgur.com/jSS79.png";
+    String savePath;
+    try {
+      final response = await dio.get(
+        url,
+        onReceiveProgress: showDownloadProgress,
+        //Received data with List<int>
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: true,
+            validateStatus: (status) {
+              return status! < 500;
+            }),
+      );
+      print(response.headers);
+      final tmpDir = await getTemporaryDirectory();
+      File file = File(tmpDir.path);
+      var raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void showDownloadProgress(received, total) {
+    if (total != -1) {
+      print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +78,7 @@ class Home extends StatelessWidget {
                         SizedBox(height: 16),
                         Text('Latest', style: H1Style),
                         InkWell(
-                          onTap: () => Get.back(),
+                          onTap: () => download2(),
                           child: Text(
                             'data',
                             style: TextStyle(fontSize: 32),

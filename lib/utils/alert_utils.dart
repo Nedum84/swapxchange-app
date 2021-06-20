@@ -34,7 +34,6 @@ class AlertUtils {
 
   static confirm(
     String content, {
-    required BuildContext context,
     String? title,
     String positiveBtnText = 'OK',
     String negativeBtnText = 'CANCEL',
@@ -42,16 +41,14 @@ class AlertUtils {
     bool fromTop = true,
     bool expandHeight = false,
   }) {
-    showGeneralDialog(
-      // barrierDismissible: true,
+    Get.generalDialog(
       barrierColor: Colors.black.withOpacity(0.5),
       transitionDuration: Duration(milliseconds: 700),
-      context: context,
       pageBuilder: (_, __, ___) {
         return Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => Navigator.pop(context),
+            onTap: () => Get.back(),
             child: Align(
               alignment: fromTop ? Alignment.topCenter : Alignment.bottomCenter,
               child: Column(
@@ -80,7 +77,7 @@ class AlertUtils {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             InkWell(
-                              onTap: () => Navigator.of(context).pop(),
+                              onTap: () => Get.back(),
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                                 decoration: BoxDecoration(
@@ -99,7 +96,7 @@ class AlertUtils {
                             InkWell(
                               onTap: () {
                                 okCallBack!();
-                                Navigator.of(context).pop();
+                                Get.back();
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),

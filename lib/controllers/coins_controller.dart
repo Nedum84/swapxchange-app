@@ -5,6 +5,7 @@ import 'package:swapxchange/repository/repo_coins.dart';
 class CoinsController extends GetxController {
   static CoinsController to = Get.find();
   static int uploadAmount = 100;
+  static int registrationCoinsAmount = 500;
   static int dailyLimitCoinsAmount = 10;
   static int referralCoinsAmount = 50;
   static int watchVideoAmount = 20;

@@ -1,7 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/saved_product_controller.dart';
+import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/repository/repo_saved_products.dart';
 
-class SaveBtn extends StatelessWidget {
+class SaveBtn extends StatefulWidget {
+  final Product product;
+
+  const SaveBtn({Key? key, required this.product}) : super(key: key);
+  @override
+  _SaveBtnState createState() => _SaveBtnState();
+}
+
+class _SaveBtnState extends State<SaveBtn> {
+  bool isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSaved();
+  }
+
+  _checkSaved() async {
+    final checkIsSaved = await RepoSavedProducts.checkSaved(productId: widget.product.productId!);
+    setState(() {
+      isSaved = checkIsSaved;
+    });
+  }
+
+  _toggleSaved() async {
+    final savedProduct = await RepoSavedProducts.savedProduct(productId: widget.product.productId!);
+    if (savedProduct) {
+      _checkSaved();
+      SavedProductController.to.fetchAll(reset: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -10,10 +44,10 @@ class SaveBtn extends StatelessWidget {
       child: CircleAvatar(
         backgroundColor: Color.fromRGBO(0, 0, 0, 0.0),
         child: IconButton(
-          onPressed: () => null,
+          onPressed: _toggleSaved,
           icon: Icon(
             Icons.favorite,
-            color: Colors.white30,
+            color: isSaved ? Colors.white : Colors.white30,
           ),
         ),
       ),

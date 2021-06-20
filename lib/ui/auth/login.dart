@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
 
     _authRepo.facebookSignIn(
       loginSuccess: (user) {
-        Auth.authenticateUser(
+        AuthUtils.authenticateUser(
           user: user,
           onDone: () {
             setState(() => _isLoading = false);

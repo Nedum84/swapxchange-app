@@ -45,7 +45,6 @@ class _SwapWithState extends State<SwapWith> {
       'Do you want to swap your ${myProduct!.productName} with ${widget.suggestedProduct!.productName}',
       title: 'Confirm',
       positiveBtnText: 'YES',
-      context: context,
       okCallBack: () async {
         ProductChats productChats = ProductChats(
           productId: widget.suggestedProduct!.productId,

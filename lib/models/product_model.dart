@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:swapxchange/extensions/list_extensions.dart';
 import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/product_image.dart';
 
@@ -38,7 +39,7 @@ class Product {
   String? productDescription;
   String? productSuggestion;
   final String? productCondition;
-  final ProductStatus? productStatus;
+  ProductStatus? productStatus;
   final int? userId;
   final String? userAddress;
   final String? userAddressCity;
@@ -55,6 +56,12 @@ class Product {
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
+
+  static List<ProductImage> setImages(String imagesJson) {
+    final List<ProductImage> images = List<ProductImage>.from(jsonDecode(imagesJson).map((x) => ProductImage.fromMap(x)));
+
+    return images.sortedDescBy((it) => it.idx!) as List<ProductImage>;
+  }
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         productId: int.parse(json["product_id"]),
@@ -75,7 +82,8 @@ class Product {
         distance: double.parse(json["distance"] ?? "0"),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        images: List<ProductImage>.from(jsonDecode(json["images"]).map((x) => ProductImage.fromMap(x))),
+        // images: List<ProductImage>.from(jsonDecode(json["images"]).map((x) => ProductImage.fromMap(x))),
+        images: setImages(json["images"]),
         suggestions: List<Category>.from(jsonDecode(json["suggestions"]).map((x) => Category.fromMap(x))),
         user: Poster.fromMap(jsonDecode(json["user"])),
         uploadPrice: double.parse(json["upload_price"]),
@@ -115,8 +123,12 @@ class Product {
       return ProductStatus.ACTIVE_PRODUCT_STATUS;
     } else if (status == 4) {
       return ProductStatus.COMPLETED_PRODUCT_STATUS;
-    } else {
+    } else if (status == 5) {
       return ProductStatus.DELETED_PRODUCT_STATUS;
+    } else if (status == 6) {
+      return ProductStatus.BLOCKED_PRODUCT_STATUS;
+    } else {
+      return ProductStatus.UNPUBLISHED_PRODUCT_STATUS;
     }
   }
 
@@ -129,8 +141,12 @@ class Product {
       return 3;
     } else if (status == ProductStatus.COMPLETED_PRODUCT_STATUS) {
       return 4;
-    } else {
+    } else if (status == ProductStatus.DELETED_PRODUCT_STATUS) {
       return 5;
+    } else if (status == ProductStatus.DELETED_PRODUCT_STATUS) {
+      return 6;
+    } else {
+      return 1;
     }
   }
 }
@@ -178,4 +194,5 @@ enum ProductStatus {
   ACTIVE_PRODUCT_STATUS,
   COMPLETED_PRODUCT_STATUS,
   DELETED_PRODUCT_STATUS,
+  BLOCKED_PRODUCT_STATUS,
 }

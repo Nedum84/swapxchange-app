@@ -53,7 +53,7 @@ class _EnterNameState extends State<EnterName> {
   }
 
   _authenticate(User user) {
-    Auth.authenticateUser(
+    AuthUtils.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);
