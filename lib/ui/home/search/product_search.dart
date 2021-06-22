@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/product_search_controller.dart';
-import 'package:swapxchange/ui/components/product_item.dart';
 import 'package:swapxchange/ui/home/search/search_appbar.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
+import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/constants.dart';
 
 import 'suggestions_container.dart';

@@ -16,7 +16,7 @@ class MyProductController extends GetxController {
 
   @override
   void onInit() {
-    fetchAll();
+    // fetchAll();
     super.onInit();
   }
 

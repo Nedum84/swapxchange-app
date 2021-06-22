@@ -23,7 +23,7 @@ class ProductSearchController extends GetxController {
   void onInit() {
     textController.text = queryString.value;
     resetList(true);
-    fetchProducts();
+    // fetchProducts();
     super.onInit();
   }
 

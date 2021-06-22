@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/enum/online_status.dart';
@@ -273,7 +272,7 @@ class AuthRepo {
     _userCollection.doc(getCurrentUser()!.uid).update(u.toMap()).then((value) => onSuccess(u)).catchError(onError);
   }
 
-  void signOut(BuildContext context) async {
+  void signOut() async {
     try {
       await PrefsAppUser().signOut(); //prefs clear
       await FacebookAuth.instance.logOut();
@@ -282,11 +281,11 @@ class AuthRepo {
       print(e);
     }
 
-    Get.offAll(() => Login(), transition: Transition.cupertinoDialog);
+    Get.offAll(() => Login());
   }
 
-  void setOnlineStatus({required String userId, required OnlineStatus userState}) {
-    _userCollection.doc(userId).update({
+  void setOnlineStatus({required String uid, required OnlineStatus userState}) {
+    _userCollection.doc(uid).update({
       "state": EnumToString.convertToString(userState).toLowerCase(),
     });
   }

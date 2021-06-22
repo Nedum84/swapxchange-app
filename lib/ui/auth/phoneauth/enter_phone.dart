@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/verify_phone.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
-import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -26,9 +26,8 @@ class _EnterPhoneState extends State<EnterPhone> {
   @override
   void initState() {
     super.initState();
-
-    User? user = _authRepo.getCurrentUser();
-    if (user != null) _authenticate(user);
+    // User? user = _authRepo.getCurrentUser();
+    // if (user != null) _authenticate(user);
   }
 
   _signInWithPhone() {
@@ -55,7 +54,6 @@ class _EnterPhoneState extends State<EnterPhone> {
             phoneVerificationId: phoneVerificationId,
             phoneNo: phoneNo,
           ),
-          transition: Transition.leftToRight,
         );
       },
       onCodeAutoRetrievalTimeout: (er) {

@@ -44,7 +44,7 @@ class SubCategoryItem extends StatelessWidget {
   const SubCategoryItem({Key? key, required this.subCat}) : super(key: key);
 
   _goto() {
-    Get.to(() => ViewSubCatProducts(subcategory: subCat), transition: Transition.leftToRight);
+    Get.to(() => ViewSubCatProducts(subcategory: subCat));
   }
 
   @override

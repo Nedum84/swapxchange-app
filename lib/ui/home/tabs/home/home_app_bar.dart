@@ -38,7 +38,8 @@ class MenuIcon extends StatelessWidget {
       child: IconButton(
         icon: Icon(
           icon,
-          color: Color(0xff707070),
+          // color: Color(0xff707070),
+          color: KColors.TEXT_COLOR_DARK,
           size: 28,
         ),
         onPressed: onClick,
@@ -63,7 +64,8 @@ class MenuBadge extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Color(0xff707070),
+              // color: Color(0xff707070),
+              color: KColors.TEXT_COLOR_DARK,
               size: 28,
             ),
             Positioned(

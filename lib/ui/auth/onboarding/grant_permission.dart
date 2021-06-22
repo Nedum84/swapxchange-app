@@ -3,10 +3,15 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart' as pHandler;
+import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/controllers/product_controller.dart';
+import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
-import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/repository/repo_category.dart';
+import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/home/tabs/dashboard/dashboard.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/permissions.dart';
@@ -39,15 +44,13 @@ class _GrantPermissionState extends State<GrantPermission> {
         if (_curStep == 0) {
           _stepperActiveColor = KColors.PRIMARY;
         } else if (_curStep == 1) {
-          _stepperActiveColor = KColors.SECONDARY;
+          _stepperActiveColor = Color(0xffC85F07);
         }
       });
     });
   }
 
   _grantLocationAccess() async {
-    _gotoDashboard();
-    return;
     setState(() => _isLoading = true);
     Permissions.locationPermission().then((isPermGranted) async {
       if (isPermGranted) {
@@ -85,8 +88,21 @@ class _GrantPermissionState extends State<GrantPermission> {
     });
   }
 
-  _gotoDashboard() {
-    Get.to(() => Dashboard());
+  _gotoDashboard() async {
+    setState(() => _isLoading = true);
+    final cats = await RepoCategory.findAll();
+    final subCats = await RepoSubCategory.findAll();
+
+    if (cats != null && subCats != null) {
+      ProductController.to.fetchAll(reset: true);
+      CategoryController.to.setItems(items: cats);
+      SubCategoryController.to.setItems(items: subCats);
+      //Done & proceed
+      Get.to(() => Dashboard());
+    } else {
+      setState(() => _isLoading = false);
+      AlertUtils.toast("Network error");
+    }
   }
 
   @override
@@ -101,7 +117,7 @@ class _GrantPermissionState extends State<GrantPermission> {
           itemBuilder: (context, position) {
             if (position == 0) {
               return GrantPermContainer(
-                imageString: 'images/location_access.png',
+                imageString: 'images/location-permission.png',
                 textTitle: "Hi, Welcome!",
                 textDisplay: "SwapXchange.ng is a platform for exchange/swap. Open access to your location and we'll show interesting offers close to you.",
                 button: PrimaryButton(
@@ -112,21 +128,21 @@ class _GrantPermissionState extends State<GrantPermission> {
               );
             } else {
               return GrantPermContainer(
-                imageString: 'images/file_access.png',
+                imageString: 'images/exit.png',
                 textTitle: "Let's Go",
                 textDisplay: "You definitely have unnecessary stuff. Offer it to users and get what you dream of. Browse items available for swap and make a deal. "
                     "So money is no longer needed.",
                 button: PrimaryButton(
                   onClick: () => _gotoDashboard(),
                   btnText: "Great, I\'m in",
-                  bgColor: KColors.SECONDARY,
-                  textColor: KColors.TEXT_COLOR_DARK,
-                  arrowColor: Colors.white,
+                  bgColor: Color(0xffC85F07),
+                  isLoading: _isLoading,
+                  arrowColor: Color(0xffC85F07),
                 ),
               );
             }
           },
-          itemCount: 3,
+          itemCount: 2,
           onPageChanged: (newPage) {},
         ),
       ),
@@ -171,17 +187,16 @@ class GrantPermContainer extends StatelessWidget {
             children: [
               Image.asset(
                 imageString,
-                // height: 70,
-                width: 200,
+                height: 100,
+                // width: 200,
               ),
+              SizedBox(height: 16),
               Text(
                 textTitle,
                 textAlign: TextAlign.center,
                 style: H1Style,
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Text(
                 textDisplay,
                 textAlign: TextAlign.center,

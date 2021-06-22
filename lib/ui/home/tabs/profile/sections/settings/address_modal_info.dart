@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/product/addproduct/widgets/bottomsheet_container.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';

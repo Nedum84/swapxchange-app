@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/product/addproduct/widgets/bottomsheet_container.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class SelectProductSuggestion extends StatelessWidget {

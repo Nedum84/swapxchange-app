@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -36,7 +37,7 @@ class UserDetailsWidget extends StatelessWidget {
                 children: [
                   Text(
                     userController.user!.name!,
-                    style: H2Style,
+                    style: H2Style.copyWith(color: KColors.TEXT_COLOR_DARK),
                   ),
                   Row(
                     children: [

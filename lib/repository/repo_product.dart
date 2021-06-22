@@ -140,13 +140,18 @@ class RepoProduct extends ApiClient {
 
   //--> Find Exchange Options fo a given product
   static Future<List<Product>?> findExchangeOptions({required int productId, limit = 1000, offset = 0}) async {
-    Response response = await ApiClient.request().get('/products/exchange/$productId/$offset/$limit');
+    try {
+      Response response = await ApiClient.request().get('/products/exchange/$productId/$offset/$limit');
 
-    if (response.statusCode == 200) {
-      var items = response.data["data"]["products"];
+      print(response.data);
+      if (response.statusCode == 200) {
+        var items = response.data["data"]["products"];
 
-      var list = (items as List).map((data) => Product.fromMap(data)).toList();
-      return list;
+        var list = (items as List).map((data) => Product.fromMap(data)).toList();
+        return list;
+      }
+    } on Exception catch (e) {
+      print(e);
     }
 
     return null;

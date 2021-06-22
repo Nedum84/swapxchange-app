@@ -1,14 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
 import 'package:swapxchange/ui/splash/splashscreen.dart';
 
 void main() async {
-  // await GetStorage.init('SwapXchangeContainer'); //get storage initialization
-  await GetStorage.init(); //get storage initialization
   //initialize the binding
   // WidgetsFlutterBinding.ensureInitialized();
   //initialize the binding

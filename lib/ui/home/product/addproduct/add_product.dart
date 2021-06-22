@@ -9,7 +9,6 @@ import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_image.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_category.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_product_suggestion.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_sub_category.dart';
@@ -20,6 +19,7 @@ import 'package:swapxchange/ui/home/product/addproduct/widgets/accept_policy_wid
 import 'package:swapxchange/ui/home/product/addproduct/widgets/add_item.dart';
 import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/wallet/how_to_get_coins.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/helpers.dart';

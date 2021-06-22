@@ -7,6 +7,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart' as pHandler;
+import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/controllers/product_controller.dart';
+import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/address_change_methods.dart';
@@ -48,7 +51,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
       double.tryParse(UserController.to.user!.addressLat!) ?? 6.4550651,
       double.tryParse(UserController.to.user!.addressLong!) ?? 3.5197741,
     ),
-    zoom: 11,
+    zoom: 18,
   );
 
 // For controlling the view of the Map
@@ -80,11 +83,15 @@ class _ChangeLocationState extends State<ChangeLocation> {
       address_lat: updatedUser.addressLat,
       address_long: updatedUser.addressLong,
       state: updatedUser.state!,
-      onSuccess: (appUser) {
-        AlertUtils.hideProgressDialog();
+      onSuccess: (appUser) async {
         if (appUser != null) {
           UserController.to.setUser(appUser);
+          ProductController.to.fetchAll(reset: true);
+          CategoryController.to.fetch();
+          SubCategoryController.to.fetch();
+          await Future.delayed(Duration(seconds: 2));
           AlertUtils.toast('Address updated successfully');
+          AlertUtils.hideProgressDialog();
           Get.back(closeOverlays: true);
         }
       },
@@ -120,7 +127,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: LatLng(lat, long),
-                // zoom: (await mapController!.getZoomLevel()) + 2,/**/
+                zoom: 18, /**/
               ),
             ),
           );
@@ -169,7 +176,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(addressDetails.latitude, addressDetails.longitude),
-            // zoom: (await mapController!.getZoomLevel()) + 2,
+            zoom: 18,
           ),
         ),
       );
@@ -192,7 +199,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
             initialCameraPosition: _initialLocation,
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            mapType: MapType.satellite,
+            mapType: MapType.normal,
             zoomGesturesEnabled: true,
             zoomControlsEnabled: false,
             markers: markers,

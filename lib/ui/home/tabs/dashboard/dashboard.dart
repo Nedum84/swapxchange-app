@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/bottom_menu_controller.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/enum/bottom_menu_item.dart';
-import 'package:swapxchange/ui/components/custom_keep_alive_page.dart';
+import 'package:swapxchange/enum/online_status.dart';
+import 'package:swapxchange/models/app_user.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/ui/home/callscreens/pickup_layout.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list.dart';
 import 'package:swapxchange/ui/home/tabs/home/home.dart';
 import 'package:swapxchange/ui/home/tabs/profile/profile.dart';
 import 'package:swapxchange/ui/home/tabs/saved/saved_product.dart';
+import 'package:swapxchange/ui/widgets/custom_keep_alive_page.dart';
 
 import 'bottom_menu_widget.dart';
 
@@ -17,13 +22,47 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
+  AuthRepo _authMethods = AuthRepo();
+
   @override
   void initState() {
     super.initState();
     _init();
   }
 
-  _init() async {}
+  _init() {
+    AppUser currentUser = UserController.to.user!;
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+      _authMethods.setOnlineStatus(uid: currentUser.uid!, userState: OnlineStatus.ONLINE);
+    });
+
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    AppUser currentUser = UserController.to.user!;
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _authMethods.setOnlineStatus(uid: currentUser.uid!, userState: OnlineStatus.ONLINE);
+        print("resume state");
+        break;
+      case AppLifecycleState.inactive:
+        _authMethods.setOnlineStatus(uid: currentUser.uid!, userState: OnlineStatus.OFFLINE);
+        print("inactive state");
+        break;
+      case AppLifecycleState.paused:
+        _authMethods.setOnlineStatus(uid: currentUser.uid!, userState: OnlineStatus.AWAY);
+        print("paused state");
+        break;
+      case AppLifecycleState.detached:
+        _authMethods.setOnlineStatus(uid: currentUser.uid!, userState: OnlineStatus.OFFLINE);
+        print("detached state");
+        break;
+    }
+  }
 
   @override
   void dispose() {
@@ -32,53 +71,46 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
-        child: PageView(
-          controller: Get.find<BottomMenuController>().pageViewController,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            CustomKeepAlivePage(child: Home()),
-            CustomKeepAlivePage(child: ChatList()),
-            CustomKeepAlivePage(child: SavedProduct()),
-            CustomKeepAlivePage(child: Profile()),
-          ],
+    return PickupLayout(
+      scaffold: Scaffold(
+        body: Container(
+          padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
+          child: PageView(
+            controller: Get.find<BottomMenuController>().pageViewController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              CustomKeepAlivePage(child: Home()),
+              CustomKeepAlivePage(child: ChatList()),
+              CustomKeepAlivePage(child: SavedProduct()),
+              CustomKeepAlivePage(child: Profile()),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            BottomMenuWidget(
-              title: 'Home',
-              icon: Icons.dashboard,
-              bottomMenuItem: BottomMenuItem.HOME,
-            ),
-            BottomMenuWidget(
-              title: 'Chat',
-              icon: Icons.offline_share,
-              bottomMenuItem: BottomMenuItem.CHAT,
-            ),
-            AddMenuWidget(),
-            BottomMenuWidget(
-              title: 'Saved',
-              icon: Icons.chat_outlined,
-              bottomMenuItem: BottomMenuItem.SAVED,
-            ),
-            BottomMenuWidget(
-              title: 'Profile',
-              icon: Icons.favorite_rounded,
-              bottomMenuItem: BottomMenuItem.PROFILE,
-            ),
-          ],
+        bottomNavigationBar: BottomAppBar(
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              BottomMenuWidget(
+                title: 'Latest',
+                bottomMenuItem: BottomMenuItem.HOME,
+              ),
+              BottomMenuWidget(
+                title: 'Chat',
+                bottomMenuItem: BottomMenuItem.CHAT,
+              ),
+              AddMenuWidget(),
+              BottomMenuWidget(
+                title: 'Saved',
+                bottomMenuItem: BottomMenuItem.SAVED,
+              ),
+              BottomMenuWidget(
+                title: 'Account',
+                bottomMenuItem: BottomMenuItem.PROFILE,
+              ),
+            ],
+          ),
         ),
       ),
     );

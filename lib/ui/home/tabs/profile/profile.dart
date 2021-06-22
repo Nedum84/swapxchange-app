@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:swapxchange/controllers/bottom_menu_controller.dart';
 import 'package:swapxchange/enum/bottom_menu_item.dart';
-import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/faqs/Faqs.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/feedback/give_feedback.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/myproducts/myproducts.dart';
@@ -14,6 +13,7 @@ import 'package:swapxchange/ui/home/tabs/profile/sections/wallet/how_to_get_coin
 import 'package:swapxchange/ui/home/tabs/profile/widgets/get_coin_widget.dart';
 import 'package:swapxchange/ui/home/tabs/profile/widgets/profile_list_item.dart';
 import 'package:swapxchange/ui/home/tabs/profile/widgets/user_details_widget.dart';
+import 'package:swapxchange/ui/widgets/dashboard_custom_appbar.dart';
 import 'package:swapxchange/utils/constants.dart';
 
 class Profile extends StatelessWidget {

@@ -16,7 +16,7 @@ class ProductController extends GetxController {
 
   @override
   void onInit() {
-    fetchProducts();
+    // fetchProducts();
     super.onInit();
   }
 
@@ -50,11 +50,12 @@ class ProductController extends GetxController {
     );
   }
 
-  void fetchAll() async {
+  void fetchAll({bool reset = false}) async {
     isLoading(true);
-    offset = productList.value.length;
+    offset = reset ? 0 : productList.length;
     var items = await RepoProduct.findAll(offset: offset, limit: limit);
-    if (items!.length != 0) {
+    if (items != null) {
+      if (reset) productList.clear(); //Reset the list for hot reload
       productList.addAll(items);
       update();
     }
@@ -63,9 +64,8 @@ class ProductController extends GetxController {
 
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value) {
-        if (controller!.position.extentAfter < 200) {
-          print("Frtching.......");
+      if (!isLoading.value && productList.length > 0) {
+        if (controller!.position.extentAfter < 500) {
           fetchAll();
         }
       }

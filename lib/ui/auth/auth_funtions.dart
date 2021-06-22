@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/controllers/my_product_controller.dart';
+import 'package:swapxchange/controllers/product_controller.dart';
+import 'package:swapxchange/controllers/saved_product_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
@@ -24,12 +27,15 @@ class AuthUtils {
       //-->Save tokens
       UserPrefs.setTokens(tokens: tokens);
       if (appUser.name!.isEmpty) {
-        Get.to(() => EnterName(), transition: Transition.leftToRight);
+        Get.to(() => EnterName());
       } else if (appUser.address!.isEmpty) {
-        Get.to(() => GrantPermission(), transition: Transition.leftToRight);
+        Get.to(() => GrantPermission());
       } else {
-        Get.to(() => Dashboard(), transition: Transition.leftToRight); //remove later...
-        // Get.offAll(() => Dashboard(), transition: Transition.leftToRight);
+        ProductController.to.fetchAll(reset: true);
+        MyProductController.to.fetchAll(reset: true);
+        SavedProductController.to.fetchAll(reset: true);
+
+        Get.offAll(() => Dashboard());
       }
     }
   }

@@ -10,7 +10,7 @@ import 'package:swapxchange/repository/repo_category.dart';
 import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/login.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final u = _authRepo.getCurrentUser();
     if (u == null) {
-      Get.offAll(() => Login(), transition: Transition.leftToRightWithFade);
+      Get.offAll(() => Login());
     } else {
       authenticateUser(u);
     }

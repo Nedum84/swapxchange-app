@@ -71,13 +71,25 @@ class RepoChats {
     });
   }
 
-  //Get user unread messages
+  //Get user unread messages with another user
   static Stream<QuerySnapshot> getUnreadMessages({
     required int secondUserId,
     required int myId,
   }) =>
       _messageCollection
           .where(FirebaseCollection.SENDER_FIELD, isEqualTo: secondUserId)
+          .where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: myId)
+          .where(
+            FirebaseCollection.IS_READ,
+            isEqualTo: false,
+          )
+          .snapshots();
+
+  //Get All user unread messages
+  static Stream<QuerySnapshot> getAllUnreadMessages({
+    required int myId,
+  }) =>
+      _messageCollection
           .where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: myId)
           .where(
             FirebaseCollection.IS_READ,

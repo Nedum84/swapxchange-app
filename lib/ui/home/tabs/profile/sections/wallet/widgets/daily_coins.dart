@@ -4,7 +4,7 @@ import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/repo_coins.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';

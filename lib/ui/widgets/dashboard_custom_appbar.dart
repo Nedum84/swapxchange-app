@@ -23,7 +23,7 @@ class DashboardCustomAppbar extends StatelessWidget {
           ),
           if (icon != null)
             InkWell(
-              onTap: () => print('cxcxcx----'),
+              onTap: iconClick,
               child: Icon(
                 icon,
                 color: KColors.TEXT_COLOR_DARK,

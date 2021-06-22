@@ -16,7 +16,7 @@ class SavedProductController extends GetxController {
 
   @override
   void onInit() {
-    fetchAll();
+    // fetchAll();
     super.onInit();
   }
 

@@ -27,9 +27,9 @@ class SubCategoryController extends GetxController {
 
   Future<List<SubCategory>> fetchByCategoryId({required int catId}) async {
     List<SubCategory> list = [];
-    var items;
-    items = subCategoryList.value.where((element) => element.categoryId == catId).toList();
-    if (items == null || items.length == 0) {
+    List<SubCategory>? items = [];
+    items = subCategoryList.where((element) => element.categoryId == catId).toList();
+    if (items.length == 0) {
       items = await RepoSubCategory.findByCategoryId(catId: catId);
     }
     if (items!.isNotEmpty) list = items;
@@ -40,7 +40,7 @@ class SubCategoryController extends GetxController {
   Future<SubCategory?> fetchById({required int subCatId}) async {
     SubCategory? subCategory;
     var item;
-    item = subCategoryList.value.firstWhereOrNull((element) => element.subCategoryId == subCatId);
+    item = subCategoryList.firstWhereOrNull((element) => element.subCategoryId == subCatId);
     if (item == null) {
       item = await RepoSubCategory.getSubCategoryById(subCatId: subCatId);
     }

@@ -6,10 +6,10 @@ import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
-import 'package:swapxchange/ui/components/custom_appbar.dart';
-import 'package:swapxchange/ui/components/product_item.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/no_data_found.dart';
+import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 

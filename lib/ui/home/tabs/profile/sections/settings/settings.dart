@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/privacy/privacy.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/change_location.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/editprofile.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/terms.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class Settings extends StatelessWidget {
+  _logOut() {
+    AlertUtils.confirm(
+      'Your products & settings are saved. Proceed to logout?',
+      title: 'Logout!',
+      positiveBtnText: 'YES, LOG ME OUT',
+      okCallBack: () async {
+        AuthRepo().signOut();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +67,6 @@ class Settings extends StatelessWidget {
                   title: 'Edit Profile',
                   onClick: () => Get.to(
                     () => EditProfile(),
-                    transition: Transition.cupertinoDialog,
                   ),
                 ),
                 CustomTile(
@@ -100,6 +112,7 @@ class Settings extends StatelessWidget {
                 Container(
                   color: Colors.white,
                   child: ListTile(
+                    onTap: _logOut,
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),
                     title: Text(
                       'Log out',

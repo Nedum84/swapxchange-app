@@ -28,6 +28,7 @@ class Product {
     this.user,
     this.suggestions,
     this.uploadPrice,
+    this.noOfViews,
   });
 
   final int? productId;
@@ -52,6 +53,7 @@ class Product {
   final Poster? user;
   final List<Category>? suggestions;
   final double? uploadPrice;
+  final int? noOfViews;
 
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
@@ -87,6 +89,7 @@ class Product {
         suggestions: List<Category>.from(jsonDecode(json["suggestions"]).map((x) => Category.fromMap(x))),
         user: Poster.fromMap(jsonDecode(json["user"])),
         uploadPrice: double.parse(json["upload_price"]),
+        noOfViews: int.tryParse(json["no_of_views"]) ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -112,6 +115,7 @@ class Product {
         "suggestions": List<dynamic>.from(suggestions!.map((x) => x.toMap())),
         "user": user?.toMap(),
         "upload_price": uploadPrice,
+        "no_of_views": noOfViews,
       };
 
   static ProductStatus statusToEnum(int status) {

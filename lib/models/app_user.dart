@@ -17,6 +17,7 @@ class AppUser {
     this.state,
     this.profilePhoto,
     this.deviceToken,
+    this.userLevel,
     this.onlineStatus,
     this.userAppVersion,
     this.lastLogin,
@@ -35,6 +36,7 @@ class AppUser {
   String? state;
   String? profilePhoto;
   String? deviceToken;
+  int? userLevel;
   final String? onlineStatus;
   final String? userAppVersion;
   final DateTime? lastLogin;
@@ -57,6 +59,7 @@ class AppUser {
         state: json["state"],
         profilePhoto: json["profile_photo"],
         deviceToken: json["device_token"],
+        userLevel: int.tryParse(json["user_level"]) ?? 1,
         onlineStatus: json["online_status"],
         userAppVersion: json["user_app_version"],
         lastLogin: DateTime.parse(json["last_login"]),
@@ -76,6 +79,7 @@ class AppUser {
         "state": state,
         "profile_photo": profilePhoto,
         "device_token": deviceToken,
+        "user_level": userLevel,
         "online_status": onlineStatus,
         "user_app_version": userAppVersion,
         "last_login": lastLogin?.toIso8601String(),
