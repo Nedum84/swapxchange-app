@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
@@ -7,9 +8,18 @@ import 'package:swapxchange/ui/splash/splashscreen.dart';
 
 void main() async {
   //initialize the binding
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   //initialize the binding
   await Firebase.initializeApp();
+
+  //For header start up color
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      // customise here
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(MyApp());
 }
 

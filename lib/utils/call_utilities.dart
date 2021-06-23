@@ -2,7 +2,9 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/call.dart';
+import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/repository/call_methods.dart';
+import 'package:swapxchange/repository/notification_repo.dart';
 import 'package:swapxchange/ui/home/callscreens/call_screen.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/helpers.dart';
@@ -38,9 +40,23 @@ class CallUtils {
     call.hasDialled = true;
 
     if (callMade) {
-      // enter log
-      // LogRepository.addLogs(log);
-
+      //Send PUSH Notification
+      if (to.notification!.chat != 0) {
+        final notRepo = NotificationRepo();
+        final model = NotificationModel(
+          data: NotificationData(
+            type: NotificationType.CALL,
+            id: to.userId.toString(),
+            idSecondary: call.callUid.toString(),
+            payload: call.toMap(call).toString(),
+          ),
+          notification: PushNotification(
+            title: ' ${call.useVideo! ? "Video" : "Voice"} Call from ${from.name} ',
+            body: "Click to answer before it ends ",
+          ),
+        );
+        notRepo.sendNotification(tokens: [to.deviceToken!], model: model);
+      }
       Get.to(() => CallScreen(call: call, clientRole: ClientRole.Broadcaster));
     }
   }

@@ -15,12 +15,13 @@ import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/auth/onboarding/grant_permission.dart';
 import 'package:swapxchange/ui/auth/phoneauth/enter_name.dart';
 import 'package:swapxchange/ui/home/tabs/dashboard/dashboard.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/user_prefs.dart';
 
-class AuthUtils {
+class AuthFunctions {
   static AuthRepo _authRepo = AuthRepo();
 
-  static void redirect(Tokens? tokens, AppUser? appUser) {
+  static void redirect(Tokens? tokens, AppUser? appUser) async {
     if (tokens != null) {
       //--> Set up user on the controller
       UserController.to.setUser(appUser!);
@@ -31,19 +32,6 @@ class AuthUtils {
       } else if (appUser.address!.isEmpty) {
         Get.to(() => GrantPermission());
       } else {
-        ProductController.to.fetchAll(reset: true);
-        MyProductController.to.fetchAll(reset: true);
-        SavedProductController.to.fetchAll(reset: true);
-
-        Get.offAll(() => Dashboard());
-      }
-    }
-  }
-
-  static void authenticateUser({required User user, required Function onDone, required Function(String error) onError}) async {
-    _authRepo.addDataToDb(
-      firebaseUser: user,
-      onSuccess: (appUser, tokens) async {
         //Fetching defaults state data
         final isCatEmpty = CategoryController.to.categoryList.isEmpty;
         final isSubCatEmpty = SubCategoryController.to.subCategoryList.isEmpty;
@@ -55,16 +43,34 @@ class AuthUtils {
           if (cats != null && subCats != null && coinsBalance != null) {
             CategoryController.to.setItems(items: cats);
             SubCategoryController.to.setItems(items: subCats);
-            //Done & proceed
-            onDone();
-            AuthUtils.redirect(tokens, appUser);
+
+            gotoDashboard();
           } else {
-            onError("Network error");
+            AlertUtils.toast("Network error");
           }
         } else {
-          onDone();
-          AuthUtils.redirect(tokens, appUser);
+          gotoDashboard();
         }
+      }
+    }
+  }
+
+  static gotoDashboard() {
+    //Done & proceed
+    ProductController.to.fetchAll(reset: true);
+    MyProductController.to.fetchAll(reset: true);
+    SavedProductController.to.fetchAll(reset: true);
+
+    Get.offAll(() => Dashboard());
+  }
+
+  static void authenticateUser({required User user, required Function onDone, required Function(String error) onError}) async {
+    _authRepo.addDataToDb(
+      firebaseUser: user,
+      onSuccess: (appUser, tokens) async {
+        //Done & proceed
+        onDone();
+        AuthFunctions.redirect(tokens, appUser);
       },
       onError: (er) {
         onError("$er");

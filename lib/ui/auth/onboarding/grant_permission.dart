@@ -4,12 +4,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart' as pHandler;
 import 'package:swapxchange/controllers/category_controller.dart';
-import 'package:swapxchange/controllers/product_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/repo_category.dart';
 import 'package:swapxchange/repository/repo_sub_category.dart';
-import 'package:swapxchange/ui/home/tabs/dashboard/dashboard.dart';
+import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
@@ -94,11 +93,11 @@ class _GrantPermissionState extends State<GrantPermission> {
     final subCats = await RepoSubCategory.findAll();
 
     if (cats != null && subCats != null) {
-      ProductController.to.fetchAll(reset: true);
       CategoryController.to.setItems(items: cats);
       SubCategoryController.to.setItems(items: subCats);
-      //Done & proceed
-      Get.to(() => Dashboard());
+
+      //Done, fetch default persistent data & proceed
+      AuthFunctions.gotoDashboard();
     } else {
       setState(() => _isLoading = false);
       AlertUtils.toast("Network error");

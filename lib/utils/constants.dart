@@ -18,6 +18,10 @@ class Constants {
   static final ANDROID_MAP_KEY = 'AIzaSyB2SmVI9__vmGe8LQmVhKtXgYwT88rRepQ';
   static final IOS_MAP_KEY = 'AIzaSyCDm9RxFcAe-2hYYFBBb9yUJEz374Xr6TA';
 
+  //FCM KEYS
+  static final ANDROID_FCM_KEY = 'AAAA38NPyg8:APA91bF8N0T0MY5PxAeedtonV0nKABQBbqtax3SG9u-pTJew0UtCzRfdIWScqAj4x_ZoMbXMzBmxlkspiH5o8D77P40wR-alLTHmkcV4Z5VF4x7g09mGj1Teqxjne8-ojYBf6WPN4TJJ';
+  static final IOS_FCM_KEY = 'AAAA38NPyg8:APA91bE51hKPId59Ouooi1Dx-GsimQhncSgJi3iKmeiWutDzZ6V2knaAifRXEI0MxjBvmA-b03Cg0DmyuTRk-PhtbBM6WDnzlptymPzL8ruFtsV76S0BftgC6YuKhK0gQkOdHb_zGwLU';
+
   static final SHARE_CONTENT = "Shopping/Swapping made easy with SwapXchange.shop. Get it on "
       "https://play.google.com/store/apps/details?id=com.app.swapxchange or visit https://swapxchange.shop";
 

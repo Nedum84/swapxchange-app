@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 
 class MapView extends StatelessWidget {
   final Product product;
@@ -15,6 +16,7 @@ class MapView extends StatelessWidget {
       markerId: MarkerId('${product.productId}'),
       position: LatLng(double.parse(product.userAddressLat!), double.parse(product.userAddressLong!)),
       icon: BitmapDescriptor.defaultMarker,
+      onTap: () => AlertUtils.toast('${product.userAddress}'),
     );
 
     markers.add(startMarker);

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/repository/dio/error_catch.dart';
@@ -148,6 +151,32 @@ class RepoProduct extends ApiClient {
         var items = response.data["data"]["products"];
 
         var list = (items as List).map((data) => Product.fromMap(data)).toList();
+        return list;
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    return null;
+  }
+
+  //--> Find Nearby Users
+  static Future<List<AppUser>?> findNearByUsers({required lat, required long}) async {
+    try {
+      Response response = await ApiClient.request().get('/products/nearbyuserss/$lat/$long');
+
+      if (response.statusCode == 200) {
+        var items = response.data["data"]["users"];
+        var list = (items as List)
+            .map(
+              (json) => AppUser(
+                userId: int.parse(json["user_id"]),
+                name: json["name"],
+                deviceToken: json["device_token"],
+                notification: NotificationSetting.fromMap(jsonDecode(json["notification"])),
+              ),
+            )
+            .toList();
         return list;
       }
     } on Exception catch (e) {

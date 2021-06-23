@@ -9,6 +9,7 @@ import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/home/callscreens/pickup_layout.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list.dart';
+import 'package:swapxchange/ui/home/tabs/dashboard/register_notification.dart';
 import 'package:swapxchange/ui/home/tabs/home/home.dart';
 import 'package:swapxchange/ui/home/tabs/profile/profile.dart';
 import 'package:swapxchange/ui/home/tabs/saved/saved_product.dart';
@@ -28,6 +29,8 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _init();
+    //Register notification
+    registerNotification();
   }
 
   _init() {

@@ -59,12 +59,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _fetchData(User user) async {
     final cats = await RepoCategory.findAll();
+    RepoSubCategory.findByCategoryId(catId: 3);
     final subCats = await RepoSubCategory.findAll();
     final coinsBalance = await CoinsController.to.getBalance();
     if (cats != null && subCats != null && coinsBalance != null) {
       CategoryController.to.setItems(items: cats);
       SubCategoryController.to.setItems(items: subCats);
-      AuthUtils.authenticateUser(
+      AuthFunctions.authenticateUser(
         user: user,
         onDone: () => setState(() => isError = false),
         onError: (er) {

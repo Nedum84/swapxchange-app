@@ -6,8 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
+import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/repository/notification_repo.dart';
 import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
@@ -260,6 +262,30 @@ class ChatDetailState extends State<ChatDetail> {
     message.senderId = UserController.to.user!.userId;
     message.timestamp = Timestamp.now().microsecondsSinceEpoch;
     RepoChats.addMessageToDb(message);
+    sendNotification(message);
+  }
+
+  //Send PUSH Notification
+  static sendNotification(ChatMessage message) async {
+    AppUser currentUser = UserController.to.user!;
+    AppUser? receiver = await UserController.to.getUser(userId: message.receiverId);
+    if (receiver != null) {
+      if (receiver.notification!.chat != 1) return;
+      final notRepo = NotificationRepo();
+      final model = NotificationModel(
+        data: NotificationData(
+          type: NotificationType.CHAT,
+          id: message.senderId.toString(),
+          idSecondary: message.receiverId.toString(),
+          payload: message.toJson(),
+        ),
+        notification: PushNotification(
+          title: 'Message from ${currentUser.name}',
+          body: message.message,
+        ),
+      );
+      notRepo.sendNotification(tokens: [receiver.deviceToken!], model: model);
+    }
   }
 
   void pickImage({required ImageSource source}) async {

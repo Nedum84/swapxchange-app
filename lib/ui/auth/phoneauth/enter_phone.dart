@@ -69,7 +69,7 @@ class _EnterPhoneState extends State<EnterPhone> {
   }
 
   _authenticate(User user) {
-    AuthUtils.authenticateUser(
+    AuthFunctions.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);

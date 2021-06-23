@@ -99,7 +99,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   }
 
   _authenticate(User user) {
-    AuthUtils.authenticateUser(
+    AuthFunctions.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);

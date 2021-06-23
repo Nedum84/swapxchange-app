@@ -43,13 +43,22 @@ class UserController extends GetxController {
       }
     }
 
+    // user = await AuthRepo.findByUserId(userId: userId);
     if (user != null) {
       return user;
     }
   }
 
   void updateUsers(AppUser user) {
-    users.add(user);
-    // update();
+    AppUser? checkUser = users.firstWhereOrNull((element) => element.userId == user.userId);
+    if (checkUser != null) {
+      int index = users.indexWhere((element) => element.userId == user.userId);
+      users.removeAt(index);
+      users.insert(index, user);
+    } else {
+      users.add(user);
+      // update();
+
+    }
   }
 }

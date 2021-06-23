@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:swapxchange/utils/helpers.dart';
 
 class RepoStorage {

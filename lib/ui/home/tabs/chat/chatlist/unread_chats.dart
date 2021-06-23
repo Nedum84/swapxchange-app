@@ -43,7 +43,7 @@ class UnreadChatsDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 0,
+      top: 0,
       right: 2,
       child: StreamBuilder<QuerySnapshot>(
           stream: RepoChats.getAllUnreadMessages(myId: myId),

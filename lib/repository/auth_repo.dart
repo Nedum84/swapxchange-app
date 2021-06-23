@@ -185,7 +185,7 @@ class AuthRepo {
     //Register/Update on the server
     await ApiClient.request().post('/users', data: appUser.toMap()).then((res) {
       try {
-        if (res != null) {
+        if (res.data != null) {
           appUser = AppUser.fromMap(res.data["data"]["user"]);
           tokens = Tokens.fromMap(res.data["data"]["tokens"]);
           if (tokens != null) UserPrefs.setTokens(tokens: tokens!);
@@ -286,7 +286,8 @@ class AuthRepo {
 
   void setOnlineStatus({required String uid, required OnlineStatus userState}) {
     _userCollection.doc(uid).update({
-      "state": EnumToString.convertToString(userState).toLowerCase(),
+      "online_status": EnumToString.convertToString(userState).toLowerCase(),
+      "last_login": DateTime.now(),
     });
   }
 

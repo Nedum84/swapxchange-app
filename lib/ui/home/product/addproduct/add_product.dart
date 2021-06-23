@@ -4,9 +4,13 @@ import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/my_product_controller.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/enum/product_state.dart';
+import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/coins_model.dart';
+import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/repository/notification_repo.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_image.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_category.dart';
@@ -104,7 +108,7 @@ class AddProduct extends GetView<AddProductController> {
             AlertUtils.toast('Successfully published your product');
             //redirect after the last Image upload & reset controller to defaults
             controller.reset();
-            Get.off(() => ProductDetail(product: newProduct!));
+            sendNotification(newProduct!);
           }
         }
       }).catchError((error) {
@@ -112,6 +116,41 @@ class AddProduct extends GetView<AddProductController> {
         controller.setLoading(false);
       });
     });
+  }
+
+  //Send PUSH Notification
+  static sendNotification(Product product) async {
+    final nearByUsers = await RepoProduct.findNearByUsers(lat: product.userAddressLat, long: product.userAddressLong);
+    if (nearByUsers != null && nearByUsers.length > 0) {
+      AppUser currentUser = UserController.to.user!;
+      List<AppUser> receivers = [];
+      nearByUsers.forEach((element) {
+        if (element.userId != currentUser.userId) {
+          if (element.notification!.product == 1 && element.deviceToken!.isNotEmpty) {
+            receivers.add(element);
+          }
+        }
+      });
+      if (receivers.length != 0) {
+        final notRepo = NotificationRepo();
+        final model = NotificationModel(
+          data: NotificationData(
+            type: NotificationType.PRODUCT,
+            id: product.productId.toString(),
+            idSecondary: product.orderId,
+            payload: product.toJson(),
+          ),
+          notification: PushNotification(
+            title: 'Nearby product available for swap',
+            body: "${product.productName} • ${product.productDescription} ",
+          ),
+        );
+        final tokens = receivers.map((e) => e.deviceToken!).toList();
+        notRepo.sendNotification(tokens: tokens, model: model);
+        NotificationRepo.saveNotifications(model: model, users: receivers);
+      }
+      Get.off(() => ProductDetail(product: product));
+    }
   }
 
   Widget _suggestedList() {

@@ -5,6 +5,7 @@ import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/privacy/privacy.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/change_location.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/editprofile.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/modals/notification_modal.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/settings/terms.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
@@ -12,6 +13,7 @@ import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class Settings extends StatelessWidget {
+  var top = 0.0;
   _logOut() {
     AlertUtils.confirm(
       'Your products & settings are saved. Proceed to logout?',
@@ -27,7 +29,7 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.white,
-      backgroundColor: KColors.WHITE_GREY2,
+      backgroundColor: KColors.WHITE_GREY,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -44,19 +46,23 @@ class Settings extends StatelessWidget {
             ),
             flexibleSpace: GetBuilder<UserController>(
               builder: (userController) {
-                return FlexibleSpaceBar(
-                  centerTitle: false,
-                  title: Text(
-                    "User Settings",
-                    style: H1Style,
-                  ),
-                  background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
-                      ? Container()
-                      : CachedImage(
-                          userController.user!.profilePhoto,
-                          fit: BoxFit.cover,
-                        ),
-                );
+                return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+                  top = constraints.biggest.height;
+                  return FlexibleSpaceBar(
+                    collapseMode: CollapseMode.pin,
+                    centerTitle: false,
+                    title: Text(
+                      "User Settings",
+                      style: H1Style.copyWith(color: top <= 120 ? KColors.TEXT_COLOR_DARK : Colors.white70),
+                    ),
+                    background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
+                        ? Container()
+                        : CachedImage(
+                            userController.user!.profilePhoto,
+                            fit: BoxFit.cover,
+                          ),
+                  );
+                });
               },
             ),
           ),
@@ -76,11 +82,31 @@ class Settings extends StatelessWidget {
                   ),
                 ),
                 CustomTile(
-                  title: 'Blocked Users',
-                  onClick: () => null,
+                  title: 'Notification',
+                  onClick: () => Get.bottomSheet(NotificationModal()),
+                  trailing: Container(
+                    width: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GetBuilder<UserController>(builder: (userController) {
+                          final uN = userController.user!.notification!;
+                          final isOn = uN.general == 1 || uN.chat == 1 || uN.product == 1 || uN.call == 1;
+                          return Text(
+                            isOn ? 'On' : 'Off',
+                            style: StyleNormal.copyWith(color: isOn ? KColors.PRIMARY : KColors.RED),
+                          );
+                        }),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: KColors.TEXT_COLOR.withOpacity(.3),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
                 CustomTile(
-                  title: 'Notification',
+                  title: 'Base Currency',
                   onClick: () => null,
                   trailing: Container(
                     width: 80,
@@ -88,7 +114,7 @@ class Settings extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'On',
+                          '${UserController.to.user!.baseCurrency}',
                           style: StyleNormal.copyWith(color: KColors.PRIMARY),
                         ),
                         Icon(

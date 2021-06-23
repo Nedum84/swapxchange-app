@@ -14,7 +14,7 @@ import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/address_change_methods.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
-import 'package:swapxchange/ui/home/tabs/profile/sections/settings/address_modal_info.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/modals/address_modal_info.dart';
 import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -272,53 +272,51 @@ class _ChangeLocationState extends State<ChangeLocation> {
           top: 115,
           right: 0,
           left: 0,
-          child: Container(
-            width: 400,
-            height: 400,
-            margin: EdgeInsets.only(top: 0, right: 20, left: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(0)),
-            ),
-            child: FutureBuilder<List<Suggestion>>(
-                future: AddressChangeMethods().fetchSuggestions(address: searchAddress),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: LoadingProgressMultiColor(showBg: false));
-                  }
-                  if (!snapshot.hasData || searchAddress.isEmpty || !showSuggestion || snapshot.data!.length == 0) {
-                    return Container();
-                  }
-                  if (snapshot.data!.length == 0 && searchAddress.isNotEmpty) {
-                    Center(
-                      child: Text('No address found', style: StyleNormal),
-                    );
-                  }
-
-                  return Container(
-                    color: Colors.white70,
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      itemCount: snapshot.data!.length,
-                      physics: BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            color: KColors.TEXT_COLOR,
-                            size: 16,
-                          ),
-                          title: Text(
-                            snapshot.data![index].description,
-                            style: StyleNormal,
-                          ),
-                          onTap: () => _findLagLongFromAddress(snapshot.data![index]),
-                        );
-                      },
-                    ),
+          child: FutureBuilder<List<Suggestion>>(
+              future: AddressChangeMethods().fetchSuggestions(address: searchAddress),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: LoadingProgressMultiColor(showBg: false));
+                }
+                if (!snapshot.hasData || searchAddress.isEmpty || !showSuggestion || snapshot.data!.length == 0) {
+                  return Container();
+                }
+                if (snapshot.data!.length == 0 && searchAddress.isNotEmpty) {
+                  Center(
+                    child: Text('No address found', style: StyleNormal),
                   );
-                }),
-          ),
+                }
+
+                return Container(
+                  width: 400,
+                  height: 400,
+                  margin: EdgeInsets.only(top: 0, right: 20, left: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white70,
+                    borderRadius: BorderRadius.all(Radius.circular(0)),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    itemCount: snapshot.data!.length,
+                    physics: BouncingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: KColors.TEXT_COLOR,
+                          size: 16,
+                        ),
+                        title: Text(
+                          snapshot.data![index].description,
+                          style: StyleNormal,
+                        ),
+                        onTap: () => _findLagLongFromAddress(snapshot.data![index]),
+                      );
+                    },
+                  ),
+                );
+              }),
         ),
         Positioned(
           bottom: 30,
@@ -349,7 +347,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
     Marker startMarker = Marker(
       markerId: MarkerId('${user.userId}'),
       position: LatLng(double.parse(updatedUser.addressLat!), double.parse(updatedUser.addressLong!)),
-      onTap: _showBottomSheet,
+      onTap: () => _showBottomSheet(),
       icon: BitmapDescriptor.defaultMarker,
     );
 

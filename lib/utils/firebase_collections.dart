@@ -19,4 +19,7 @@ class FirebaseCollection {
   static final String CALL_STATUS_DIALLED = "dialled";
   static final String CALL_STATUS_RECEIVED = "received";
   static final String CALL_STATUS_MISSED = "missed";
+
+  //Notification
+  static final NOTIFICATION_COLLECTION = 'notification';
 }
