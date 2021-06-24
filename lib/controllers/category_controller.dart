@@ -38,6 +38,10 @@ class CategoryController extends GetxController {
     return category;
   }
 
+  List<Category> hotDeals() {
+    return categoryList.sortedDescBy((it) => it.noOfProducts!).toList();
+  }
+
   void sort() {
     //---> ASC
     categoryList.value.sort((a, b) => a.categoryId!.compareTo(b.categoryId!));

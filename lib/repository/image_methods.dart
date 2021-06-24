@@ -18,7 +18,7 @@ class ImageMethods {
       if (response.statusCode == 201 || response.statusCode == 200) {
         return response.data["data"]["image_path"];
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
   }

@@ -22,8 +22,6 @@ class ChatList extends StatelessWidget {
           children: [
             DashboardCustomAppbar(
               title: 'Chats',
-              icon: Icons.phone,
-              iconClick: () => null,
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(

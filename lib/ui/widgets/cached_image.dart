@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:swapxchange/models/tokens.dart';
@@ -106,19 +108,24 @@ class CachedImage extends StatelessWidget {
                 final token = tokens.access?.token;
                 return imageUrl == null || imageUrl!.isEmpty
                     ? _altWidget()
-                    : CachedNetworkImage(
-                        imageUrl: imageUrl!,
-                        fit: fit,
-                        httpHeaders: {'Authorization': "Bearer $token"},
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) {
-                          return Image.network(
-                            imageUrl ?? "",
+                    : !imageUrl!.contains('http') //For file images, use file image
+                        ? Image.file(
+                            File(imageUrl!),
                             fit: fit,
-                            headers: {'Authorization': "Bearer $token"},
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: imageUrl!,
+                            fit: fit,
+                            httpHeaders: {'Authorization': "Bearer $token"},
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) {
+                              return Image.network(
+                                imageUrl ?? "",
+                                fit: fit,
+                                headers: {'Authorization': "Bearer $token"},
+                              );
+                            },
                           );
-                        },
-                      );
               },
             ),
           ),

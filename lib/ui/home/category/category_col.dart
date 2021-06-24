@@ -23,6 +23,7 @@ class CategoryCol extends StatelessWidget {
             return Container(
               margin: EdgeInsets.only(bottom: 8),
               child: CategoryBtn(
+                imagePath: current.categoryIcon ?? "",
                 textColor: txtColor,
                 showShadow: selected.categoryId != current.categoryId ? false : true,
                 title: current.categoryName!,

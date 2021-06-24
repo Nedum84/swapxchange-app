@@ -20,7 +20,6 @@ class RepoProductSearch extends ApiClient {
   static Future<List<Product>?> findBySearch({required String query, required String filters, limit, offset}) async {
     Response response = await ApiClient.request().get('/products/search/$query/$filters/$offset/$limit');
 
-    print(response.data);
     if (response.statusCode == 200) {
       var items = response.data["data"]["products"];
 

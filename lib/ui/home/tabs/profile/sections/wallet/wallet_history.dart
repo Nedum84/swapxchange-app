@@ -3,7 +3,9 @@ import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/repo_coins.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -12,15 +14,10 @@ class WalletHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black26.withOpacity(.2),
-        iconTheme: IconThemeData(
-          color: KColors.TEXT_COLOR_DARK, //change your color here
-        ),
-        title: Text(
-          'History',
-          style: H1Style,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          title: 'History',
         ),
       ),
       body: SubPage(),

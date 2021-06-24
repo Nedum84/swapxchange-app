@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class GiveFeedback extends StatelessWidget {
@@ -10,20 +11,10 @@ class GiveFeedback extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: KColors.WHITE_GREY,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: KColors.TEXT_COLOR_DARK,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        centerTitle: false,
-        title: Text(
-          'Give Feedback',
-          style: H1Style,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          title: 'Give Feedback',
         ),
       ),
       body: Container(
@@ -39,14 +30,14 @@ class GiveFeedback extends StatelessWidget {
               child: TextField(
                 controller: messageController,
                 keyboardType: TextInputType.multiline,
-                maxLines: 6,
+                maxLines: 8,
                 style: TextStyle(
                   color: KColors.TEXT_COLOR_DARK,
                   fontWeight: FontWeight.w600,
                 ),
                 cursorColor: Colors.blueGrey,
                 decoration: InputDecoration(
-                  hintText: 'Enter your name',
+                  hintText: 'Enter your feedback...',
                   hintStyle: StyleNormal.copyWith(
                     color: KColors.TEXT_COLOR,
                     fontWeight: FontWeight.w500,

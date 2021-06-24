@@ -4,12 +4,13 @@ import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/ui/home/category/browse_category.dart';
 import 'package:swapxchange/ui/home/category/view_single_category.dart';
+import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class TopDeals extends StatelessWidget {
-  final catController = CategoryController.to;
+  final hotCats = CategoryController.to.hotDeals();
 
   _goto(Category category) {
     Get.to(() => ViewSingleCategory(category: category));
@@ -31,20 +32,23 @@ class TopDeals extends StatelessWidget {
           children: [
             Expanded(
               child: CategoryBtn(
-                title: catController.categoryList[0].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[0]),
+                imagePath: hotCats[0].categoryIcon ?? "",
+                title: hotCats[0].categoryName ?? "",
+                onClick: () => _goto(hotCats[0]),
               ),
             ),
             Expanded(
               child: CategoryBtn(
-                title: catController.categoryList[1].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[1]),
+                imagePath: hotCats[1].categoryIcon ?? "",
+                title: hotCats[1].categoryName ?? "",
+                onClick: () => _goto(hotCats[1]),
               ),
             ),
             Expanded(
               child: CategoryBtn(
-                title: catController.categoryList[2].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[2]),
+                imagePath: hotCats[2].categoryIcon ?? "",
+                title: hotCats[2].categoryName ?? "",
+                onClick: () => _goto(hotCats[2]),
               ),
             ),
             Expanded(child: SeeAllBtn(title: 'See All')),
@@ -62,6 +66,7 @@ class CategoryBtn extends StatelessWidget {
   final Function()? onClick;
   final double? size;
   final double? textSize;
+  final String imagePath;
 
   const CategoryBtn({
     Key? key,
@@ -71,6 +76,7 @@ class CategoryBtn extends StatelessWidget {
     this.onClick,
     this.size,
     this.textSize,
+    required this.imagePath,
   }) : super(key: key);
 
   @override
@@ -92,8 +98,8 @@ class CategoryBtn extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: Image.asset(
-                'images/logo.jpg',
+              child: CachedImage(
+                imagePath,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,

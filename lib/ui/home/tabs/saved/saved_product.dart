@@ -17,65 +17,60 @@ class SavedProduct extends StatelessWidget {
     return GetBuilder<SavedProductController>(builder: (savedProductController) {
       final products = savedProductController.productList;
 
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Container(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              return savedProductController.fetchAll(reset: true);
-            },
-            color: KColors.PRIMARY,
-            strokeWidth: 3,
-            child: Column(
-              children: [
-                DashboardCustomAppbar(
-                  title: 'Saved Products',
-                  icon: Icons.post_add,
-                  iconClick: () => Get.to(() => AddProduct()),
-                ),
-                Expanded(
-                  child: (products.length != 0)
-                      ? NotificationListener(
-                          onNotification: savedProductController.handleScrollNotification,
-                          child: GridView.builder(
-                            controller: savedProductController.controller,
-                            padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
-                            itemCount: products.length,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 3 / 4,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 0,
-                            ),
-                            itemBuilder: (context, index) {
-                              return ProductItem(
-                                product: products[index],
-                              );
-                            },
-                          ),
-                        )
-                      : Container(
-                          child: Center(
-                            child: (savedProductController.isLoading.value)
-                                ? Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : LayoutBuilder(
-                                    builder: (context, constraints) => SingleChildScrollView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      child: SizedBox(
-                                        height: constraints.maxHeight,
-                                        child: NoProductWidget(title: "You have not saved any product."),
-                                      ),
-                                    ),
-                                  ),
-                          ),
-                        ),
-                ),
-              ],
+      return RefreshIndicator(
+        onRefresh: () async {
+          return savedProductController.fetchAll(reset: true);
+        },
+        color: KColors.PRIMARY,
+        strokeWidth: 3,
+        child: Column(
+          children: [
+            DashboardCustomAppbar(
+              title: 'Saved Products',
+              icon: Icons.post_add,
+              iconClick: () => Get.to(() => AddProduct()),
             ),
-          ),
+            Expanded(
+              child: (products.length != 0)
+                  ? NotificationListener(
+                      onNotification: savedProductController.handleScrollNotification,
+                      child: GridView.builder(
+                        controller: savedProductController.controller,
+                        padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
+                        itemCount: products.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3 / 4,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 0,
+                        ),
+                        itemBuilder: (context, index) {
+                          return ProductItem(
+                            product: products[index],
+                          );
+                        },
+                      ),
+                    )
+                  : Container(
+                      child: Center(
+                        child: (savedProductController.isLoading.value)
+                            ? Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(),
+                              )
+                            : LayoutBuilder(
+                                builder: (context, constraints) => SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  child: SizedBox(
+                                    height: constraints.maxHeight,
+                                    child: NoProductWidget(title: "You have not saved any product."),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+            ),
+          ],
         ),
       );
     });

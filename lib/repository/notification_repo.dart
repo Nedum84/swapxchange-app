@@ -13,6 +13,9 @@ class NotificationRepo {
   final String serverToken = Platform.isAndroid ? Constants.ANDROID_FCM_KEY : Constants.IOS_FCM_KEY;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
+  //Create notification collection instance
+  static CollectionReference notificationCollection = FirebaseFirestore.instance.collection(FirebaseCollection.NOTIFICATION_COLLECTION);
+
   Future<NotificationModel?> sendNotification({required List<String> tokens, required NotificationModel model}) async {
     final Completer<NotificationModel?> completer = Completer<NotificationModel>();
 
@@ -79,10 +82,6 @@ class NotificationRepo {
   }
 
   static saveNotifications({required NotificationModel model, required List<AppUser> users}) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    //Create a batch
-    CollectionReference notificationCollection = _firestore.collection(FirebaseCollection.NOTIFICATION_COLLECTION);
-
     //Send to all the users
     users.forEach((element) async {
       final data = {
@@ -95,15 +94,20 @@ class NotificationRepo {
   }
 
   //Get All user unread messages
-  static Stream<QuerySnapshot> getAllUnreadMessages({
-    required int myId,
-  }) {
-    _messageCollection
-        .where(FirebaseCollection.RECEIVER_FIELD, isEqualTo: myId)
-        .where(
-          FirebaseCollection.IS_READ,
-          isEqualTo: false,
-        )
+  static Stream<QuerySnapshot> getMyNotifications({required int myId}) {
+    return notificationCollection
+        .where(FirebaseCollection.USER_ID, isEqualTo: myId)
+        // .where(
+        //   FirebaseCollection.IS_READ,
+        //   isEqualTo: false,
+        // )
         .snapshots();
+  }
+
+  //Mark as read/opened
+  static void markAsRead({required String docId}) async {
+    notificationCollection.doc(docId).update({
+      FirebaseCollection.IS_READ: true,
+    });
   }
 }

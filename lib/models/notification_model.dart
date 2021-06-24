@@ -7,6 +7,8 @@ class NotificationModel {
     this.data,
     this.userId,
     this.dateCreated,
+    this.isRead = false,
+    this.docId,
   });
 
   final String priority;
@@ -14,6 +16,8 @@ class NotificationModel {
   final NotificationData? data;
   final int? userId; // The user this is being sent for
   final DateTime? dateCreated;
+  final bool? isRead;
+  final String? docId;
 
   factory NotificationModel.fromJson(String str) => NotificationModel.fromMap(json.decode(str));
 
@@ -24,7 +28,9 @@ class NotificationModel {
         notification: PushNotification.fromMap(json["notification"]),
         data: NotificationData.fromMap(json["data"]),
         userId: json["user_id"] ?? 0,
-        dateCreated: json["date_created"] ?? DateTime.now(),
+        dateCreated: DateTime.tryParse(json["date_created"].toString()) ?? DateTime.now(),
+        isRead: json["is_read"] ?? false,
+        docId: json["doc_id"] ?? "sxwapxchange",
       );
 
   Map<String, dynamic> toMap() => {
@@ -33,6 +39,8 @@ class NotificationModel {
         "data": data?.toMap(),
         "user_id": userId,
         "date_created": dateCreated,
+        "is_read": isRead,
+        "doc_id": docId,
       };
 }
 

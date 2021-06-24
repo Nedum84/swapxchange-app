@@ -58,6 +58,7 @@ class InterestAndSwapButton extends StatelessWidget {
               itemBuilder: (context, index) {
                 final cat = product.suggestions![index];
                 return CategoryBtn(
+                  imagePath: cat.categoryIcon ?? "",
                   title: '${cat.shortCatName()}',
                   size: 40,
                   textSize: 10,

@@ -5,7 +5,7 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/strings.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-class Privacy extends StatelessWidget {
+class AboutUs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +13,7 @@ class Privacy extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
         child: CustomAppbar(
-          title: 'Privacy Policy',
+          title: 'About Us',
         ),
       ),
       body: ListView.separated(

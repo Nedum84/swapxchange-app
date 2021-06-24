@@ -25,8 +25,12 @@ class RepoStorage {
   }
 
   Future<bool> delete(String filePath) async {
-    final ref = firestore.refFromURL(filePath);
-    return await ref.delete().then((value) => true).catchError((e) => false);
+    try {
+      final ref = firestore.refFromURL(filePath);
+      return await ref.delete().then((value) => true).catchError((e) => false);
+    } catch (e) {
+      return true;
+    }
   }
 
   Future<bool> updateFile(String filePath, File file) async {
@@ -43,11 +47,12 @@ class RepoStorage {
         url,
         onReceiveProgress: showDownloadProgress,
         options: Options(
-            responseType: ResponseType.bytes,
-            followRedirects: true,
-            validateStatus: (status) {
-              return status! < 500;
-            }),
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),
       );
       print(response.headers);
       File file = File(savePath);

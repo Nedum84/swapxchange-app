@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/strings.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -9,20 +10,10 @@ class TermsAndConditions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: KColors.WHITE_GREY,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: KColors.TEXT_COLOR_DARK,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        centerTitle: false,
-        title: Text(
-          'Terms',
-          style: H1Style,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          title: 'Terms',
         ),
       ),
       body: ListView.separated(

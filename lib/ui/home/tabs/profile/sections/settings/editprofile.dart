@@ -8,10 +8,10 @@ import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
-import 'package:swapxchange/ui/components/custom_appbar.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/choose_image_from.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
@@ -69,6 +69,8 @@ class EditProfile extends StatelessWidget {
       AlertUtils.showProgressDialog(title: 'Updating photo...');
       String? imgUrl = await RepoStorage().uploadFile(selectedImage);
       if (imgUrl != null) {
+        // delete previous image
+        await RepoStorage().delete(user.profilePhoto!);
         // AuthRepo().getCurrentUser()!.updateProfile(photoURL: imgUrl); //Adding to the authentication table
         AppUser cUser = UserController.to.user!;
         cUser.profilePhoto = imgUrl;
@@ -105,23 +107,28 @@ class EditProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get.back();
     return Scaffold(
-      backgroundColor: KColors.WHITE_GREY2,
+      backgroundColor: KColors.WHITE_GREY,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: CustomAppbar(
+          makeTransparent: true,
+          title: '',
+          actionBtn: [
+            Align(
+              child: ButtonSmall(
+                onClick: _update,
+                text: 'update',
+                bgColor: KColors.PRIMARY,
+                textColor: Colors.white,
+              ),
+            )
+          ],
+        ),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
-        child: Column(
+        child: ListView(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
-              child: CustomAppbar(
-                title: '',
-                actionBtn: ButtonSmall(
-                  onClick: _update,
-                  text: 'update',
-                  bgColor: KColors.PRIMARY,
-                  textColor: Colors.white,
-                ),
-              ),
-            ),
             Container(
               child: Column(
                 children: [

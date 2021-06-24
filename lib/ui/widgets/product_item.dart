@@ -51,7 +51,7 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Text(
-              "${product!.productId}. ${product!.productName}",
+              "${product!.productName}",
               style: StyleProductTitle,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,

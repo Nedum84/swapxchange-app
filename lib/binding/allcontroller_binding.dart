@@ -16,7 +16,7 @@ class AllControllerBinding extends Bindings {
     Get.put(ProductController(), permanent: true);
     Get.put(MyProductController(), permanent: true);
     Get.put(SavedProductController(), permanent: true);
-    Get.lazyPut<BottomMenuController>(() => BottomMenuController());
+    Get.put(BottomMenuController(), permanent: true);
     Get.put(SubCategoryController(), permanent: true);
     Get.put(CategoryController(), permanent: true);
     Get.put(UserController(), permanent: true);

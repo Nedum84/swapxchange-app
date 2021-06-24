@@ -14,7 +14,7 @@ class RepoProduct extends ApiClient {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Product.fromMap(response.data["data"]["product"]);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -27,7 +27,7 @@ class RepoProduct extends ApiClient {
       if (response.statusCode == 200) {
         return Product.fromMap(response.data["data"]["product"]);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -115,7 +115,7 @@ class RepoProduct extends ApiClient {
 
         var list = (items as List).map((data) => Product.fromMap(data)).toList();
         return list;
-      } on Exception catch (e) {
+      } catch (e) {
         print(e);
       }
     }
@@ -153,7 +153,7 @@ class RepoProduct extends ApiClient {
         var list = (items as List).map((data) => Product.fromMap(data)).toList();
         return list;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
 
@@ -179,7 +179,7 @@ class RepoProduct extends ApiClient {
             .toList();
         return list;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
 

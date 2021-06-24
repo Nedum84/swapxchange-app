@@ -49,7 +49,7 @@ class AddressChangeMethods {
       try {
         final location = response.data["results"][0]["geometry"]["location"];
         return MapPoint(longitude: location['lng'], latitude: location['lat'], address: response.data["results"][0]["formatted_address"]);
-      } on Exception catch (e) {
+      } catch (e) {
         print(e);
       }
     }

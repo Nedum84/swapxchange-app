@@ -10,7 +10,7 @@ class RepoSavedProducts extends ApiClient {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
     return false;
@@ -23,7 +23,7 @@ class RepoSavedProducts extends ApiClient {
       if (response.statusCode == 200) {
         return response.data["data"]["is_saved"];
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
     return false;
@@ -36,7 +36,7 @@ class RepoSavedProducts extends ApiClient {
       if (response.statusCode == 200) {
         return true;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
     return false;

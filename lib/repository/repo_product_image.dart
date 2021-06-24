@@ -10,7 +10,7 @@ class RepoProductImage {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ProductImage.fromMap(response.data["data"]["image_product"]);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
   }

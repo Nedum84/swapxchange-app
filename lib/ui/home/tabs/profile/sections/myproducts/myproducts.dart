@@ -20,6 +20,12 @@ class MyProducts extends StatelessWidget {
 
       return Scaffold(
         backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+          child: CustomAppbar(
+            title: 'My Products',
+          ),
+        ),
         body: RefreshIndicator(
           onRefresh: () async {
             return myProductController.fetchAll(reset: true);
@@ -27,10 +33,9 @@ class MyProducts extends StatelessWidget {
           color: KColors.PRIMARY,
           strokeWidth: 3,
           child: Container(
-            padding: EdgeInsets.all(Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
+            padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
             child: Column(
               children: [
-                CustomAppbar(title: 'My Products'),
                 Expanded(
                   child: (products.length != 0)
                       ? NotificationListener(
@@ -146,7 +151,7 @@ class MyProductItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "${product.productId}.${product.category}. ${product.productName}",
+                    "${product.productName}",
                     style: StyleProductTitle.copyWith(color: KColors.TEXT_COLOR_DARK),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,

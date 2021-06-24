@@ -17,8 +17,8 @@ class SubCategory {
   });
 
   final int? subCategoryId;
-  final String? subCategoryName;
-  final String? subCategoryIcon;
+  String? subCategoryName;
+  String? subCategoryIcon;
   final int? categoryId;
   final int? idx;
   final DateTime? createdAt;
@@ -46,8 +46,8 @@ class SubCategory {
         "sub_category_icon": subCategoryIcon,
         "category_id": categoryId,
         "idx": idx,
-        "created_at": createdAt!.toIso8601String(),
-        "updated_at": updatedAt!.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
         "no_of_products": noOfProducts,
       };
 }

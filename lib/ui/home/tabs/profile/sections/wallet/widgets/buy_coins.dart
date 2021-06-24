@@ -27,15 +27,28 @@ class _BuyCoinsState extends State<BuyCoins> {
 
   _chargeCard() async {
     final user = UserController.to.user!;
+    final amount = selectedAmount * 100;
+    final email = user.email!.isNotEmpty ? user.email : "${user.name!.toLowerCase().replaceAll(' ', '.')}@swapxchange.shop";
+
     String paymentReference = PaystackRepo.genPaymentReference(
       noOfCoins: CoinsController.getCoinsFromAmount(selectedAmount),
       userId: user.userId!,
     );
+    // String? accessCode = await PaystackRepo.createAccessCode(
+    //   paymentReference: paymentReference,
+    //   amount: amount,
+    //   email: email!,
+    // );
+    // if (accessCode == null) {
+    //   AlertUtils.toast("Couldn't generate access token, try again");
+    //   return;
+    // }
+
     Charge charge = Charge()
-      ..amount = selectedAmount * 100 //convert to kobo
-      // ..amount = 20*100//convert to kobo
+      ..amount = amount //convert to kobo
       ..reference = paymentReference
-      ..email = user.email!.isNotEmpty ? user.email : "${user.name!.toLowerCase().replaceAll(' ', '.')}@swapxchange.shop";
+      // ..accessCode = accessCode
+      ..email = email;
     CheckoutResponse response = await plugin.checkout(
       context,
       method: CheckoutMethod.card,

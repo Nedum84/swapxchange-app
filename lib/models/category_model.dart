@@ -16,8 +16,8 @@ class Category {
   });
 
   final int? categoryId;
-  final String? categoryName;
-  final String? categoryIcon;
+  String? categoryName;
+  String? categoryIcon;
   final int? idx;
   final int? noOfProducts;
   final DateTime? createdAt;
@@ -45,7 +45,7 @@ class Category {
         "category_icon": categoryIcon,
         "idx": idx,
         "no_of_products": noOfProducts,
-        "created_at": createdAt!.toIso8601String(),
-        "updated_at": updatedAt!.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
       };
 }

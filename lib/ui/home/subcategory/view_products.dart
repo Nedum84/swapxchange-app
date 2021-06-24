@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/models/product_model.dart';
@@ -61,11 +60,17 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          makeTransparent: true,
+          title: widget.subcategory.subCategoryName!,
+        ),
+      ),
       body: Container(
-        padding: EdgeInsets.all(Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
+        padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
         child: Column(
           children: [
-            CustomAppbar(title: widget.subcategory.subCategoryName!),
             Container(
               height: 40,
               child: (filters.length == 0)

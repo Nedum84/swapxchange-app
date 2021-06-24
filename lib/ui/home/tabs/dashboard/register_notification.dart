@@ -81,7 +81,7 @@ void registerNotification() async {
       if (model.data != null) {
         routeNotification(model);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
     }
   });
