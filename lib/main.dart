@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'SwapXchange',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),

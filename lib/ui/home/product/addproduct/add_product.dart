@@ -23,12 +23,13 @@ import 'package:swapxchange/ui/home/product/addproduct/widgets/accept_policy_wid
 import 'package:swapxchange/ui/home/product/addproduct/widgets/add_item.dart';
 import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/wallet/how_to_get_coins.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/image_upload_utilities.dart';
-import 'package:swapxchange/utils/styles.dart';
 
 class AddProduct extends GetView<AddProductController> {
   void gotoImageUpload({bool showAddImageDialog = false}) async {
@@ -149,8 +150,8 @@ class AddProduct extends GetView<AddProductController> {
         notRepo.sendNotification(tokens: tokens, model: model);
         NotificationRepo.saveNotifications(model: model, users: receivers);
       }
-      Get.off(() => ProductDetail(product: product));
     }
+    Get.off(() => ProductDetail(product: product));
   }
 
   Widget _suggestedList() {
@@ -178,17 +179,12 @@ class AddProduct extends GetView<AddProductController> {
     return GetBuilder<AddProductController>(builder: (addController) {
       // addController.setLoading(false);
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: CustomBackButton(
-            color: KColors.TEXT_COLOR_DARK,
-            isPositioned: false,
-          ),
-          title: Center(
-            child: Text(
-              '${(addController.isEditing) ? 'Edit' : 'New'} Product',
-              style: H1Style,
-            ),
+        backgroundColor: KColors.WHITE_GREY,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+          child: CustomAppbar(
+            shadowColor: KColors.TEXT_COLOR.withOpacity(.2),
+            title: '${(addController.isEditing) ? 'Edit' : 'New'} Product',
           ),
         ),
         body: Container(

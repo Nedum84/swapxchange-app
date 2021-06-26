@@ -43,6 +43,7 @@ class MapView extends StatelessWidget {
           mapType: MapType.normal,
           zoomGesturesEnabled: false,
           zoomControlsEnabled: false,
+          scrollGesturesEnabled: false,
           markers: markers(),
         ),
       ),

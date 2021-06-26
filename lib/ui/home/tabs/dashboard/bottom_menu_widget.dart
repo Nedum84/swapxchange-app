@@ -35,14 +35,14 @@ class BottomMenuWidget extends StatelessWidget {
                   children: [
                     Icon(
                       bottomMenuProvider.bottomIcon(bottomMenuItem),
-                      color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
+                      color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                       size: isCurrent ? 24 : 20,
                     ),
                     Text(
                       title,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
+                        color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                       ),
                     )
                   ],
@@ -83,14 +83,14 @@ class AddMenuWidget extends StatelessWidget {
               children: [
                 Icon(
                   FontAwesomeIcons.plusSquare,
-                  color: Colors.black12,
+                  color: KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                   size: 20,
                 ),
                 Text(
                   'Add',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black12,
+                    color: KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                   ),
                 )
               ],

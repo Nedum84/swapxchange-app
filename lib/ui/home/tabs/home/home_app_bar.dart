@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/repository/notification_repo.dart';
@@ -23,7 +24,10 @@ class HomeAppBar extends StatelessWidget {
           // UserAddress(),
           MenuIcon(
             icon: Icons.search,
-            onClick: () => Get.to(() => ProductSearch()),
+            onClick: () {
+              ProductSearchController.to.fetchProducts();
+              Get.to(() => ProductSearch());
+            },
           ),
           MenuBadge(
             icon: Icons.notifications_none,

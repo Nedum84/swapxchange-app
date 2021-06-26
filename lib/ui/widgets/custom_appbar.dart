@@ -40,13 +40,21 @@ class CustomAppbar extends StatelessWidget {
   final List<Widget>? actionBtn;
   final bool makeTransparent;
   final double? titleFontSize;
+  final Color? shadowColor;
 
-  const CustomAppbar({Key? key, required this.title, this.actionBtn, this.makeTransparent = false, this.titleFontSize}) : super(key: key);
+  const CustomAppbar({
+    Key? key,
+    required this.title,
+    this.actionBtn,
+    this.makeTransparent = false,
+    this.titleFontSize,
+    this.shadowColor,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: makeTransparent ? Colors.transparent : Colors.white,
-      shadowColor: Colors.transparent,
+      shadowColor: shadowColor ?? Colors.transparent,
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,

@@ -50,18 +50,14 @@ class ProductSearchController extends GetxController {
   void fetchProducts() async {
     hideSearchSuggestion(true);
     isLoading(true);
-    update();
-    offset = resetList.value ? 0 : productList.value.length;
+    offset = resetList.value ? 0 : productList.length;
     String query = queryString.value.isEmpty ? "none" : queryString.value;
     var items = await RepoProductSearch.findBySearch(query: query, filters: searchFilter.value, offset: offset, limit: limit);
     if (items!.length != 0) {
       if (resetList.value) {
         productList(items);
-        update();
       } else {
-        print('ffffgffffgf');
         productList.addAll(items);
-        update();
       }
     }
     isLoading(false);
@@ -85,7 +81,7 @@ class ProductSearchController extends GetxController {
 
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value) {
+      if (!isLoading.value && productList.length > 0) {
         if (controller!.position.extentAfter < 500) {
           resetList(false);
           fetchProducts();

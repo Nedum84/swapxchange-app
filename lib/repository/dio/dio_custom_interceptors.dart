@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:get/get.dart' as GetX;
 import 'package:swapxchange/models/tokens.dart';
-import 'package:swapxchange/ui/auth/login.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/user_prefs.dart';
 
@@ -24,8 +21,8 @@ class DioCustomInterceptors extends Interceptor {
     Tokens? tokens = await UserPrefs.getTokens();
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
-    // options.baseUrl = 'http://127.0.0.1:8088/v1/';
+    // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
+    options.baseUrl = 'http://199.192.27.225:8088/v1/';
     options.connectTimeout = 5000;
     options.receiveTimeout = 3000;
     // Transform response data to Json Map
@@ -56,7 +53,7 @@ class DioCustomInterceptors extends Interceptor {
       Tokens? tokens = await UserPrefs.getTokens();
       if (tokens?.refresh == null) {
         AlertUtils.toast('Your session has expired. Login again');
-        GetX.Get.offAll(() => Login());
+        AuthRepo().signOut();
         return handler.next(dioError);
       }
       //request options...
@@ -89,10 +86,14 @@ class DioCustomInterceptors extends Interceptor {
         dio.fetch(options).then(
           (r) => handler.resolve(r),
           onError: (e) {
+            //Goto Login ooo
+            AuthRepo().signOut();
             handler.reject(e);
           },
         );
       }).catchError((er) {
+        //Goto Login ooo
+        AuthRepo().signOut();
         handler.reject(dioError);
       });
       return;

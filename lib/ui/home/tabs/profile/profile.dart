@@ -27,7 +27,7 @@ class Profile extends StatelessWidget {
       child: Column(
         children: [
           DashboardCustomAppbar(
-            title: '',
+            title: 'My Account',
             icon: Icons.settings,
             iconClick: () => Get.to(() => Settings()),
           ),

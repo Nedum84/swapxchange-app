@@ -48,7 +48,7 @@ class NotificationList extends StatelessWidget {
           }
           final data = snapshot.data!.docs;
           if (data.length == 0) {
-            return Center(child: Text('No notification yet'));
+            return Center(child: Text('No notification found'));
           }
 
           var items = (data).map((data) => NotificationModel.fromMap({...data.data(), "doc_id": data.id})).toList();

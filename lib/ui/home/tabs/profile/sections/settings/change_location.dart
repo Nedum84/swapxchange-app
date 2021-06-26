@@ -346,7 +346,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
     // Start Location Marker
     Marker startMarker = Marker(
       markerId: MarkerId('${user.userId}'),
-      position: LatLng(double.parse(updatedUser.addressLat!), double.parse(updatedUser.addressLong!)),
+      position: LatLng(double.tryParse(updatedUser.addressLat!) ?? 06.4550651, double.tryParse(updatedUser.addressLong!) ?? 3.5197741),
       onTap: () => _showBottomSheet(),
       icon: BitmapDescriptor.defaultMarker,
     );

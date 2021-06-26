@@ -50,6 +50,12 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
     setState(() => isLoading = true);
     offset = products.length;
     if (subCategoryList.length == 0) await _setSubCategoryList(); //Fetch subcategory list(s before proceeding...
+
+    // If there's no sub category, return oooo...
+    if (subCategoryList.isEmpty) {
+      setState(() => isLoading = false);
+      return;
+    }
     final items = await RepoProduct.findBySubCategory(subCatId: selectedSubCategory!.subCategoryId!, offset: offset, limit: limit);
     if (items!.isNotEmpty) products.addAll(items);
 

@@ -55,7 +55,9 @@ class AuthFunctions {
     }
   }
 
-  static gotoDashboard() {
+  static gotoDashboard() async {
+    //Refresh balance either way
+    await CoinsController.to.getBalance();
     //Done & proceed
     ProductController.to.fetchAll(reset: true);
     MyProductController.to.fetchAll(reset: true);

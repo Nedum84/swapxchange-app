@@ -19,7 +19,8 @@ class CategoryCol extends StatelessWidget {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final current = categories[index];
-            Color? txtColor = selected.categoryId != current.categoryId ? KColors.TEXT_COLOR.withOpacity(.2) : null;
+            final isCurrent = selected.categoryId == current.categoryId;
+            Color? txtColor = !isCurrent ? KColors.TEXT_COLOR.withOpacity(.4) : KColors.TEXT_COLOR_DARK;
             return Container(
               margin: EdgeInsets.only(bottom: 8),
               child: CategoryBtn(

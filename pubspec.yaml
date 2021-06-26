@@ -63,8 +63,6 @@ dependencies:
 
   # path provider
   path_provider: ^2.0.1
-  # provider
-  provider: ^5.0.0
 
   # cached network image
   cached_network_image: ^3.0.0
@@ -96,7 +94,6 @@ dependencies:
   web_socket_channel: ^2.1.0
   enum_to_string: ^2.0.1
   collection: ^1.15.0
-  infinite_scroll_pagination: ^3.0.1
   rxdart: ^0.27.0
   flutter_paystack: ^1.0.5+1
   share: ^2.0.4

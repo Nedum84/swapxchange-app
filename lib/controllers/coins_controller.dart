@@ -42,6 +42,11 @@ class CoinsController extends GetxController {
     update();
   }
 
+  void resetBal() {
+    _myCoins = null;
+    update();
+  }
+
   static int getCoinsFromAmount(int amount) {
     if (amount == coins500Price) {
       return 500;

@@ -112,6 +112,7 @@ class CategoryBtn extends StatelessWidget {
             style: StyleNormal.copyWith(color: textColor != null ? textColor : KColors.TEXT_COLOR, fontSize: textSize ?? 14),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           )
         ],
       ),

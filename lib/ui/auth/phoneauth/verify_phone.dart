@@ -48,7 +48,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   void startTimer() {
     Timer.periodic(Duration(seconds: 1), (timer) {
       timerTicker = timer;
-      print(timer.tick);
+      // print(timer.tick);
       setState(() => _currentTime = timer.tick);
 
       if (timer.tick >= totalTimeMins) {
@@ -65,6 +65,11 @@ class _VerifyOtpState extends State<VerifyOtp> {
       onCodeSent: (phoneVerificationId) {
         _phoneVerificationId = phoneVerificationId;
         AlertUtils.toast('An OTP has been sent to your phone number');
+        setState(() {
+          totalTimeMins = 60;
+          _isLoading = false;
+        });
+        startTimer();
       },
       onCodeAutoRetrievalTimeout: (er) {
         AlertUtils.toast('Timeout: $er');

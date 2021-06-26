@@ -46,6 +46,7 @@ class Settings extends StatelessWidget {
             ),
             flexibleSpace: GetBuilder<UserController>(
               builder: (userController) {
+                final isProfileEmpty = userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty;
                 return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                   top = constraints.biggest.height;
                   return FlexibleSpaceBar(
@@ -53,9 +54,9 @@ class Settings extends StatelessWidget {
                     centerTitle: false,
                     title: Text(
                       "User Settings",
-                      style: H1Style.copyWith(color: top <= 120 ? KColors.TEXT_COLOR_DARK : Colors.white70),
+                      style: H1Style.copyWith(color: top <= 120 || isProfileEmpty ? KColors.TEXT_COLOR_DARK : Colors.white70),
                     ),
-                    background: userController.user!.profilePhoto == null || userController.user!.profilePhoto!.isEmpty
+                    background: isProfileEmpty
                         ? Container()
                         : CachedImage(
                             userController.user!.profilePhoto,

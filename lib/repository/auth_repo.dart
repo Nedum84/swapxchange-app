@@ -3,6 +3,9 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/bottom_menu_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/enum/bottom_menu_item.dart';
 import 'package:swapxchange/enum/online_status.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/tokens.dart';
@@ -274,6 +277,10 @@ class AuthRepo {
 
   void signOut() async {
     try {
+      // Reset data...
+      CoinsController.to.resetBal();
+      Get.find<BottomMenuController>().onChangeMenu(BottomMenuItem.HOME);
+      //Sign out
       await PrefsAppUser().signOut(); //prefs clear
       await FacebookAuth.instance.logOut();
       await _auth.signOut();
