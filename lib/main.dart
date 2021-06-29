@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
+import 'package:swapxchange/ui/home/tabs/dashboard/register_notification.dart';
 import 'package:swapxchange/ui/splash/splashscreen.dart';
 
 void main() async {
@@ -11,6 +12,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //initialize the binding
   await Firebase.initializeApp();
+
+  //Register notification
+  registerNotification();
 
   //For header start up color
   SystemChrome.setSystemUIOverlayStyle(

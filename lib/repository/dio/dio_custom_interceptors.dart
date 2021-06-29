@@ -23,8 +23,8 @@ class DioCustomInterceptors extends Interceptor {
 
     // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
     options.baseUrl = 'http://199.192.27.225:8088/v1/';
-    options.connectTimeout = 5000;
-    options.receiveTimeout = 3000;
+    options.connectTimeout = 12000;
+    options.receiveTimeout = 10000;
     // Transform response data to Json Map
     options.responseType = ResponseType.json;
     //Add headers

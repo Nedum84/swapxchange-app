@@ -47,6 +47,8 @@ class NotificationModel {
 class NotificationData {
   NotificationData({
     this.clickAction = 'FLUTTER_NOTIFICATION_CLICK',
+    this.title,
+    this.body,
     this.id,
     this.idSecondary,
     this.type = NotificationType.CHAT,
@@ -54,6 +56,8 @@ class NotificationData {
   });
 
   final String clickAction;
+  final String? title;
+  final String? body;
   final String? id;
   final String? idSecondary;
   final NotificationType? type;
@@ -65,6 +69,8 @@ class NotificationData {
 
   factory NotificationData.fromMap(Map<String, dynamic> json) => NotificationData(
         clickAction: json["click_action"],
+        title: json["title"],
+        body: json["body"],
         id: json["id"],
         idSecondary: json["id_secondary"],
         type: typeToEnum(json["type"]),
@@ -73,6 +79,8 @@ class NotificationData {
 
   Map<String, dynamic> toMap() => {
         "click_action": clickAction,
+        "title": title,
+        "body": body,
         "id": id,
         "id_secondary": idSecondary,
         "type": typeFromEnum(type!),

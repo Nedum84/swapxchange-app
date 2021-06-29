@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/notification_model.dart';
+import 'package:swapxchange/ui/home/tabs/dashboard/register_notification.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 
@@ -25,38 +26,47 @@ class NotificationRepo {
     dio.options.headers["Authorization"] = "key=$serverToken";
 
     Map data = {};
+    Map data2 = {
+      'priority': model.priority,
+      'user_id': model.userId,
+      'date_created': model.dateCreated,
+      'doc_id': model.docId,
+      'is_read': model.isRead,
+      'data': model.data!.toMap(),
+    };
     if (tokens.length == 1) {
       data = {
-        ...model.toMap(),
+        ...data2,
         ...{"to": tokens[0]},
         ...{
           'android': {
-            'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            'priority': 'high',
             'notification': {
+              'channel_id': MESSAGE_CHANNEL_ID,
               'tag': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            }
+            },
+            'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
+            'priority': 'high'
           }
         }
       };
     } else {
       data = {
-        ...model.toMap(),
+        ...data2,
         ...{"registration_ids": tokens},
         ...{
-          'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-          // 'android': {
-          //   'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-          //   'priority': 'high',
-          //   'notification': {
-          //     'tag': 'tag',
-          //   }
-          // }
+          'android': {
+            'notification': {
+              'channel_id': MESSAGE_CHANNEL_ID,
+              'tag': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
+            },
+            'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
+            'priority': 'high'
+          }
         }
       };
     }
     // use "registration_ids" instead of "to" and send the push notification to multiple tokens
-    final data2 = {}..addAll(model.toMap())..addAll({"registration_ids": tokens});
+    final data3 = {}..addAll(model.toMap())..addAll({"registration_ids": tokens});
 
     print(data);
 

@@ -48,11 +48,11 @@ class CachedImage extends StatelessWidget {
           child: Container(
             height: isRound ? radius : height,
             width: isRound ? radius : width,
-            color: KColors.TEXT_COLOR.withOpacity(.1),
+            color: KColors.TEXT_COLOR.withOpacity(.06),
             padding: EdgeInsets.all(2),
             child: Icon(
               Icons.person,
-              color: Colors.black26,
+              color: Colors.black12,
             ),
           ),
         );
@@ -70,13 +70,13 @@ class CachedImage extends StatelessWidget {
           child: Container(
             height: isRound ? radius : height,
             width: isRound ? radius : width,
-            color: KColors.TEXT_COLOR.withOpacity(.1),
+            color: KColors.TEXT_COLOR.withOpacity(.05),
             padding: EdgeInsets.all(2),
             child: Center(
               child: Text(
                 'LOADING...',
                 style: StyleNormal.copyWith(
-                  color: Colors.black26,
+                  color: Colors.black12,
                 ),
               ),
             ),

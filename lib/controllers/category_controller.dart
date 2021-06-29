@@ -9,12 +9,6 @@ class CategoryController extends GetxController {
   RxList<Category> categoryList = <Category>[].obs;
   RxBool isLoading = true.obs;
 
-  @override
-  void onInit() {
-    fetch();
-    super.onInit();
-  }
-
   void fetch() async {
     isLoading(true);
     var items = await RepoCategory.findAll();

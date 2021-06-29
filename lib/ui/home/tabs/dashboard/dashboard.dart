@@ -29,9 +29,8 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _init();
-
     //Register notification
-    registerNotification();
+    updateNotificationToken();
   }
 
   _init() {

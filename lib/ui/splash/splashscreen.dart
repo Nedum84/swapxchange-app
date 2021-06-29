@@ -39,6 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (u == null) {
       Get.offAll(() => Login());
     } else {
+      // print('ytyt-------------------------------------------------------------------------=-=-=-=-=-=-=-=-=---------------------------------------------------');
       authenticateUser(u);
     }
   }
@@ -59,7 +60,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _fetchData(User user) async {
     final cats = await RepoCategory.findAll();
-    RepoSubCategory.findByCategoryId(catId: 3);
     final subCats = await RepoSubCategory.findAll();
     final coinsBalance = await CoinsController.to.getBalance();
     if (cats != null && subCats != null && coinsBalance != null) {

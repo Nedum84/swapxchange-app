@@ -62,7 +62,12 @@ class _LoginState extends State<Login> {
     );
   }
 
-  _authenticateUser(User user) {
+  _authenticateUser(User user) async {
+    // final fetchData = await AuthFunctions.fetchDefaults();
+    // if(!fetchData){
+    //
+    // }
+
     AuthFunctions.authenticateUser(
       user: user,
       onDone: () {

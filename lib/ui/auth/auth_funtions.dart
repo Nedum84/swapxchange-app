@@ -33,10 +33,8 @@ class AuthFunctions {
         Get.to(() => GrantPermission());
       } else {
         //Fetching defaults state data
-        final isCatEmpty = CategoryController.to.categoryList.isEmpty;
-        final isSubCatEmpty = SubCategoryController.to.subCategoryList.isEmpty;
-        final isCoinsEmpty = CoinsController.to.myCoins == null;
-        if (isCatEmpty || isSubCatEmpty || isCoinsEmpty) {
+        final fetchData = await fetchDefaults();
+        if (!fetchData) {
           final cats = await RepoCategory.findAll();
           final subCats = await RepoSubCategory.findAll();
           final coinsBalance = await CoinsController.to.getBalance();
@@ -78,5 +76,24 @@ class AuthFunctions {
         onError("$er");
       },
     );
+  }
+
+  static Future<bool> fetchDefaults() async {
+    //Fetching defaults state data
+    final isCatEmpty = CategoryController.to.categoryList.isEmpty;
+    final isSubCatEmpty = SubCategoryController.to.subCategoryList.isEmpty;
+    final isCoinsEmpty = CoinsController.to.myCoins == null;
+    if (isCatEmpty || isSubCatEmpty || isCoinsEmpty) {
+      final cats = await RepoCategory.findAll();
+      final subCats = await RepoSubCategory.findAll();
+      final coinsBalance = await CoinsController.to.getBalance();
+      if (cats != null && subCats != null && coinsBalance != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
   }
 }

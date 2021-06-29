@@ -19,6 +19,7 @@ class _EnterPhoneState extends State<EnterPhone> {
   TextEditingController phoneNumberController = TextEditingController();
 
   FocusNode textFieldFocusPhone = FocusNode();
+  String countryCode = '+234';
 
   bool _isLoading = false;
   AuthRepo _authRepo = AuthRepo();
@@ -40,7 +41,7 @@ class _EnterPhoneState extends State<EnterPhone> {
       return;
     }
     //include country code
-    phoneNo = '+234$phoneNo';
+    phoneNo = '$countryCode$phoneNo';
 
     setState(() => _isLoading = true);
     _authRepo.phoneNumberSignIn(
@@ -121,7 +122,7 @@ class _EnterPhoneState extends State<EnterPhone> {
                     cursorColor: Colors.blueGrey,
                     decoration: InputDecoration(
                       counterText: '',
-                      prefixText: '+234 ',
+                      prefixText: '$countryCode ',
                       prefixStyle: TextStyle(
                         color: KColors.TEXT_COLOR_DARK,
                         fontWeight: FontWeight.w600,

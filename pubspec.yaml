@@ -99,6 +99,7 @@ dependencies:
   share: ^2.0.4
   google_maps_flutter: ^2.0.6
   flutter_local_notifications: ^6.0.0
+  country_code_picker: ^2.0.2
 
 
 

@@ -8,12 +8,6 @@ class SubCategoryController extends GetxController {
   RxList<SubCategory> subCategoryList = <SubCategory>[].obs;
   RxBool isLoading = true.obs;
 
-  @override
-  void onInit() {
-    fetch();
-    super.onInit();
-  }
-
   void setItems({required List<SubCategory> items}) {
     subCategoryList(items);
   }
