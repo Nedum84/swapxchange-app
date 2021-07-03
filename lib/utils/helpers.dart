@@ -69,8 +69,9 @@ class Helpers {
   }
 
   //Returns true if date is today
-  static bool isToday(DateTime date) {
-    final now = DateTime.now();
+  static bool isToday(DateTime date, DateTime? dateNow) {
+    // final now = DateTime.now();
+    final now = dateNow ?? DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final aDate = DateTime(date.year, date.month, date.day);
     return aDate == today;

@@ -48,6 +48,7 @@ class ChatMessageList extends StatelessWidget {
               padding: EdgeInsets.all(8),
               reverse: true,
               itemCount: chatMessages.length,
+              physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 return ChatMessageItem(chatMessage: chatMessages[index]);
               },

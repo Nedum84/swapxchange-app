@@ -27,6 +27,7 @@ class AuthFunctions {
       UserController.to.setUser(appUser!);
       //-->Save tokens
       UserPrefs.setTokens(tokens: tokens);
+
       if (appUser.name!.isEmpty) {
         Get.to(() => EnterName());
       } else if (appUser.address!.isEmpty) {

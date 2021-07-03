@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
 import 'package:swapxchange/ui/home/tabs/dashboard/register_notification.dart';
 import 'package:swapxchange/ui/splash/splashscreen.dart';
+import 'package:swapxchange/utils/colors.dart';
 
 void main() async {
   //initialize the binding
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'SwapXchange',
       theme: ThemeData(
+        primaryColor: KColors.PRIMARY,
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
       ),

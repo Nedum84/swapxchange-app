@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart' as pHandler;
 import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/repo_category.dart';
 import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/change_location.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
@@ -58,21 +59,29 @@ class _GrantPermissionState extends State<GrantPermission> {
 
           var placeMark = addresses.first;
           String address = "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
+          var city = placeMark.subLocality == null || placeMark.subLocality!.isEmpty ? placeMark.locality : placeMark.subLocality;
 
           // address =
           //     "${placeMark.name}, ${placeMark.subLocality}, ${placeMark.locality}, ${placeMark.administrativeArea} ${placeMark.postalCode}, ${placeMark.country}";
 
+          if (address.isEmpty) {
+            AlertUtils.alert("Address couldn't be found, enter address manually");
+            return;
+          }
+
           _authRepo.updateAddress(
-              address: address,
-              address_lat: position.latitude,
-              address_long: position.longitude,
-              state: placeMark.subLocality!,
-              onSuccess: (appUser) {
-                controller.animateToPage(_curStep + 1, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
-              },
-              onError: (er) {
-                AlertUtils.toast("$er");
-              });
+            address: address,
+            address_lat: position.latitude,
+            address_long: position.longitude,
+            state: city ?? address,
+            onSuccess: (appUser) {
+              if (appUser != null) UserController.to.setUser(appUser);
+              controller.animateToPage(_curStep + 1, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+            },
+            onError: (er) {
+              AlertUtils.toast("$er");
+            },
+          );
           setState(() => _isLoading = false);
         }).catchError((e) {
           print(e);
@@ -80,7 +89,6 @@ class _GrantPermissionState extends State<GrantPermission> {
           setState(() => _isLoading = false);
         });
       } else {
-        pHandler.openAppSettings();
         setState(() => _isLoading = false);
         AlertUtils.toast("Access denied");
       }
@@ -104,9 +112,15 @@ class _GrantPermissionState extends State<GrantPermission> {
     }
   }
 
+  _openManualAddress() async {
+    final address = await Get.to(() => ChangeLocation());
+    if (address != null) {
+      _gotoDashboard();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // setState(() => _isLoading = false);
     return Scaffold(
       backgroundColor: Color(0xffffffff),
       body: Container(
@@ -123,6 +137,19 @@ class _GrantPermissionState extends State<GrantPermission> {
                   onClick: () => _grantLocationAccess(),
                   btnText: 'Allow Access',
                   isLoading: _isLoading,
+                ),
+                secButton: InkWell(
+                  onTap: _openManualAddress,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Enter address manually'.toUpperCase(),
+                      style: StyleNormal.copyWith(
+                        color: KColors.TEXT_COLOR_DARK,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               );
             } else {
@@ -167,12 +194,14 @@ class GrantPermContainer extends StatelessWidget {
     required this.textTitle,
     required this.textDisplay,
     required this.button,
+    this.secButton,
   });
 
   final String imageString;
   final String textTitle;
   final String textDisplay;
   final Widget button;
+  final Widget? secButton;
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +237,7 @@ class GrantPermContainer extends StatelessWidget {
                 height: 40,
               ),
               button,
+              secButton ?? Container(),
             ],
           ),
         ),

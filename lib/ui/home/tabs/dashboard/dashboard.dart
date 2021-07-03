@@ -94,7 +94,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               BottomMenuWidget(
                 title: 'Latest',

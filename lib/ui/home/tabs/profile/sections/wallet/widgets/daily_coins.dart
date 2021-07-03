@@ -24,7 +24,7 @@ class DailyCoins extends StatelessWidget {
       if (lastDailyCoin == null) {
         _getDailyCoins();
       } else {
-        if (Helpers.isToday(lastDailyCoin.createdAt!)) {
+        if (Helpers.isToday(lastDailyCoin.createdAt!, lastDailyCoin.currentTime)) {
           AlertUtils.hideProgressDialog();
           AlertUtils.alert(
             "It seems that you have already gotten today's daily reward. Check back tomorrow!",

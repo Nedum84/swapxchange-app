@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -108,34 +109,53 @@ class _EnterPhoneState extends State<EnterPhone> {
                     border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: TextField(
-                    controller: phoneNumberController,
-                    focusNode: textFieldFocusPhone,
-                    keyboardType: TextInputType.phone,
-                    maxLines: 1,
-                    maxLength: 11,
-                    autofocus: true,
-                    style: TextStyle(
-                      color: KColors.TEXT_COLOR_DARK,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    cursorColor: Colors.blueGrey,
-                    decoration: InputDecoration(
-                      counterText: '',
-                      prefixText: '$countryCode ',
-                      prefixStyle: TextStyle(
-                        color: KColors.TEXT_COLOR_DARK,
-                        fontWeight: FontWeight.w600,
+                  child: Row(
+                    children: [
+                      CountryCodePicker(
+                          onChanged: (e) => setState(() => countryCode = e.toString()),
+                          initialSelection: 'NG',
+                          showCountryOnly: true,
+                          showFlag: false,
+                          hideSearch: true,
+                          showOnlyCountryWhenClosed: false,
+                          favorite: ['NG', 'GH'],
+                          textStyle: TextStyle(
+                            color: KColors.TEXT_COLOR_DARK,
+                            fontWeight: FontWeight.w600,
+                          )),
+                      Expanded(
+                        flex: 1,
+                        child: TextField(
+                          controller: phoneNumberController,
+                          focusNode: textFieldFocusPhone,
+                          keyboardType: TextInputType.phone,
+                          maxLines: 1,
+                          maxLength: 11,
+                          autofocus: true,
+                          style: TextStyle(
+                            color: KColors.TEXT_COLOR_DARK,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.blueGrey,
+                          decoration: InputDecoration(
+                            counterText: '',
+                            // prefixText: '$countryCode ',
+                            prefixStyle: TextStyle(
+                              color: KColors.TEXT_COLOR_DARK,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            // labelText: 'Enter phone',
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                          ),
+                        ),
                       ),
-                      // labelText: 'Enter phone',
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
-                    ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 64),

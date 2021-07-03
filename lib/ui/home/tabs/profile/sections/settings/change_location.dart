@@ -92,7 +92,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
           await Future.delayed(Duration(seconds: 2));
           AlertUtils.toast('Address updated successfully');
           AlertUtils.hideProgressDialog();
-          Get.back(closeOverlays: true);
+          Get.back(closeOverlays: true, result: appUser);
         }
       },
       onError: (er) {
@@ -112,12 +112,13 @@ class _ChangeLocationState extends State<ChangeLocation> {
 
           var placeMark = addresses.first;
           String address = "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
-          String state = placeMark.subLocality ?? "";
+          String? state = placeMark.subLocality == null || placeMark.subLocality!.isEmpty ? placeMark.locality : placeMark.subLocality;
+
           double lat = position.latitude;
           double long = position.longitude;
 
           updatedUser.address = address;
-          updatedUser.state = state;
+          updatedUser.state = state ?? address;
           updatedUser.addressLong = lat.toString();
           updatedUser.addressLat = long.toString();
           updateMarkers();

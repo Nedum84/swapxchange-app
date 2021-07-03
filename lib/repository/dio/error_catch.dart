@@ -5,7 +5,8 @@ dynamic catchErrors(error) {
   try {
     resp = error?.response?.data!["message"] ?? '$error';
   } catch (e) {
-    resp = error?.response?.data ?? '$error';
+    // resp = error?.response?.data ?? '$error';
+    resp = '$e';
   }
   return (resp);
 }

@@ -10,52 +10,54 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class TopDeals extends StatelessWidget {
-  final hotCats = CategoryController.to.hotDeals();
-
   _goto(Category category) {
     Get.to(() => ViewSingleCategory(category: category));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Top Deals',
-          style: H1Style,
-        ),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: CategoryBtn(
-                imagePath: hotCats[0].categoryIcon ?? "",
-                title: hotCats[0].categoryName ?? "",
-                onClick: () => _goto(hotCats[0]),
+    return GetBuilder<CategoryController>(builder: (controller) {
+      final hotCats = controller.hotDeals();
+      if (controller.categoryList.isEmpty) return Container();
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Top Deals',
+            style: H1Style,
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[0].categoryIcon ?? "",
+                  title: hotCats[0].categoryName ?? "",
+                  onClick: () => _goto(hotCats[0]),
+                ),
               ),
-            ),
-            Expanded(
-              child: CategoryBtn(
-                imagePath: hotCats[1].categoryIcon ?? "",
-                title: hotCats[1].categoryName ?? "",
-                onClick: () => _goto(hotCats[1]),
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[1].categoryIcon ?? "",
+                  title: hotCats[1].categoryName ?? "",
+                  onClick: () => _goto(hotCats[1]),
+                ),
               ),
-            ),
-            Expanded(
-              child: CategoryBtn(
-                imagePath: hotCats[2].categoryIcon ?? "",
-                title: hotCats[2].categoryName ?? "",
-                onClick: () => _goto(hotCats[2]),
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[2].categoryIcon ?? "",
+                  title: hotCats[2].categoryName ?? "",
+                  onClick: () => _goto(hotCats[2]),
+                ),
               ),
-            ),
-            Expanded(child: SeeAllBtn(title: 'See All')),
-          ],
-        )
-      ],
-    );
+              Expanded(child: SeeAllBtn(title: 'See All')),
+            ],
+          )
+        ],
+      );
+    });
   }
 }
 
@@ -95,6 +97,7 @@ class CategoryBtn extends StatelessWidget {
               border: Border.all(
                 color: textColor != null ? KColors.TEXT_COLOR_LIGHT.withOpacity(.2) : Colors.transparent,
               ),
+              color: Colors.white,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
@@ -137,9 +140,7 @@ class SeeAllBtn extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                Constants.SHADOW,
-              ],
+              boxShadow: [Constants.SHADOW],
             ),
             child: CircleAvatar(
               backgroundColor: Colors.white,

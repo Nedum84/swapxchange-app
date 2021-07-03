@@ -85,6 +85,8 @@ class NotificationData {
         "id_secondary": idSecondary,
         "type": typeFromEnum(type!),
         "payload": payload,
+        "content_available": true,
+        "priority": "normal",
       };
 
   static NotificationType typeToEnum(String status) {

@@ -20,9 +20,11 @@ import 'package:swapxchange/ui/home/product/product_detail/sections/mapview.dart
 import 'package:swapxchange/ui/home/product/product_detail/sections/save_btn.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/utils/call_utilities.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
+import 'package:swapxchange/utils/permissions.dart';
 import 'package:swapxchange/utils/strings.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -39,7 +41,13 @@ class ProductDetail extends StatelessWidget {
       if (poster == null) {
       } else {
         if (gotoCall) {
-          // Get.to(() => ChatDetail(receiver: poster));
+          final isPermGranted = await Permissions.cameraAndMicrophonePermissionsGranted();
+          if (isPermGranted)
+            CallUtils.dial(
+              from: currentUser,
+              to: poster,
+              useVideo: false,
+            );
         } else {
           final getRecent = await RepoProductChats.findRecentBwTwoUsers(secondUserId: product.userId!);
           if (getRecent == null || getRecent.productId != product.productId) {
@@ -79,7 +87,9 @@ class ProductDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Product no of views
     _addProductView();
+    print(product.createdAt);
 
     return Scaffold(
       backgroundColor: Colors.white,

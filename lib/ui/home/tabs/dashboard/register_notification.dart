@@ -42,7 +42,7 @@ void registerNotification() async {
   await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(
         andChannel,
       );
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_logo');
 
   /// Note: permissions aren't requested here just to demonstrate that can be later
   final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
@@ -76,19 +76,36 @@ void registerNotification() async {
 
   // initial message that appears for every msg...
   _messaging.getInitialMessage().then((RemoteMessage? message) {
+    print('New Initial message received!!! ----- 9000000');
     if (message != null) {
-      // showLocalNotification(message);
+      showLocalNotification(message);
     }
   });
 
+  //When app is active
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    showLocalNotification(message);
+    print('New on message received!!!');
+
+    try {
+      final notificationData = NotificationData.fromMap(message.data);
+      if (notificationData.type == NotificationType.CHAT) return;
+      showLocalNotification(message);
+    } catch (e) {
+      print(e);
+      showLocalNotification(message);
+    }
   });
   // A new onMessageOpenedApp event was published!
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     print('A new onMessageOpenedApp event was published!');
-    // showLocalNotification(message);
+    showLocalNotification(message);
   });
+}
+
+//Background/Foreground
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Handling a background message ${message.data}  ${message.notification}');
+  showLocalNotification(message);
 }
 
 void getNotificationData(String payload) {
@@ -105,6 +122,7 @@ void getNotificationData(String payload) {
       routeNotification(model);
     }
   } catch (e) {
+    print('Error converting notification: ');
     print(e);
   }
 }
@@ -126,11 +144,6 @@ void routeNotification(NotificationModel model) async {
   }
 }
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
-  // showLocalNotification(message);
-}
-
 void showLocalNotification(RemoteMessage message) {
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android!;
@@ -139,17 +152,15 @@ void showLocalNotification(RemoteMessage message) {
   final isProduct = notificationData.type != NotificationType.PRODUCT;
   final groupKey = notificationData.id.toString();
 
-  if (notification != null && android != null) {
+  if (notificationData.id != null) {
     flutterLocalNotificationsPlugin.show(
       // notification.hashCode,
       int.tryParse(groupKey) ?? notification.hashCode,
-      notification.title,
-      notification.body,
+      notificationData.title ?? "New Notification",
+      notificationData.body ?? "Click to view",
       NotificationDetails(
         android: AndroidNotificationDetails(
-          andChannel.id,
-          andChannel.name,
-          andChannel.description,
+          andChannel.id, andChannel.name, andChannel.description,
           enableVibration: isCall ? true : false,
           enableLights: isCall ? true : false,
           // onlyAlertOnce: true,
@@ -162,6 +173,7 @@ void showLocalNotification(RemoteMessage message) {
           sound: RawResourceAndroidNotificationSound('notification_tone'),
           // playSound: isCall ? true : false,
           timeoutAfter: isProduct ? 36000000 : 300000, //1hr, 5mins
+          // icon: 'app_logo',
         ),
       ),
       payload: notificationData.toJson(),

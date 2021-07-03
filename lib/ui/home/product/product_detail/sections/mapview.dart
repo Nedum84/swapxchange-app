@@ -14,7 +14,7 @@ class MapView extends StatelessWidget {
     // Start Location Marker
     Marker startMarker = Marker(
       markerId: MarkerId('${product.productId}'),
-      position: LatLng(double.parse(product.userAddressLat!), double.parse(product.userAddressLong!)),
+      position: LatLng(double.tryParse(product.userAddressLat!) ?? 6.4550651, double.tryParse(product.userAddressLong!) ?? 3.5197741),
       icon: BitmapDescriptor.defaultMarker,
       onTap: () => AlertUtils.toast('${product.userAddress}'),
     );

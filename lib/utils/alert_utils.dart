@@ -145,18 +145,15 @@ class AlertUtils {
     );
   }
 
-  static showCustomDialog(BuildContext context, {bool fromTop = false, required String body, String? title, bool tapToDismiss = true, bool expandHeight = false}) {
-    showGeneralDialog(
-      barrierLabel: "Barrier",
-      // barrierDismissible: true,
+  static showCustomDialog({bool fromTop = false, required String body, String? title, bool tapToDismiss = true, bool expandHeight = false}) {
+    Get.generalDialog(
       barrierColor: Colors.black.withOpacity(0.5),
       transitionDuration: Duration(milliseconds: 700),
-      context: context,
       pageBuilder: (_, __, ___) {
         return Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => (tapToDismiss) ? Navigator.pop(context) : null,
+            onTap: () => (tapToDismiss) ? Get.back() : null,
             child: Align(
               alignment: fromTop ? Alignment.topCenter : Alignment.bottomCenter,
               // alignment: Alignment.bottomCenter,

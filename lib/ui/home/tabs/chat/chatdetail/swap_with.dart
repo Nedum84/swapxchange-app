@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
@@ -184,6 +185,11 @@ class _SwapWithState extends State<SwapWith> {
                           )
                         : AddNewOffer(
                             onClick: () {
+                              final addCont = AddProductController.to;
+                              if (addCont.product == null) {
+                                addCont.setEditing(false);
+                                addCont.create();
+                              }
                               Get.back();
                               Get.to(() => AddProduct());
                             },
@@ -262,7 +268,7 @@ class AddNewOffer extends StatelessWidget {
                 ),
               ),
               child: Icon(
-                Icons.enhance_photo_translate_sharp,
+                Icons.add_a_photo,
                 size: 40,
                 color: KColors.TEXT_COLOR_DARK.withOpacity(.1),
               ),

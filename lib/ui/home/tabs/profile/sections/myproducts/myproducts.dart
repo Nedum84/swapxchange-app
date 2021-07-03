@@ -24,6 +24,15 @@ class MyProducts extends StatelessWidget {
           preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
           child: CustomAppbar(
             title: 'My Products',
+            actionBtn: [
+              IconButton(
+                onPressed: () => myProductController.fetchAll(reset: true),
+                icon: Icon(
+                  Icons.refresh,
+                  color: KColors.TEXT_COLOR_DARK,
+                ),
+              ),
+            ],
           ),
         ),
         body: RefreshIndicator(

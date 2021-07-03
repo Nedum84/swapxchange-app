@@ -13,6 +13,8 @@ class ProductChats {
     this.offerProductId,
     this.senderId,
     this.receiverId,
+    this.senderClosedDeal,
+    this.receiverClosedDeal,
     this.chatStatus,
     this.productImages,
     this.productOfferImages,
@@ -23,7 +25,9 @@ class ProductChats {
   final int? offerProductId;
   final int? senderId;
   final int? receiverId;
-  final SwapStatus? chatStatus;
+  int? senderClosedDeal;
+  int? receiverClosedDeal;
+  SwapStatus? chatStatus;
   final List<ProductImage>? productImages;
   final List<ProductImage>? productOfferImages;
 
@@ -37,6 +41,8 @@ class ProductChats {
         offerProductId: int.parse(json["offer_product_id"]),
         senderId: int.parse(json["sender_id"]),
         receiverId: int.parse(json["receiver_id"]),
+        senderClosedDeal: int.parse(json["sender_closed_deal"]),
+        receiverClosedDeal: int.parse(json["receiver_closed_deal"]),
         chatStatus: ProductChats.statusToEnum(json["chat_status"]),
         productImages: List<ProductImage>.from(jsonDecode(json["product_images"]).map((x) => ProductImage.fromMap(x))),
         productOfferImages: List<ProductImage>.from(jsonDecode(json["product_offer_images"]).map((x) => ProductImage.fromMap(x))),
@@ -48,6 +54,8 @@ class ProductChats {
         "offer_product_id": offerProductId,
         "sender_id": senderId,
         "receiver_id": receiverId,
+        "sender_closed_deal": senderClosedDeal,
+        "receiver_closed_deal": receiverClosedDeal,
         "chat_status": statusFromEnum(chatStatus!),
         "product_images": List<dynamic>.from(productImages?.map((x) => x.toMap()) ?? []),
         "product_offer_images": List<dynamic>.from(productOfferImages?.map((x) => x.toMap()) ?? []),

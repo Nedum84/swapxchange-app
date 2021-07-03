@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
-import 'package:swapxchange/repository/dio/error_catch.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 
 class RepoCoins extends ApiClient {
@@ -45,8 +44,8 @@ class RepoCoins extends ApiClient {
   static Future<CoinsModel?> getBalance() async {
     try {
       Response response = await ApiClient.request().get('/coins/me');
-      if (response.statusCode == 200) {
-        // print(CoinsModel.fromMap(response.data["data"]).toMap());
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print(response.data["data"]);
 
         return CoinsModel.fromMap(response.data["data"]);
       }
@@ -61,13 +60,11 @@ class RepoCoins extends ApiClient {
   static Future<CoinsModel?> findAllByUserId({required int userId}) async {
     try {
       Response response = await ApiClient.request().get('/coins/$userId');
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return CoinsModel.fromMap(response.data["data"]);
       }
     } catch (e) {
-      catchErrors(e);
+      print(e);
     }
-
-    return null;
   }
 }

@@ -61,10 +61,10 @@ class _BuyCoinsState extends State<BuyCoins> {
         _buyCoins(reference: response.reference!);
       } else {
         AlertUtils.hideProgressDialog();
-        AlertUtils.showCustomDialog(context, body: 'Payment Verification Error, Contact support for further assistance with reference:${response.reference}.');
+        AlertUtils.showCustomDialog(body: 'Payment Verification Error, Contact support for further assistance with reference:${response.reference}.');
       }
     } else {
-      AlertUtils.showCustomDialog(context, fromTop: false, body: response.message);
+      AlertUtils.showCustomDialog(fromTop: false, body: response.message);
     }
   }
 

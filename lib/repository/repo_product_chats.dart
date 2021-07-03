@@ -13,6 +13,15 @@ class RepoProductChats extends ApiClient {
     return null;
   }
 
+  static Future<ProductChats?> findById({required int id}) async {
+    Response response = await ApiClient.request().get('/productchats/$id');
+
+    if (response.statusCode == 200) {
+      return ProductChats.fromMap(response.data["data"]["product_chat"]);
+    }
+    return null;
+  }
+
   static Future<ProductChats?> findRecentBwTwoUsers({required int secondUserId}) async {
     try {
       Response response = await ApiClient.request().get('/productchats/user/$secondUserId');

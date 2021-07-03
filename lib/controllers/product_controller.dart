@@ -64,7 +64,7 @@ class ProductController extends GetxController {
 
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value && productList.length > 0) {
+      if (!isLoading.value && productList.length > 0 && productList.length >= limit) {
         if (controller!.position.extentAfter < 500) {
           fetchAll();
         }

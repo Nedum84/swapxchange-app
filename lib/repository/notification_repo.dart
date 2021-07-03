@@ -33,44 +33,31 @@ class NotificationRepo {
       'doc_id': model.docId,
       'is_read': model.isRead,
       'data': model.data!.toMap(),
+      "content_available": true,
+      "apns-priority": "5",
+      // "notification": {"sound": ""},
     };
-    if (tokens.length == 1) {
-      data = {
-        ...data2,
-        ...{"to": tokens[0]},
-        ...{
-          'android': {
-            'notification': {
-              'channel_id': MESSAGE_CHANNEL_ID,
-              'tag': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            },
-            'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            'priority': 'high'
-          }
-        }
-      };
-    } else {
-      data = {
-        ...data2,
-        ...{"registration_ids": tokens},
-        ...{
-          'android': {
-            'notification': {
-              'channel_id': MESSAGE_CHANNEL_ID,
-              'tag': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            },
-            'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
-            'priority': 'high'
-          }
-        }
-      };
-    }
     // use "registration_ids" instead of "to" and send the push notification to multiple tokens
+    data = {
+      ...data2,
+      // ...model.toMap(),
+      "registration_ids": tokens,
+      ...{
+        'android': {
+          'notification': {
+            'channel_id': MESSAGE_CHANNEL_ID,
+            'tag': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
+          },
+          'collapseKey': "${model.data!.id}-${NotificationData.typeFromEnum(model.data!.type!)}",
+          'priority': 'high'
+        }
+      }
+    };
     final data3 = {}..addAll(model.toMap())..addAll({"registration_ids": tokens});
 
-    print(data);
+    print(data2);
 
-    await dio.post(url, data: data2);
+    await dio.post(url, data: data);
 
     return completer.future;
   }

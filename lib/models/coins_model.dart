@@ -49,6 +49,7 @@ class LastCredit {
     this.reference,
     this.methodOfSubscription,
     this.createdAt,
+    this.currentTime,
   });
 
   final int? id;
@@ -57,6 +58,7 @@ class LastCredit {
   final String? reference;
   final MethodOfSubscription? methodOfSubscription;
   final DateTime? createdAt;
+  final DateTime? currentTime;
 
   factory LastCredit.fromJson(String str) => LastCredit.fromMap(json.decode(str));
 
@@ -69,6 +71,7 @@ class LastCredit {
         reference: json["reference"],
         methodOfSubscription: LastCredit.statusToEnum(json["method_of_subscription"]),
         createdAt: DateTime.parse(json["created_at"]),
+        currentTime: json["current_time"] == null ? DateTime.now() : DateTime?.tryParse(json["current_time"]) ?? DateTime.now(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -78,6 +81,7 @@ class LastCredit {
         "reference": reference,
         "method_of_subscription": LastCredit.statusFromEnum(methodOfSubscription!),
         "created_at": createdAt!.toIso8601String(),
+        "current_time": currentTime?.toIso8601String(),
       };
 
   static MethodOfSubscription statusToEnum(String status) {

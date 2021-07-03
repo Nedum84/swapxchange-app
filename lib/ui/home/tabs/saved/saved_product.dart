@@ -12,6 +12,15 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class SavedProduct extends StatelessWidget {
+  _gotoAddProduct() {
+    final addCont = AddProductController.to;
+    if (addCont.product == null) {
+      addCont.setEditing(false);
+      addCont.create();
+    }
+    Get.to(() => AddProduct());
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SavedProductController>(builder: (savedProductController) {
@@ -28,7 +37,7 @@ class SavedProduct extends StatelessWidget {
             DashboardCustomAppbar(
               title: 'Saved Products',
               icon: Icons.post_add,
-              iconClick: () => Get.to(() => AddProduct()),
+              iconClick: _gotoAddProduct,
             ),
             Expanded(
               child: (products.length != 0)

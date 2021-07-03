@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:swapxchange/dump/sliver_header2.dart';
 import 'package:swapxchange/enum/online_status.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
@@ -25,7 +24,7 @@ AppBar chatAppBar({required AppUser receiverUser, required AppUser currentUser})
     ),
     centerTitle: false,
     title: InkWell(
-      onTap: () => Get.to(() => SliverHeader2()),
+      // onTap: () => Get.to(() => SliverHeader2()),
       child: Row(
         children: [
           CachedImage(
