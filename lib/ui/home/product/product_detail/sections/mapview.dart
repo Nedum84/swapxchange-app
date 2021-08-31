@@ -51,7 +51,7 @@ class MapView extends StatelessWidget {
                   double.tryParse(product.userAddressLat!) ?? 6.4550651,
                   double.tryParse(product.userAddressLong!) ?? 3.5197741,
                 ),
-                zoom: 18,
+                zoom: 15,
               ),
               myLocationEnabled: false,
               myLocationButtonEnabled: false,
@@ -74,20 +74,20 @@ class MapView extends StatelessWidget {
                   border: Border.all(width: 2, color: KColors.SECONDARY),
                   color: KColors.SECONDARY.withOpacity(.15),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 5,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Color(0xffCD4F4E).withOpacity(.3),
-                      ),
-                    ),
-                  ],
-                ),
+                // child: Column(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     Container(
+                //       width: 5,
+                //       height: 5,
+                //       decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(4),
+                //         color: Color(0xffCD4F4E).withOpacity(.3),
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ),
             )
           ],

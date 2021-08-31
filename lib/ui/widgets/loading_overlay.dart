@@ -20,7 +20,7 @@ class LoadingOverlay extends StatelessWidget {
     if (itemCount == 0 && !isLoading) {
       return NoProductWidget(title: 'No product found around your location');
     }
-    if (isLoading && itemCount != 0) {
+    if (isLoading && itemCount == 0) {
       return Center(
         child: LoadingProgressMultiColor(),
       );
