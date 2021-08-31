@@ -143,7 +143,7 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       if (!isLoading) {
-        if (controller!.position.extentAfter < 500) {
+        if (controller!.position.extentAfter < 500 && products.length % limit == 0) {
           _fetchProducts();
         }
       }

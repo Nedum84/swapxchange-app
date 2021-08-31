@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/bottom_menu_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
@@ -73,63 +76,77 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     WidgetsBinding.instance!.removeObserver(this);
   }
 
+  _backPressed() {
+    final con = Get.find<BottomMenuController>();
+    if (con.bottomMenuItem != BottomMenuItem.HOME) {
+      con.onChangeMenu(BottomMenuItem.HOME);
+    } else {
+      if (!Platform.isIOS) {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get.put(BottomMenuController());
-    return PickupLayout(
-      scaffold: Scaffold(
-        body: Container(
-          padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
-          child: PageView(
-            controller: Get.find<BottomMenuController>().pageViewController,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              CustomKeepAlivePage(child: Home()),
-              CustomKeepAlivePage(child: ChatList()),
-              CustomKeepAlivePage(child: SavedProduct()),
-              CustomKeepAlivePage(child: Profile()),
-            ],
+    return WillPopScope(
+      onWillPop: () => Future.value(_backPressed()),
+      child: PickupLayout(
+        scaffold: Scaffold(
+          body: Container(
+            padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
+            child: PageView(
+              controller: Get.find<BottomMenuController>().pageViewController,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                CustomKeepAlivePage(child: Home()),
+                CustomKeepAlivePage(child: ChatList()),
+                CustomKeepAlivePage(child: SavedProduct()),
+                CustomKeepAlivePage(child: Profile()),
+              ],
+            ),
           ),
-        ),
-        bottomNavigationBar: BottomAppBar(
-          child: new Row(
-            // mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: BottomMenuWidget(
-                  title: 'Latest',
-                  bottomMenuItem: BottomMenuItem.HOME,
+          bottomNavigationBar: BottomAppBar(
+            child: new Row(
+              // mainAxisSize: MainAxisSize.max,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: BottomMenuWidget(
+                    title: 'Latest',
+                    bottomMenuItem: BottomMenuItem.HOME,
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: BottomMenuWidget(
-                  title: 'Chat',
-                  bottomMenuItem: BottomMenuItem.CHAT,
+                Expanded(
+                  flex: 1,
+                  child: BottomMenuWidget(
+                    title: 'Chat',
+                    bottomMenuItem: BottomMenuItem.CHAT,
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: AddMenuWidget(),
-              ),
-              Expanded(
-                flex: 1,
-                child: BottomMenuWidget(
-                  title: 'Saved',
-                  bottomMenuItem: BottomMenuItem.SAVED,
+                Expanded(
+                  flex: 1,
+                  child: AddMenuWidget(),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: BottomMenuWidget(
-                  title: 'Account',
-                  bottomMenuItem: BottomMenuItem.PROFILE,
+                Expanded(
+                  flex: 1,
+                  child: BottomMenuWidget(
+                    title: 'Saved',
+                    bottomMenuItem: BottomMenuItem.SAVED,
+                  ),
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: 1,
+                  child: BottomMenuWidget(
+                    title: 'Account',
+                    bottomMenuItem: BottomMenuItem.PROFILE,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

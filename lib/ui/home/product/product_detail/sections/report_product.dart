@@ -33,7 +33,7 @@ class ReportProduct extends StatelessWidget {
 
     final addFeedback = await RepoReportedProduct.addReportedProductModel(reported_product: reportedProduct);
     if (addFeedback != null) {
-      AlertUtils.toast('Product report submitted');
+      AlertUtils.toast('Report submitted successfully');
       Get.back();
       _textFieldController.clear();
     } else {

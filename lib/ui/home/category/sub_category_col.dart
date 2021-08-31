@@ -67,7 +67,7 @@ class SubCategoryItem extends StatelessWidget {
                     style: StyleNormal,
                   ),
                   Text(
-                    '${subCat.noOfProducts} items',
+                    '${subCat.noOfProducts} item${subCat.noOfProducts == 1 ? '' : 's'}',
                     style: StyleCategorySubTitle,
                   ),
                 ],

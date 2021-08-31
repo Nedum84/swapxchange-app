@@ -10,7 +10,7 @@ class ProductSearchController extends GetxController {
   RxList<Product> productList = <Product>[].obs;
   RxBool isLoading = true.obs;
   RxBool resetList = false.obs;
-  RxString queryString = "".obs;
+  // RxString queryString = "".obs;
   RxBool hideSearchSuggestion = true.obs;
   RxList searchSuggestions = [].obs;
   RxString searchFilter = SearchFilters.BEST_MATCH.obs;
@@ -30,23 +30,18 @@ class ProductSearchController extends GetxController {
   void dispose() {
     textController.dispose();
     textFieldFocus.dispose();
-    queryString("");
+    // queryString("");
     super.dispose();
   }
 
-  setQueryString(str) {
-    queryString(str);
-    update();
-    _getSuggestions();
-  }
-
-  _getSuggestions() async {
+  getSuggestions() async {
+    String queryString = textController.text.toString().trim();
     List<String>? list = [];
-    if (queryString.value.isEmpty) {
+    if (queryString.isEmpty) {
       hideSearchSuggestion(true);
       update();
     } else {
-      list = await RepoProductSearch.findSearchSuggestions(query: queryString.value);
+      list = await RepoProductSearch.findSearchSuggestions(query: textController.text);
       if (list.length != 0) hideSearchSuggestion(false);
       update();
     }
@@ -58,7 +53,9 @@ class ProductSearchController extends GetxController {
     hideSearchSuggestion(true);
     isLoading(true);
     offset = resetList.value ? 0 : productList.length;
-    String query = queryString.value.isEmpty ? "none" : queryString.value;
+    String queryString = textController.text.toString().trim();
+
+    String query = queryString.isEmpty ? "none" : queryString;
     var items = await RepoProductSearch.findBySearch(query: query, filters: searchFilter.value, offset: offset, limit: limit);
     if (items!.length != 0) {
       if (resetList.value) {
@@ -88,7 +85,7 @@ class ProductSearchController extends GetxController {
 
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value && productList.length > 0 && productList.length >= limit) {
+      if (!isLoading.value && productList.length > 0 && productList.length % limit == 0) {
         if (controller!.position.extentAfter < 500) {
           resetList(false);
           fetchProducts();

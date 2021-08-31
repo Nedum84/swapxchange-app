@@ -146,7 +146,6 @@ class RepoProduct extends ApiClient {
     try {
       Response response = await ApiClient.request().get('/products/exchange/$productId/$offset/$limit');
 
-      print(response.data);
       if (response.statusCode == 200) {
         var items = response.data["data"]["products"];
 

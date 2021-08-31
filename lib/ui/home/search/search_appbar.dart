@@ -24,8 +24,15 @@ class SearchAppBar extends StatelessWidget {
               controller: searchController.textController,
               focusNode: searchController.textFieldFocus,
               keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (str) {
+                searchController.textFieldFocus.unfocus();
+                searchController.hideSearchSuggestion(true);
+                searchController.resetList(true);
+                searchController.update();
+                searchController.fetchProducts();
+              },
               maxLines: 1,
-              // autofocus: true,
               style: TextStyle(
                 color: KColors.TEXT_COLOR,
                 fontWeight: FontWeight.w600,
@@ -46,7 +53,7 @@ class SearchAppBar extends StatelessWidget {
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.all(0).copyWith(left: 16),
               ),
-              onChanged: (newString) => searchController.setQueryString(newString),
+              onChanged: (newString) => searchController.getSuggestions(),
             ),
           ),
           InkWell(

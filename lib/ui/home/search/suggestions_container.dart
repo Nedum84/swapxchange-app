@@ -36,7 +36,6 @@ class SuggestionsContainer extends StatelessWidget {
                             searchController.textFieldFocus.unfocus();
                             searchController.hideSearchSuggestion(true);
                             searchController.textController.text = item;
-                            searchController.setQueryString(item);
                             searchController.resetList(true);
                             searchController.update();
                             searchController.fetchProducts();

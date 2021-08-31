@@ -131,7 +131,7 @@ class SeeAllBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() => BrowseCategory(), transition: Transition.cupertinoDialog),
+      onTap: () => Get.to(() => BrowseCategory()),
       child: Column(
         children: [
           Container(

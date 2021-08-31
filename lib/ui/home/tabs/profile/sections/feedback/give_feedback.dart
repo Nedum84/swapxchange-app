@@ -16,7 +16,7 @@ class GiveFeedback extends StatelessWidget {
     textFieldFocusName.unfocus();
     final msg = messageController.text.toString().trim();
     if (msg.isEmpty) {
-      AlertUtils.toast('Enter feedback message');
+      AlertUtils.toast('Enter message');
       return;
     }
 
@@ -24,7 +24,7 @@ class GiveFeedback extends StatelessWidget {
     final feedback = FeedbackModel(message: msg);
     final addFeedback = await RepoFeedback.addFeedbackModel(feedback: feedback);
     if (addFeedback != null) {
-      AlertUtils.toast('Message received successfully');
+      AlertUtils.toast('Feedback message delivered');
       messageController.clear();
     } else {
       AlertUtils.toast('Error occurred, try again');

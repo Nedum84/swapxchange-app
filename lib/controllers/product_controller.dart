@@ -68,7 +68,7 @@ class ProductController extends GetxController {
   bool handleScrollNotification(ScrollNotification notification) {
     //--> For infinite fetching...
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value && productList.length > 0 && productList.length >= limit) {
+      if (!isLoading.value && productList.length > 0 && productList.length % limit == 0) {
         if (controller!.position.extentAfter < 500) {
           fetchAll();
         }
@@ -76,10 +76,10 @@ class ProductController extends GetxController {
     }
     //--> For scroll  text change
     // if (notification is ScrollEndNotification) {
-    if (controller!.position.extentBefore >= 200 && pageTitle == "") {
+    if (controller!.position.extentBefore >= 160 && pageTitle == "") {
       pageTitle = "Latest";
       update();
-    } else if (controller!.position.extentBefore < 200 && pageTitle.isNotEmpty) {
+    } else if (controller!.position.extentBefore < 160 && pageTitle.isNotEmpty) {
       pageTitle = "";
       update();
       // }

@@ -89,8 +89,9 @@ class ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Product no of views
-    _addProductView();
-    print(product.createdAt);
+    Future.delayed(Duration(milliseconds: 500), () {
+      _addProductView();
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,

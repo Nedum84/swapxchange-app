@@ -24,7 +24,6 @@ class TermsAndConditions extends StatelessWidget {
               return LoadingProgressMultiColor(showBg: false);
             }
             final data = snapshot.data;
-            print("s------------------------------xcxcxcxcxcxcxcxc");
 
             return SingleChildScrollView(
               child: Container(
