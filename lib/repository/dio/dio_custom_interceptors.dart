@@ -23,8 +23,8 @@ class DioCustomInterceptors extends Interceptor {
 
     // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
     options.baseUrl = 'http://199.192.27.225:8088/v1/';
-    options.connectTimeout = 12000;
-    options.receiveTimeout = 10000;
+    options.connectTimeout = 15000;
+    options.receiveTimeout = 12000;
     // Transform response data to Json Map
     options.responseType = ResponseType.json;
     //Add headers
@@ -36,6 +36,7 @@ class DioCustomInterceptors extends Interceptor {
 
   @override
   onResponse(Response response, ResponseInterceptorHandler handler) {
+    // print("PATH: ${response.requestOptions.path}:: ${response.data["data"]}");
     print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
     return super.onResponse(response, handler);
   }
@@ -49,7 +50,7 @@ class DioCustomInterceptors extends Interceptor {
     }
 
     // Assume 401 stands for token expired
-    if (dioError.response?.statusCode == 401) {
+    if (dioError.response?.statusCode == 401 && dioError.response!.statusMessage == "Unauthorized") {
       Tokens? tokens = await UserPrefs.getTokens();
       if (tokens?.refresh == null) {
         AlertUtils.toast('Your session has expired. Login again');

@@ -1,12 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/models/feedback_model.dart';
+import 'package:swapxchange/repository/repo_feedback.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class GiveFeedback extends StatelessWidget {
   TextEditingController messageController = TextEditingController();
+  FocusNode textFieldFocusName = FocusNode();
+
+  _submitFeedback() async {
+    textFieldFocusName.unfocus();
+    final msg = messageController.text.toString().trim();
+    if (msg.isEmpty) {
+      AlertUtils.toast('Enter feedback message');
+      return;
+    }
+
+    AlertUtils.showProgressDialog(title: null);
+    final feedback = FeedbackModel(message: msg);
+    final addFeedback = await RepoFeedback.addFeedbackModel(feedback: feedback);
+    if (addFeedback != null) {
+      AlertUtils.toast('Message received successfully');
+      messageController.clear();
+    } else {
+      AlertUtils.toast('Error occurred, try again');
+    }
+
+    AlertUtils.hideProgressDialog();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +55,7 @@ class GiveFeedback extends StatelessWidget {
               ),
               child: TextField(
                 controller: messageController,
+                focusNode: textFieldFocusName,
                 keyboardType: TextInputType.multiline,
                 maxLines: 8,
                 style: TextStyle(
@@ -55,7 +82,7 @@ class GiveFeedback extends StatelessWidget {
             SizedBox(
               height: 16,
             ),
-            PrimaryButton(onClick: () => null, btnText: 'Submit')
+            PrimaryButton(onClick: _submitFeedback, btnText: 'Submit')
           ],
         ),
       ),

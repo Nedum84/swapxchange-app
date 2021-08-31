@@ -7,6 +7,7 @@ import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
 import 'package:swapxchange/ui/widgets/dashboard_custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -31,7 +32,7 @@ class ChatList extends StatelessWidget {
                     stream: RepoChats.fetchChatList2(userId: user!.userId!),
                     builder: (context, snapshot2) {
                       if (!snapshot1.hasData || !snapshot2.hasData) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: LoadingProgressMultiColor());
                       }
                       final data1 = snapshot1.data!.docs;
                       final data2 = snapshot2.data!.docs;

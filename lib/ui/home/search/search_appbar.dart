@@ -21,11 +21,11 @@ class SearchAppBar extends StatelessWidget {
           Expanded(
             child: TextField(
               // controller: TextEditingController()..text = searchController.queryString.value,
-              // controller: searchController.textController,
+              controller: searchController.textController,
               focusNode: searchController.textFieldFocus,
               keyboardType: TextInputType.text,
               maxLines: 1,
-              autofocus: true,
+              // autofocus: true,
               style: TextStyle(
                 color: KColors.TEXT_COLOR,
                 fontWeight: FontWeight.w600,

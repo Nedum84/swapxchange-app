@@ -12,8 +12,8 @@ class Constants {
   static final PAYSTACK_SECRET_KEY = 'sk_test_9cd3e56e95f4abea6a56643e45ca3f606210effc';
 
   // //LIVE KEYS
-  // static final PAYSTACK_PUBLIC_KEY = 'pk_live_cd8470ea118572ad73108abecbc87e11536d6138';
-  // static final PAYSTACK_SECRET_KEY = 'sk_live_55f3a4f67130f438f358ea2890c3bb6cfd0e746d';
+  // static final PAYSTACK_PUBLIC_KEY = 'pk_live_20911f8fc8fdf9447d243fe1526bdee388ea1481';
+  // static final PAYSTACK_SECRET_KEY = 'sk_live_1627b9cf52161b293eafcd2a5d3a9b68a0a2d726';
 
   static final ANDROID_MAP_KEY = 'AIzaSyB2SmVI9__vmGe8LQmVhKtXgYwT88rRepQ';
   static final IOS_MAP_KEY = 'AIzaSyCDm9RxFcAe-2hYYFBBb9yUJEz374Xr6TA';

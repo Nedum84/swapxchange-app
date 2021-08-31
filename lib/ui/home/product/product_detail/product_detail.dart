@@ -17,6 +17,7 @@ import 'package:swapxchange/ui/home/product/product_detail/sections/call_chat_it
 import 'package:swapxchange/ui/home/product/product_detail/sections/image_carousel.dart';
 import 'package:swapxchange/ui/home/product/product_detail/sections/interest_and_swap_button.dart';
 import 'package:swapxchange/ui/home/product/product_detail/sections/mapview.dart';
+import 'package:swapxchange/ui/home/product/product_detail/sections/report_product.dart';
 import 'package:swapxchange/ui/home/product/product_detail/sections/save_btn.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
@@ -177,20 +178,20 @@ class ProductDetail extends StatelessWidget {
                           final data = snapshots.data! as List;
                           final cat = data[0] as Category;
                           final subCat = data[1] as SubCategory;
-                          return Text('${cat.categoryName} • ${subCat.subCategoryName}', style: StyleNormal);
+                          return Text('${cat.categoryName} • ${subCat.subCategoryName}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5)));
                         },
                       ),
                       SizedBox(height: 24),
                       Text('DESCRIPTION', style: H3Style),
                       SizedBox(height: 8),
-                      Text(lorem.substring(0, 100), style: StyleNormal),
+                      Text(lorem.substring(0, 100), style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
                       SizedBox(height: 24),
                       Text('POSTED BY', style: H3Style),
                       SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${product.user!.name} on ${Helpers.formatDate(product.createdAt!)}', style: StyleNormal),
+                          Text('${product.user!.name} on ${Helpers.formatDate(product.createdAt!)}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
                           Row(
                             children: [
                               Icon(Icons.remove_red_eye, size: 16, color: KColors.TEXT_COLOR_LIGHT2),
@@ -217,11 +218,7 @@ class ProductDetail extends StatelessWidget {
                           if (product.userId != UserController.to.user!.userId)
                             Expanded(
                               flex: 1,
-                              child: ButtonOutline2(
-                                titleColor: KColors.RED,
-                                title: 'Report this',
-                                onClick: () => null,
-                              ),
+                              child: ReportProduct(product: product),
                             ),
                         ],
                       )

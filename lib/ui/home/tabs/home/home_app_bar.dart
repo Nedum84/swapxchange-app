@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/product_controller.dart';
 import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/notification_model.dart';
@@ -15,27 +16,40 @@ import 'package:swapxchange/utils/styles.dart';
 class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          // UserAddress(),
-          MenuIcon(
-            icon: Icons.search,
-            onClick: () {
-              ProductSearchController.to.fetchProducts();
-              Get.to(() => ProductSearch());
-            },
-          ),
-          MenuBadge(
-            icon: Icons.notifications_none,
-            onClick: () => Get.to(() => NotificationList()),
-          ),
-        ],
-      ),
-    );
+    return GetBuilder<ProductController>(builder: (pController) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: AnimatedOpacity(
+                opacity: pController.pageTitle.isEmpty ? 0 : 1,
+                duration: Duration(seconds: 1),
+                child: Text(
+                  "${pController.pageTitle}",
+                  style: H1Style,
+                ),
+              ),
+            ),
+            MenuIcon(
+              icon: Icons.search,
+              onClick: () {
+                // Get.offAll(() => SplashScreen());
+                // return;
+                ProductSearchController.to.fetchProducts();
+                Get.to(() => ProductSearch());
+              },
+            ),
+            MenuBadge(
+              icon: Icons.notifications_none,
+              onClick: () => Get.to(() => NotificationList()),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

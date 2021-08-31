@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:swapxchange/repository/repo_app_settings.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
-import 'package:swapxchange/utils/strings.dart';
-import 'package:swapxchange/utils/styles.dart';
 
 class TermsAndConditions extends StatelessWidget {
   @override
@@ -16,20 +17,26 @@ class TermsAndConditions extends StatelessWidget {
           title: 'Terms',
         ),
       ),
-      body: ListView.separated(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          itemCount: 20,
-          itemBuilder: (context, index) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
+      body: FutureBuilder<String?>(
+          future: RepoAppSettings.getAppSettingsByKey(key: "terms_and_conditions"),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return LoadingProgressMultiColor(showBg: false);
+            }
+            final data = snapshot.data;
+            print("s------------------------------xcxcxcxcxcxcxcxc");
+
+            return SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                ),
+                child: Html(data: data ?? "Network error"),
               ),
-              child: Text('${index + 1}. $lorem', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK)),
             );
-          },
-          separatorBuilder: (ctx, idx) => SizedBox(height: 16)),
+          }),
     );
   }
 }

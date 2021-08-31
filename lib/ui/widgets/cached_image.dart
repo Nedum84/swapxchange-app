@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:swapxchange/models/tokens.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -101,7 +102,7 @@ class CachedImage extends StatelessWidget {
               future: UserPrefs.getTokens(),
               builder: (context, snapshots) {
                 if (!snapshots.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: LoadingProgressMultiColor(showBg: false));
                 }
 
                 final tokens = snapshots.data!;
@@ -117,7 +118,7 @@ class CachedImage extends StatelessWidget {
                             imageUrl: imageUrl!,
                             fit: fit,
                             httpHeaders: {'Authorization': "Bearer $token"},
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false)),
                             errorWidget: (context, url, error) {
                               return Image.network(
                                 imageUrl ?? "",

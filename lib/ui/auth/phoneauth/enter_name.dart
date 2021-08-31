@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
@@ -68,6 +69,17 @@ class _EnterNameState extends State<EnterName> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: KColors.PRIMARY,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
@@ -124,7 +136,6 @@ class _EnterNameState extends State<EnterName> {
               ],
             ),
           ),
-          CustomBackButton(),
           Positioned(
             left: 0,
             right: 0,

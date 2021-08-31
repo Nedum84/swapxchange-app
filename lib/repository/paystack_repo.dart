@@ -50,8 +50,8 @@ class PaystackRepo {
     }
   }
 
-  //UNIQUE PAYMENT REFERENCE FOR QUESTIONS
-  static String genPaymentReference({required int noOfCoins, required int userId}) {
-    return '${Helpers.genRandString(length: 10).toUpperCase()}_${noOfCoins}_$userId';
+  //UNIQUE PAYMENT REFERENCE FOR PURCHASES
+  static String genPaymentReference({required int noOfCoins, required int userId, required int price}) {
+    return '${Helpers.genRandString(length: 10).toUpperCase()}_${noOfCoins}_${userId}_$price';
   }
 }

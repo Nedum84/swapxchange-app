@@ -33,6 +33,7 @@ class _BuyCoinsState extends State<BuyCoins> {
     String paymentReference = PaystackRepo.genPaymentReference(
       noOfCoins: CoinsController.getCoinsFromAmount(selectedAmount),
       userId: user.userId!,
+      price: selectedAmount,
     );
     // String? accessCode = await PaystackRepo.createAccessCode(
     //   paymentReference: paymentReference,

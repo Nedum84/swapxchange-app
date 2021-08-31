@@ -109,7 +109,10 @@ class ModalOptions extends StatelessWidget {
             OptionsItem(
               title: "View product",
               icon: Icons.preview,
-              onClick: () => Get.to(() => ProductDetail(product: product)),
+              onClick: () {
+                Get.back();
+                Get.to(() => ProductDetail(product: product));
+              },
             ),
             //Product not blocked and not completed
             if (product.productStatus != ProductStatus.BLOCKED_PRODUCT_STATUS && product.productStatus != ProductStatus.COMPLETED_PRODUCT_STATUS)

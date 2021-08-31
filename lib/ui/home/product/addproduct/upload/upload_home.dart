@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/models/product_image.dart';
-import 'package:swapxchange/repository/image_methods.dart';
+import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/image_listview.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/image_viewpager.dart';
 import 'package:swapxchange/ui/widgets/choose_image_from.dart';
@@ -27,6 +27,7 @@ class UploadHome extends StatefulWidget {
 
 class _UploadHomeState extends State<UploadHome> {
   AddProductController addController = AddProductController.to;
+  final RepoStorage _storageMethods = RepoStorage();
 
   @override
   void initState() {
@@ -40,7 +41,8 @@ class _UploadHomeState extends State<UploadHome> {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: null);
-      String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
+      // String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
+      final String? imgUrl = await _storageMethods.uploadFile(selectedImage);
       AlertUtils.hideProgressDialog();
       if (imgUrl != null) {
         final imgP = ProductImage(
@@ -77,7 +79,8 @@ class _UploadHomeState extends State<UploadHome> {
                   child: Stack(
                     children: [
                       ImageViewpager(
-                        deleteImage: (imageProduct) {
+                        deleteImage: (imageProduct) async {
+                          await _storageMethods.delete(imageProduct.imagePath!);
                           ImageUploadUtilities.deleteImage(imageProduct);
                         },
                         makeCover: (imageProduct) {

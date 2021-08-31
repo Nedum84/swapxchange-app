@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/enter_phone.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/privacy/privacy.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/terms.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -126,6 +129,10 @@ class _LoginState extends State<Login> {
                   children: <TextSpan>[
                     TextSpan(
                       text: 'Privacy Policy',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Get.to(() => Privacy());
+                        },
                       style: TextStyle(
                         decoration: TextDecoration.underline,
                       ),
@@ -133,6 +140,10 @@ class _LoginState extends State<Login> {
                     TextSpan(text: ' and '),
                     TextSpan(
                         text: 'Licence Agreement',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(() => TermsAndConditions());
+                          },
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                         )),

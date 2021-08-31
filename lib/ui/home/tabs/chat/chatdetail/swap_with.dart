@@ -14,6 +14,7 @@ import 'package:swapxchange/ui/home/product/exchange_options/swap_suggestion.dar
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -140,7 +141,7 @@ class _SwapWithState extends State<SwapWith> {
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: LoadingProgressMultiColor());
               }
 
               List<Product>? myProducts = snapshot.data;

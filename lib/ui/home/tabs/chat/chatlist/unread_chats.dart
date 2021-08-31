@@ -44,22 +44,16 @@ class UnreadChatsDot extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       top: 0,
-      right: 2,
+      right: 1,
       child: StreamBuilder<QuerySnapshot>(
           stream: RepoChats.getAllUnreadMessages(myId: myId),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Container(
-                height: 0,
-                width: 0,
-              );
+              return Container(height: 0, width: 0);
             }
             final data = snapshot.data!.docs;
             if (data.isEmpty || data.length == 0) {
-              return Container(
-                height: 0,
-                width: 0,
-              );
+              return Container(height: 0, width: 0);
             }
 
             return Container(

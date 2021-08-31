@@ -6,7 +6,7 @@ import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
-class Privacy extends StatelessWidget {
+class ProhibitedProducts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,11 +14,11 @@ class Privacy extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
         child: CustomAppbar(
-          title: 'Privacy Policy',
+          title: 'Prohibited Products',
         ),
       ),
       body: FutureBuilder<String?>(
-          future: RepoAppSettings.getAppSettingsByKey(key: "privacy_policy"),
+          future: RepoAppSettings.getAppSettingsByKey(key: "prohibited_products"),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return LoadingProgressMultiColor(showBg: false);

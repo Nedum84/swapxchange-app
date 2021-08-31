@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
@@ -119,6 +120,18 @@ class _VerifyOtpState extends State<VerifyOtp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: KColors.WHITE_GREY,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: KColors.PRIMARY,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
@@ -182,7 +195,6 @@ class _VerifyOtpState extends State<VerifyOtp> {
               ],
             ),
           ),
-          CustomBackButton(),
           Positioned(
             left: 0,
             right: 0,

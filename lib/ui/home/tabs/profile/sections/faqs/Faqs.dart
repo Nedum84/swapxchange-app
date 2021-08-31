@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/models/faq_model.dart';
+import 'package:swapxchange/repository/repo_faq.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
-import 'package:swapxchange/utils/strings.dart';
 import 'package:swapxchange/utils/styles.dart';
-
-class FaqModel {
-  // FaqModel(this.title, [this.description = const <FaqModel>[]]);
-  FaqModel({required this.title, required this.description});
-
-  final String title;
-  final String description;
-}
 
 class Faqs extends StatelessWidget {
   @override
@@ -25,12 +19,25 @@ class Faqs extends StatelessWidget {
             title: 'FAQs',
           ),
         ),
-        body: ListView.separated(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          itemBuilder: (BuildContext context, int index) => FaqItem(data[index]),
-          itemCount: data.length,
-          separatorBuilder: (ctx, idx) => SizedBox(height: 12),
-        ),
+        body: FutureBuilder<List<FaqModel>?>(
+            future: RepoFaq.findAll(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return LoadingProgressMultiColor(showBg: false);
+              }
+              final faqs = snapshot.data;
+
+              if (faqs!.length == 0) {
+                return Center(child: Text("No faq found"));
+              }
+
+              return ListView.separated(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                itemBuilder: (BuildContext context, int index) => FaqItem(faqs[index]),
+                itemCount: faqs.length,
+                separatorBuilder: (ctx, idx) => SizedBox(height: 12),
+              );
+            }),
       ),
     );
   }
@@ -49,7 +56,7 @@ class FaqItem extends StatelessWidget {
       childrenPadding: EdgeInsets.only(bottom: 12, left: 16),
       expandedAlignment: Alignment.topLeft,
       title: Text(
-        faq.title,
+        faq.question ?? "",
         style: H3Style.copyWith(
           color: KColors.TEXT_COLOR_DARK,
           fontWeight: FontWeight.normal,
@@ -57,33 +64,10 @@ class FaqItem extends StatelessWidget {
       ),
       children: [
         Text(
-          faq.description,
-          style: StyleNormal.copyWith(),
+          faq.answer ?? "",
+          style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_LIGHT2),
         )
       ],
     );
   }
 }
-
-final List<FaqModel> data = <FaqModel>[
-  FaqModel(
-    title: 'How to shop at SwapXchane',
-    description: lorem.substring(0, 200),
-  ),
-  FaqModel(
-    title: 'How to shop at SwapXchane',
-    description: lorem.substring(0, 100),
-  ),
-  FaqModel(
-    title: 'How to shop at SwapXchane',
-    description: lorem.substring(0, 200),
-  ),
-  FaqModel(
-    title: 'How to shop at SwapXchane',
-    description: lorem.substring(0, 150),
-  ),
-  FaqModel(
-    title: 'How to shop at SwapXchane',
-    description: lorem.substring(0, 20),
-  ),
-];

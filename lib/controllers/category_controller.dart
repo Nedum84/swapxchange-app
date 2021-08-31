@@ -17,7 +17,7 @@ class CategoryController extends GetxController {
   }
 
   void setItems({required List<Category> items}) {
-    categoryList(items);
+    categoryList(items.sortedAscBy((it) => it.idx!).toList());
   }
 
   Future<Category?> fetchById({required int catId}) async {
@@ -33,7 +33,9 @@ class CategoryController extends GetxController {
   }
 
   List<Category> hotDeals() {
-    return categoryList.sortedDescBy((it) => it.noOfProducts!).toList();
+    final cats = categoryList;
+    cats.sort((a, b) => b.noOfProducts!.compareTo(a.noOfProducts!));
+    return cats;
   }
 
   void sort() {

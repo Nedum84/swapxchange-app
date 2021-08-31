@@ -5,6 +5,7 @@ import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/admin/subcategory/add_subcategory.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -85,7 +86,7 @@ class _AdminSubCategoryState extends State<AdminSubCategory> {
         strokeWidth: 3,
         child: Container(
           child: isLoading && subCategories.length == 0
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child: LoadingProgressMultiColor())
               : subCategories.length == 0
                   ? Center(child: Text('Nothing found'))
                   : ListView.separated(

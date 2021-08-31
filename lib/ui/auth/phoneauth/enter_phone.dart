@@ -86,6 +86,17 @@ class _EnterPhoneState extends State<EnterPhone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: KColors.PRIMARY,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
@@ -167,7 +178,6 @@ class _EnterPhoneState extends State<EnterPhone> {
               ],
             ),
           ),
-          CustomBackButton(),
           Positioned(
             left: 0,
             right: 0,

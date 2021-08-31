@@ -7,15 +7,11 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class UserDetailsWidget extends StatelessWidget {
-  // UserDetailsWidget() {
-  //   print('userController.user - = - = -=  - = - = -= - =  -=  - =- =  -=  -');
-  // }
   @override
   Widget build(BuildContext context) {
     return GetBuilder<UserController>(
         init: UserController(),
         builder: (userController) {
-          // print('userController.user ---------------------------------------------------ssssssssssssssssssssssss---------============ ================');
           return Row(
             children: [
               Container(

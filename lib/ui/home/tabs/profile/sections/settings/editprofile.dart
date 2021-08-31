@@ -23,8 +23,18 @@ class EditProfile extends StatelessWidget {
   TextEditingController nameController = TextEditingController(text: UserController.to.user!.name ?? "");
   TextEditingController emailController = TextEditingController(text: UserController.to.user!.email ?? "");
   TextEditingController phoneController = TextEditingController(text: UserController.to.user!.mobileNumber ?? "");
+  FocusNode textFieldFocusName = FocusNode();
+  FocusNode textFieldFocusEmail = FocusNode();
+  FocusNode textFieldFocusPhone = FocusNode();
+
+  _hideKeyboard() {
+    textFieldFocusName.unfocus();
+    textFieldFocusEmail.unfocus();
+    textFieldFocusPhone.unfocus();
+  }
 
   _update() async {
+    _hideKeyboard();
     final name = nameController.text.toString().trim();
     final email = emailController.text.toString().trim();
     final phone = phoneController.text.toString().trim();
@@ -64,6 +74,7 @@ class EditProfile extends StatelessWidget {
   }
 
   void selectImage(ImageSource source) async {
+    _hideKeyboard();
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: 'Updating photo...');
@@ -121,7 +132,8 @@ class EditProfile extends StatelessWidget {
                 bgColor: KColors.PRIMARY,
                 textColor: Colors.white,
               ),
-            )
+            ),
+            SizedBox(width: 16)
           ],
         ),
       ),
@@ -183,6 +195,7 @@ class EditProfile extends StatelessWidget {
                     ),
                     child: TextField(
                       controller: nameController,
+                      focusNode: textFieldFocusName,
                       keyboardType: TextInputType.name,
                       maxLines: 1,
                       textAlign: TextAlign.center,
@@ -221,6 +234,7 @@ class EditProfile extends StatelessWidget {
                     ),
                     child: TextField(
                       controller: emailController,
+                      focusNode: textFieldFocusEmail,
                       keyboardType: TextInputType.emailAddress,
                       maxLines: 1,
                       textAlign: TextAlign.center,
@@ -262,6 +276,7 @@ class EditProfile extends StatelessWidget {
                           ),
                           child: TextField(
                             controller: phoneController,
+                            focusNode: textFieldFocusPhone,
                             keyboardType: TextInputType.emailAddress,
                             maxLines: 1,
                             textAlign: TextAlign.center,

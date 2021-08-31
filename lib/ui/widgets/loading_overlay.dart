@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swapxchange/ui/home/tabs/saved/saved_product.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 
 class LoadingOverlay extends StatelessWidget {
   final Widget child;
@@ -13,6 +14,7 @@ class LoadingOverlay extends StatelessWidget {
     this.itemCount = 0,
   })  : assert(child != null),
         super(key: key);
+
   @override
   Widget build(BuildContext context) {
     if (itemCount == 0 && !isLoading) {
@@ -20,7 +22,7 @@ class LoadingOverlay extends StatelessWidget {
     }
     if (isLoading && itemCount != 0) {
       return Center(
-        child: CircularProgressIndicator(),
+        child: LoadingProgressMultiColor(),
       );
     }
     return child;

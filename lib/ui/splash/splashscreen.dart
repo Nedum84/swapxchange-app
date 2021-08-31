@@ -11,6 +11,7 @@ import 'package:swapxchange/repository/repo_sub_category.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/login.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -32,6 +33,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _initialize() async {
+    // Get.to(() => Login());
+    // return;
     setState(() => isError = false);
     await Future.delayed(Duration(seconds: 2));
 
@@ -39,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
     if (u == null) {
       Get.offAll(() => Login());
     } else {
-      // print('ytyt-------------------------------------------------------------------------=-=-=-=-=-=-=-=-=---------------------------------------------------');
       authenticateUser(u);
     }
   }
@@ -53,7 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
       onError: (er) {
         setState(() => isError = true);
         AlertUtils.toast("$er");
-        print(er);
       },
     );
   }
@@ -105,23 +106,29 @@ class _SplashScreenState extends State<SplashScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'images/logo_text1.png',
-                    width: Get.width / 1.5,
-                  ),
-                  AnimatedTextKit(
-                    repeatForever: true,
-                    isRepeatingAnimation: true,
-                    pause: Duration(milliseconds: 50),
-                    animatedTexts: [
-                      ColorizeAnimatedText(
-                        'Find & Swap Stuff nearby',
-                        textStyle: StyleNormal.copyWith(fontSize: 16),
-                        colors: colorizeColors,
-                        speed: Duration(milliseconds: 500),
+                  Expanded(child: SizedBox()),
+                  Column(
+                    children: [
+                      Image.asset(
+                        'images/logo_text1.png',
+                        width: Get.width / 1.5,
+                      ),
+                      AnimatedTextKit(
+                        repeatForever: true,
+                        isRepeatingAnimation: true,
+                        pause: Duration(milliseconds: 50),
+                        animatedTexts: [
+                          ColorizeAnimatedText(
+                            'Find & Swap Stuff nearby',
+                            textStyle: StyleNormal.copyWith(fontSize: 16),
+                            colors: colorizeColors,
+                            speed: Duration(milliseconds: 500),
+                          ),
+                        ],
                       ),
                     ],
-                  )
+                  ),
+                  Expanded(child: LoadingProgressMultiColor())
                 ],
               )
             : NoInternetError(onReload: _initialize),
@@ -145,7 +152,7 @@ class NoInternetError extends StatelessWidget {
           Icon(
             Icons.perm_scan_wifi_outlined,
             size: 64,
-            color: KColors.TEXT_COLOR,
+            color: KColors.TEXT_COLOR_DARK,
           ),
           Text(
             'No Connection',

@@ -4,6 +4,7 @@ import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/repo_coins.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
@@ -50,7 +51,7 @@ class SubPage extends StatelessWidget {
         future: RepoCoins.findAllByUserId(userId: UserController.to.user!.userId!),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: LoadingProgressMultiColor());
           }
           final data = snapshot.data;
           if (data == null || data.meta?.length == 0) {

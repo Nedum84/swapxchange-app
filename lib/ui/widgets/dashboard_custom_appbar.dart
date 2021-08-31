@@ -5,10 +5,11 @@ import 'package:swapxchange/utils/styles.dart';
 
 class DashboardCustomAppbar extends StatelessWidget {
   final String title;
+  final Widget? titleWidget;
   final IconData? icon;
   final Function()? iconClick;
 
-  const DashboardCustomAppbar({Key? key, required this.title, this.icon, this.iconClick}) : super(key: key);
+  const DashboardCustomAppbar({Key? key, required this.title, this.icon, this.iconClick, this.titleWidget}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,10 +17,11 @@ class DashboardCustomAppbar extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              title,
-              style: H1Style,
-            ),
+            child: titleWidget ??
+                Text(
+                  title,
+                  style: H1Style,
+                ),
           ),
           if (icon != null)
             InkWell(

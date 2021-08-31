@@ -1,9 +1,11 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/my_product_controller.dart';
+import 'package:swapxchange/controllers/product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/enum/product_state.dart';
 import 'package:swapxchange/models/app_user.dart';
@@ -36,7 +38,7 @@ class AddProduct extends GetView<AddProductController> {
     Get.to(() => UploadHome(showAddImageDialog: showAddImageDialog));
   }
 
-  _validateAndSubmit() async {
+  _validateAndSubmit(BuildContext context) async {
     final CoinsModel? myCoins = CoinsController.to.myCoins!;
 
     if (controller.imageList.length == 0) {
@@ -68,7 +70,7 @@ class AddProduct extends GetView<AddProductController> {
         final updateProduct = await RepoProduct.updateProduct(product: controller.product!);
         if (updateProduct != null) {
           controller.updateProduct(updateProduct);
-          _updateImages(updateProduct);
+          _updateImages(updateProduct, context);
         } else {
           _showError("Error occurred! try again");
         }
@@ -76,7 +78,7 @@ class AddProduct extends GetView<AddProductController> {
         final createProduct = await RepoProduct.createProduct(product: controller.product!);
         if (createProduct != null) {
           controller.updateProduct(createProduct);
-          _updateImages(createProduct);
+          _updateImages(createProduct, context);
         } else {
           _showError("Error occurred! try again");
         }
@@ -89,7 +91,7 @@ class AddProduct extends GetView<AddProductController> {
     controller.setLoading(false);
   }
 
-  _updateImages(Product product) async {
+  _updateImages(Product product, BuildContext context) async {
     // update my balance
     await CoinsController.to.getBalance();
 
@@ -109,6 +111,7 @@ class AddProduct extends GetView<AddProductController> {
             AlertUtils.toast('Successfully published your product');
             //redirect after the last Image upload & reset controller to defaults
             controller.reset();
+            _successAlert(context, product);
             sendNotification(newProduct!);
           }
         }
@@ -117,6 +120,23 @@ class AddProduct extends GetView<AddProductController> {
         controller.setLoading(false);
       });
     });
+  }
+
+  _successAlert(BuildContext context, Product product) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.SUCCES,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Success!!!',
+      desc: 'Your product was published successful',
+      dismissOnTouchOutside: false,
+      btnOkText: 'View product',
+      btnOkOnPress: () {
+        Get.off(
+          () => ProductDetail(product: product),
+        );
+      },
+    )..show();
   }
 
   //Send PUSH Notification
@@ -151,7 +171,9 @@ class AddProduct extends GetView<AddProductController> {
         NotificationRepo.saveNotifications(model: model, users: receivers);
       }
     }
-    Get.off(() => ProductDetail(product: product));
+    //Fetch my products
+    MyProductController.to.fetchAll(reset: true);
+    ProductController.to.fetchAll(reset: true);
   }
 
   Widget _suggestedList() {
@@ -267,7 +289,7 @@ class AddProduct extends GetView<AddProductController> {
               SizedBox(height: 10),
               Center(
                 child: PrimaryButton(
-                  onClick: _validateAndSubmit,
+                  onClick: () => _validateAndSubmit(context),
                   btnText: 'Publish',
                   isLoading: controller.isLoading,
                   width: 250,

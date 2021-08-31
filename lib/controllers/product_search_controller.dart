@@ -21,10 +21,17 @@ class ProductSearchController extends GetxController {
 
   @override
   void onInit() {
-    textController.text = queryString.value;
     resetList(true);
     // fetchProducts();
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    textFieldFocus.dispose();
+    queryString("");
+    super.dispose();
   }
 
   setQueryString(str) {

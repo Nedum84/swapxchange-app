@@ -6,6 +6,7 @@ import 'package:swapxchange/ui/admin/category/add_category.dart';
 import 'package:swapxchange/ui/admin/subcategory/admin_subcategory.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
@@ -65,7 +66,7 @@ class _AdminCategoryState extends State<AdminCategory> {
         strokeWidth: 3,
         child: Container(
           child: isLoading && categories.length == 0
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child: LoadingProgressMultiColor())
               : categories.length == 0
                   ? Center(child: Text('No category found'))
                   : ListView.separated(

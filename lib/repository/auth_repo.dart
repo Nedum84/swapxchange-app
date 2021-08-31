@@ -115,7 +115,6 @@ class AuthRepo {
       final signIn = await _auth.signInWithCredential(phoneAuthCredential);
 
       final User user = signIn.user!;
-      print(phoneAuthCredential);
       loginSuccess(user);
     }
 
@@ -194,7 +193,8 @@ class AuthRepo {
           if (tokens != null) UserPrefs.setTokens(tokens: tokens!);
         }
       } catch (e) {
-        onError(e);
+        onError(catchErrors(e));
+        return;
       }
     }).catchError((error) {
       onError(catchErrors(error));
@@ -210,9 +210,9 @@ class AuthRepo {
             (value) => onSuccess(appUser, tokens),
           )
           .catchError((error) => onError(error))
-          .timeout(Duration(seconds: 5));
+          .timeout(Duration(seconds: 20));
     } catch (e) {
-      onError(e);
+      // onError(e);
     }
   }
 

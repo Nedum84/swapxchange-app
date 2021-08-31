@@ -7,6 +7,7 @@ import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/no_data_found.dart';
 import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -123,7 +124,7 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
                         child: (isLoading)
                             ? Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
+                                child: LoadingProgressMultiColor(),
                               )
                             : NoDataFound(
                                 btnText: 'Refresh',

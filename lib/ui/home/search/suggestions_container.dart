@@ -33,8 +33,8 @@ class SuggestionsContainer extends StatelessWidget {
                         final item = searchController.searchSuggestions[index];
                         return InkWell(
                           onTap: () {
+                            searchController.textFieldFocus.unfocus();
                             searchController.hideSearchSuggestion(true);
-                            searchController.update();
                             searchController.textController.text = item;
                             searchController.setQueryString(item);
                             searchController.resetList(true);

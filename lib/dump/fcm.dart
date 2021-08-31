@@ -241,7 +241,7 @@ class _Application extends State<Application> {
           MetaCard('Permissions', Permissions()),
           MetaCard('FCM Token', TokenMonitor((token) {
             _token = token;
-            return token == null ? const CircularProgressIndicator() : Text(token, style: const TextStyle(fontSize: 12));
+            return token == null ? const LoadingProgressMultiColor() : Text(token, style: const TextStyle(fontSize: 12));
           })),
           MetaCard('Message Stream', MessageList()),
         ]),

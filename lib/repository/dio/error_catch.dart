@@ -3,12 +3,19 @@ import 'package:dio/dio.dart';
 dynamic catchErrors(error) {
   dynamic resp;
   try {
-    resp = error?.response?.data!["message"] ?? '$error';
+    resp = error?.response.data["message"];
   } catch (e) {
-    // resp = error?.response?.data ?? '$error';
-    resp = '$e';
+    if (error is DioError) {
+      if (error.response?.data?.containsKey("message") ?? false) {
+        resp = error.response!.data?["message"] ?? "Network error";
+      } else {
+        resp = "Network error::CODE02";
+      }
+    } else {
+      resp = "Network error.";
+    }
   }
-  return (resp);
+  return resp;
 }
 
 class ErrorResponse {

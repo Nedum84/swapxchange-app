@@ -7,6 +7,7 @@ import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/no_data_found.dart';
 import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -33,7 +34,7 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
 
   @override
   void initState() {
-    _fetchProducts();
+    _fetchProductsCats();
     super.initState();
   }
 
@@ -41,12 +42,12 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
     final getList = await subCategoryController.fetchByCategoryId(catId: widget.category.categoryId!);
     if (getList.length > 0)
       setState(() {
-        selectedSubCategory = getList[0];
+        // selectedSubCategory = getList[0];
         subCategoryList = getList;
       });
   }
 
-  _fetchProducts() async {
+  _fetchProductsSubCats() async {
     setState(() => isLoading = true);
     offset = products.length;
     if (subCategoryList.length == 0) await _setSubCategoryList(); //Fetch subcategory list(s before proceeding...
@@ -57,6 +58,17 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
       return;
     }
     final items = await RepoProduct.findBySubCategory(subCatId: selectedSubCategory!.subCategoryId!, offset: offset, limit: limit);
+    if (items!.isNotEmpty) products.addAll(items);
+
+    setState(() => isLoading = false);
+  }
+
+  _fetchProductsCats() async {
+    setState(() => isLoading = true);
+    offset = products.length;
+    if (subCategoryList.length == 0) await _setSubCategoryList(); //Fetch subcategory list(s before proceeding...
+
+    final items = await RepoProduct.findByCategory(catId: widget.category.categoryId!, offset: offset, limit: limit);
     if (items!.isNotEmpty) products.addAll(items);
 
     setState(() => isLoading = false);
@@ -82,23 +94,41 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
               child: (subCategoryList.length == 0)
                   ? Container()
                   : ListView.separated(
-                      itemCount: subCategoryList.length,
+                      itemCount: subCategoryList.length + 1,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        final subCat = subCategoryList[index];
+                        SubCategory? subCat;
 
-                        Color textColor = selectedSubCategory == subCat ? KColors.PRIMARY : KColors.TEXT_COLOR.withOpacity(.6);
-                        return SearchFilterItem(
-                          textColor: textColor,
-                          text: subCat.subCategoryName?.toUpperCase() ?? "",
-                          onClick: () {
-                            setState(() {
-                              selectedSubCategory = subCat;
-                              products.clear();
-                            });
-                            _fetchProducts();
-                          },
-                        );
+                        Color textColor;
+                        if (index == 0) {
+                          textColor = selectedSubCategory == null ? KColors.PRIMARY : KColors.TEXT_COLOR.withOpacity(.6);
+                        } else {
+                          subCat = subCategoryList[index - 1];
+                          textColor = selectedSubCategory == subCat ? KColors.PRIMARY : KColors.TEXT_COLOR.withOpacity(.6);
+                        }
+                        return index == 0
+                            ? SearchFilterItem(
+                                textColor: textColor,
+                                text: "ALL",
+                                onClick: () {
+                                  setState(() {
+                                    selectedSubCategory = null;
+                                    products.clear();
+                                  });
+                                  _fetchProductsCats();
+                                },
+                              )
+                            : SearchFilterItem(
+                                textColor: textColor,
+                                text: subCat?.subCategoryName?.toUpperCase() ?? "",
+                                onClick: () {
+                                  setState(() {
+                                    selectedSubCategory = subCat;
+                                    products.clear();
+                                  });
+                                  _fetchProductsSubCats();
+                                },
+                              );
                       },
                       separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16),
                     ),
@@ -129,12 +159,12 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
                         child: (isLoading)
                             ? Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
+                                child: LoadingProgressMultiColor(),
                               )
                             : NoDataFound(
                                 btnText: 'Refresh',
                                 subTitle: 'No product found',
-                                onBtnClick: _fetchProducts,
+                                onBtnClick: _fetchProductsSubCats,
                               ),
                       ),
                     ),
@@ -149,7 +179,7 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
     if (notification is ScrollEndNotification) {
       if (!isLoading) {
         if (controller!.position.extentAfter < 500) {
-          _fetchProducts();
+          _fetchProductsSubCats();
         }
       }
     }

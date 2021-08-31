@@ -5,6 +5,7 @@ import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/call.dart';
 import 'package:swapxchange/repository/call_methods.dart';
 import 'package:swapxchange/ui/home/callscreens/pickup_screen.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 
 class PickupLayout extends StatelessWidget {
   final Widget scaffold;
@@ -35,7 +36,7 @@ class PickupLayout extends StatelessWidget {
           )
         : Container(
             child: Center(
-              child: CircularProgressIndicator(),
+              child: LoadingProgressMultiColor(),
             ),
           );
   }

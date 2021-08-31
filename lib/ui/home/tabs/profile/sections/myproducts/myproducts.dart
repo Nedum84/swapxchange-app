@@ -7,6 +7,7 @@ import 'package:swapxchange/ui/home/tabs/profile/sections/myproducts/modal_optio
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/no_data_found.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
@@ -66,7 +67,7 @@ class MyProducts extends StatelessWidget {
                             child: (myProductController.isLoading.value)
                                 ? Padding(
                                     padding: EdgeInsets.all(16.0),
-                                    child: CircularProgressIndicator(),
+                                    child: LoadingProgressMultiColor(),
                                   )
                                 : NoDataFound(
                                     btnText: 'Refresh',

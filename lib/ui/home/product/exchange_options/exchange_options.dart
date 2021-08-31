@@ -7,6 +7,7 @@ import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -94,7 +95,7 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
           child: FutureBuilder<List<Product>?>(
             future: RepoProduct.findExchangeOptions(productId: _myProduct!.productId!),
             builder: (context, AsyncSnapshot<List<Product>?> snapshot) {
-              if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+              if (!snapshot.hasData) return Center(child: LoadingProgressMultiColor());
 
               var products = snapshot.data;
               if (products!.isEmpty) {

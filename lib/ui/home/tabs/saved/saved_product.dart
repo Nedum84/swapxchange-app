@@ -6,6 +6,7 @@ import 'package:swapxchange/ui/home/category/browse_category.dart';
 import 'package:swapxchange/ui/home/product/addproduct/add_product.dart';
 import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/ui/widgets/dashboard_custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
@@ -65,7 +66,7 @@ class SavedProduct extends StatelessWidget {
                         child: (savedProductController.isLoading.value)
                             ? Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
+                                child: LoadingProgressMultiColor(),
                               )
                             : LayoutBuilder(
                                 builder: (context, constraints) => SingleChildScrollView(

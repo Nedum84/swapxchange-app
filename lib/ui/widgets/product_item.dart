@@ -14,13 +14,7 @@ class ProductItem extends StatelessWidget {
   const ProductItem({Key? key, required this.product}) : super(key: key);
 
   _goto() {
-    Get.to(
-      () => ProductDetail(product: product!),
-      transition: Transition.topLevel,
-      // transition: Transition.zoom,
-      preventDuplicates: true,
-      duration: Duration(milliseconds: 600),
-    );
+    Get.to(() => ProductDetail(product: product!));
   }
 
   @override

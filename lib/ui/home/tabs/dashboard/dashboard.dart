@@ -93,25 +93,41 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         ),
         bottomNavigationBar: BottomAppBar(
           child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              BottomMenuWidget(
-                title: 'Latest',
-                bottomMenuItem: BottomMenuItem.HOME,
+              Expanded(
+                flex: 1,
+                child: BottomMenuWidget(
+                  title: 'Latest',
+                  bottomMenuItem: BottomMenuItem.HOME,
+                ),
               ),
-              BottomMenuWidget(
-                title: 'Chat',
-                bottomMenuItem: BottomMenuItem.CHAT,
+              Expanded(
+                flex: 1,
+                child: BottomMenuWidget(
+                  title: 'Chat',
+                  bottomMenuItem: BottomMenuItem.CHAT,
+                ),
               ),
-              AddMenuWidget(),
-              BottomMenuWidget(
-                title: 'Saved',
-                bottomMenuItem: BottomMenuItem.SAVED,
+              Expanded(
+                flex: 1,
+                child: AddMenuWidget(),
               ),
-              BottomMenuWidget(
-                title: 'Account',
-                bottomMenuItem: BottomMenuItem.PROFILE,
+              Expanded(
+                flex: 1,
+                child: BottomMenuWidget(
+                  title: 'Saved',
+                  bottomMenuItem: BottomMenuItem.SAVED,
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: BottomMenuWidget(
+                  title: 'Account',
+                  bottomMenuItem: BottomMenuItem.PROFILE,
+                ),
               ),
             ],
           ),

@@ -26,25 +26,36 @@ class BottomMenuWidget extends StatelessWidget {
         return InkWell(
           onTap: () => bottomMenuProvider.onChangeMenu(bottomMenuItem),
           child: Container(
-            padding: EdgeInsets.all(8),
+            // padding: EdgeInsets.all(8),
+            alignment: Alignment.center,
+            height: 55,
             child: Stack(
+              // alignment: Alignment.center,
               //Stack to allow badge dot display
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      bottomMenuProvider.bottomIcon(bottomMenuItem),
-                      color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
-                      size: isCurrent ? 22 : 18,
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      width: isCurrent ? 22 : 18,
+                      height: isCurrent ? 22 : 18,
+                      child: FittedBox(
+                        child: Icon(
+                          bottomMenuProvider.bottomIcon(bottomMenuItem),
+                          color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
+                          // size: double.infinity,
+                        ),
+                      ),
                     ),
-                    Text(
-                      title,
+                    AnimatedDefaultTextStyle(
+                      duration: Duration(milliseconds: 300),
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: isCurrent ? 11 : 10,
                         color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                       ),
-                    )
+                      child: Text(title),
+                    ),
                   ],
                 ),
                 if (bottomMenuItem == BottomMenuItem.CHAT) UnreadChatsDot(), //Dot Badge

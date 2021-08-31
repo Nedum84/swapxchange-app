@@ -14,6 +14,8 @@ class ProductController extends GetxController {
 
   ScrollController? controller = ScrollController();
 
+  String pageTitle = "";
+
   @override
   void onInit() {
     // fetchProducts();
@@ -43,8 +45,9 @@ class ProductController extends GetxController {
         isLoading(false);
       },
       onError: (error) {
-        isLoading.value = false;
+        isLoading(false);
         apiError.value = error;
+        update();
         print(error.message.toString());
       },
     );
@@ -63,12 +66,23 @@ class ProductController extends GetxController {
   }
 
   bool handleScrollNotification(ScrollNotification notification) {
+    //--> For infinite fetching...
     if (notification is ScrollEndNotification) {
       if (!isLoading.value && productList.length > 0 && productList.length >= limit) {
         if (controller!.position.extentAfter < 500) {
           fetchAll();
         }
       }
+    }
+    //--> For scroll  text change
+    // if (notification is ScrollEndNotification) {
+    if (controller!.position.extentBefore >= 200 && pageTitle == "") {
+      pageTitle = "Latest";
+      update();
+    } else if (controller!.position.extentBefore < 200 && pageTitle.isNotEmpty) {
+      pageTitle = "";
+      update();
+      // }
     }
     return false;
   }
