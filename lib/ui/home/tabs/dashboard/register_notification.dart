@@ -135,7 +135,7 @@ void routeNotification(NotificationModel model) async {
       Get.to(() => ChatDetail(receiver: user));
     }
   } else if (model.data!.type == NotificationType.PRODUCT) {
-    final product = await RepoProduct.getById(productId: int.parse(model.data!.id!));
+    final product = await RepoProduct.getById(productId: model.data!.id!);
     if (product != null) {
       Get.to(() => ProductDetail(product: product));
     }

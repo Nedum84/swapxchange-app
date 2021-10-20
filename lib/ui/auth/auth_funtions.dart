@@ -30,7 +30,7 @@ class AuthFunctions {
 
       if (appUser.name!.isEmpty) {
         Get.to(() => EnterName());
-      } else if (appUser.address!.isEmpty) {
+      } else if (appUser.address == null || appUser.address!.isEmpty) {
         Get.to(() => GrantPermission());
       } else {
         //Fetching defaults state data
@@ -89,6 +89,8 @@ class AuthFunctions {
       final subCats = await RepoSubCategory.findAll();
       final coinsBalance = await CoinsController.to.getBalance();
       if (cats != null && subCats != null && coinsBalance != null) {
+        CategoryController.to.setItems(items: cats);
+        SubCategoryController.to.setItems(items: subCats);
         return true;
       } else {
         return false;

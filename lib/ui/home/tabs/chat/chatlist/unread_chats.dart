@@ -6,8 +6,8 @@ import 'package:swapxchange/ui/home/tabs/home/home_app_bar.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class UnreadChats extends StatelessWidget {
-  final int secondUserId;
-  final int myId;
+  final String secondUserId;
+  final String myId;
 
   const UnreadChats({Key? key, required this.secondUserId, required this.myId}) : super(key: key);
 
@@ -38,7 +38,7 @@ class UnreadChats extends StatelessWidget {
 }
 
 class UnreadChatsDot extends StatelessWidget {
-  final int myId = UserController.to.user!.userId!;
+  final String myId = UserController.to.user!.userId!;
 
   @override
   Widget build(BuildContext context) {

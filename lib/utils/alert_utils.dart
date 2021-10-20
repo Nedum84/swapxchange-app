@@ -95,8 +95,8 @@ class AlertUtils {
                             ),
                             InkWell(
                               onTap: () {
-                                okCallBack!();
                                 Get.back();
+                                okCallBack!();
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),

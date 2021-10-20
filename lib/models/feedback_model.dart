@@ -15,11 +15,11 @@ class FeedbackModel {
     this.updatedAt,
   });
 
-  final int? id;
-  final int? userId;
+  final String? id;
+  final String? userId;
   final String? message;
   final String? status;
-  final int? resolvedBy;
+  final String? resolvedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -28,13 +28,13 @@ class FeedbackModel {
   String toJson() => json.encode(toMap());
 
   factory FeedbackModel.fromMap(Map<String, dynamic> json) => FeedbackModel(
-        id: int.tryParse(json["id"]),
-        userId: int.tryParse(json["user_id"]),
+        id: json["id"],
+        userId: json["user_id"],
         message: json["message"],
         status: json["status"],
-        resolvedBy: int.tryParse(json["resolved_by"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        resolvedBy: json["resolved_by"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toMap() => {

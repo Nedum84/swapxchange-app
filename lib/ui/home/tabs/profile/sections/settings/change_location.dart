@@ -41,6 +41,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
   Set<Marker> markers = {};
   String searchAddress = '';
   bool showSuggestion = false;
+  TextEditingController addressController = TextEditingController(text: UserController.to.user!.address);
 
 // Retrieving coordinates
   late MapPoint startCoordinates;
@@ -48,8 +49,8 @@ class _ChangeLocationState extends State<ChangeLocation> {
 // Initial location of the Map view
   CameraPosition _initialLocation = CameraPosition(
     target: LatLng(
-      double.tryParse(UserController.to.user!.addressLat!) ?? 6.4550651,
-      double.tryParse(UserController.to.user!.addressLong!) ?? 3.5197741,
+      UserController.to.user!.addressLat ?? 6.4550651,
+      UserController.to.user!.addressLong ?? 3.5197741,
     ),
     zoom: 18,
   );
@@ -65,8 +66,8 @@ class _ChangeLocationState extends State<ChangeLocation> {
   void initState() {
     super.initState();
     startCoordinates = MapPoint(
-      latitude: double.tryParse(user.addressLat!) ?? 0,
-      longitude: double.tryParse(user.addressLong!) ?? 0,
+      latitude: user.addressLat ?? 0,
+      longitude: user.addressLong ?? 0,
     );
     updatedUser.name = user.name;
     updatedUser.address = user.address;
@@ -107,31 +108,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
     Permissions.locationPermission().then((isPermGranted) async {
       if (isPermGranted) {
         await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((Position position) async {
-          List<Placemark> addresses = await placemarkFromCoordinates(position.latitude, position.longitude);
-          AlertUtils.hideProgressDialog();
-
-          var placeMark = addresses.first;
-          String address = "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
-          String? state = placeMark.subLocality == null || placeMark.subLocality!.isEmpty ? placeMark.locality : placeMark.subLocality;
-
-          double lat = position.latitude;
-          double long = position.longitude;
-
-          updatedUser.address = address;
-          updatedUser.state = state ?? address;
-          updatedUser.addressLong = lat.toString();
-          updatedUser.addressLat = long.toString();
-          updateMarkers();
-          _showBottomSheet();
-
-          mapController!.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(lat, long),
-                zoom: 18, /**/
-              ),
-            ),
-          );
+          _addressFromLatLong(position.latitude, position.longitude);
         }).catchError((e) {
           AlertUtils.hideProgressDialog();
           print(e);
@@ -143,6 +120,31 @@ class _ChangeLocationState extends State<ChangeLocation> {
         AlertUtils.toast("Access denied");
       }
     });
+  }
+
+  _addressFromLatLong(double lat, double long) async {
+    List<Placemark> addresses = await placemarkFromCoordinates(lat, long);
+    AlertUtils.hideProgressDialog();
+
+    var placeMark = addresses.first;
+    String address = "${placeMark.street} ${placeMark.subLocality}, ${placeMark.locality}";
+    String? state = placeMark.subLocality == null || placeMark.subLocality!.isEmpty ? placeMark.locality : placeMark.subLocality;
+
+    updatedUser.address = address;
+    updatedUser.state = state ?? address;
+    updatedUser.addressLong = lat;
+    updatedUser.addressLat = long;
+    updateMarkers();
+    _showBottomSheet();
+
+    mapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(lat, long),
+          zoom: 18, /**/
+        ),
+      ),
+    );
   }
 
   _showBottomSheet() {
@@ -168,8 +170,8 @@ class _ChangeLocationState extends State<ChangeLocation> {
       setState(() => showSuggestion = false);
       updatedUser.address = addressDetails.address;
       updatedUser.state = Helpers.getAddressCity(address: addressDetails.address!);
-      updatedUser.addressLong = addressDetails.longitude.toString();
-      updatedUser.addressLat = addressDetails.latitude.toString();
+      updatedUser.addressLong = addressDetails.longitude;
+      updatedUser.addressLat = addressDetails.latitude;
       updateMarkers();
       _showBottomSheet();
 
@@ -181,6 +183,19 @@ class _ChangeLocationState extends State<ChangeLocation> {
           ),
         ),
       );
+    }
+  }
+
+  //--> Without google map
+  _findLagLongFromAddress2(String addr) async {
+    try {
+      AlertUtils.showProgressDialog(title: null);
+      List<Location> locations = await locationFromAddress(addr);
+      _addressFromLatLong(locations[0].latitude, locations[0].longitude);
+    } catch (e) {
+      AlertUtils.hideProgressDialog();
+      AlertUtils.toast('address not found');
+      print(e);
     }
   }
 
@@ -234,8 +249,9 @@ class _ChangeLocationState extends State<ChangeLocation> {
                 ),
                 SizedBox(width: 8),
                 Expanded(
-                  child: TextFormField(
-                    initialValue: user.address,
+                  child: TextField(
+                    // initialValue: user.address,
+                    controller: addressController,
                     keyboardType: TextInputType.streetAddress,
                     maxLines: 1,
                     style: TextStyle(
@@ -248,6 +264,8 @@ class _ChangeLocationState extends State<ChangeLocation> {
                         showSuggestion = true;
                       });
                     },
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (str) => _findLagLongFromAddress2(str),
                     cursorColor: Colors.blueGrey,
                     decoration: InputDecoration(
                       hintText: 'Enter your address...',
@@ -297,7 +315,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
                     borderRadius: BorderRadius.all(Radius.circular(0)),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  child: ListView.builder(
+                  child: ListView.separated(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     itemCount: snapshot.data!.length,
                     physics: BouncingScrollPhysics(),
@@ -312,7 +330,16 @@ class _ChangeLocationState extends State<ChangeLocation> {
                           snapshot.data![index].description,
                           style: StyleNormal,
                         ),
-                        onTap: () => _findLagLongFromAddress(snapshot.data![index]),
+                        onTap: () {
+                          _findLagLongFromAddress(snapshot.data![index]);
+                          addressController.text = snapshot.data![index].description;
+                        },
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 1,
+                        color: KColors.WHITE_GREY,
                       );
                     },
                   ),
@@ -347,7 +374,7 @@ class _ChangeLocationState extends State<ChangeLocation> {
     // Start Location Marker
     Marker startMarker = Marker(
       markerId: MarkerId('${user.userId}'),
-      position: LatLng(double.tryParse(updatedUser.addressLat!) ?? 06.4550651, double.tryParse(updatedUser.addressLong!) ?? 3.5197741),
+      position: LatLng(updatedUser.addressLat ?? 06.4550651, updatedUser.addressLong ?? 3.5197741),
       onTap: () => _showBottomSheet(),
       icon: BitmapDescriptor.defaultMarker,
     );

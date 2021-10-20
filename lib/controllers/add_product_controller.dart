@@ -7,7 +7,6 @@ import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/product_image.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
-import 'package:swapxchange/utils/helpers.dart';
 
 class AddProductController extends GetxController {
   static AddProductController to = Get.find();
@@ -41,8 +40,6 @@ class AddProductController extends GetxController {
   void create() {
     final currentUser = UserController.to.user!;
     Product product = Product(
-      userId: currentUser.userId,
-      orderId: Helpers.genRandString(),
       userAddress: currentUser.address,
       userAddressLat: currentUser.addressLat,
       userAddressLong: currentUser.addressLong,
@@ -52,9 +49,8 @@ class AddProductController extends GetxController {
       images: [],
       productName: "",
       productDescription: "",
-      suggestions: [],
-      productSuggestion: "",
-      uploadPrice: CoinsController.uploadAmount.toDouble(),
+      productSuggestion: [],
+      uploadPrice: CoinsController.uploadAmount,
     );
     updateProduct(product);
   }
@@ -89,7 +85,7 @@ class AddProductController extends GetxController {
 
   void setSubCategory(SubCategory? subCat) {
     subCategory = subCat;
-    _product!.subCategory = subCat?.subCategoryId ?? 0;
+    _product!.subCategory = subCat?.subCategoryId ?? null;
     update();
   }
 
@@ -121,11 +117,12 @@ class AddProductController extends GetxController {
     } else {
       suggestions.add(category);
     }
-    final sugs = suggestions.map((e) => e.categoryId).toString().replaceAll("(", "").replaceAll(")", "");
-    _product!.productSuggestion = sugs;
+    final sugs = suggestions.map((e) => e.categoryId).toList();
+    _product?.productSuggestion = sugs;
     update();
   }
 
+  // reset controller to defaults
   void reset() {
     _product = null;
     setEditing(false);

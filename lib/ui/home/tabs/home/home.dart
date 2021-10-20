@@ -54,7 +54,12 @@ class Home extends StatelessWidget {
                             children: [
                               if (pController.productList.length > 0) TopDeals(),
                               SizedBox(height: 16),
-                              Text('Latest', style: H1Style),
+                              InkWell(
+                                onTap: () {
+                                  ProductController.to.fetchAll(reset: true);
+                                },
+                                child: Text('Latest', style: H1Style),
+                              ),
                               SizedBox(height: 16),
                               LoadingOverlay(
                                 isLoading: pController.isLoading.value,

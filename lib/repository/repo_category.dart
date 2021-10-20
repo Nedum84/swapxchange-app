@@ -27,7 +27,7 @@ class RepoCategory extends ApiClient {
     }
   }
 
-  static Future<Category?> getCategoryById({required int catId}) async {
+  static Future<Category?> getCategoryById({required String catId}) async {
     try {
       Response response = await ApiClient.request().get('/category/$catId');
 
@@ -43,7 +43,7 @@ class RepoCategory extends ApiClient {
 
   static Future<List<Category>?> findAll() async {
     try {
-      Response response = await ApiClient.request().get('/category/all');
+      Response response = await ApiClient.request().get('/category');
 
       if (response.statusCode == 200) {
         var items = response.data["data"]["category"];

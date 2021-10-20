@@ -15,12 +15,12 @@ class DailyCoins extends StatelessWidget {
   final CoinsController coinsController = CoinsController.to;
   _checkEligible() async {
     AlertUtils.showProgressDialog();
-    final getCoinsLog = await RepoCoins.findAllByUserId(userId: UserController.to.user!.userId!);
+    final getCoinsLog = await RepoCoins.findAllByUserId(userId: UserController.to.user!.userId!, limit: 2);
 
     if (getCoinsLog == null) {
       _getDailyCoins();
     } else {
-      final lastDailyCoin = getCoinsLog.meta!.firstWhereOrNull((element) => element.methodOfSubscription == MethodOfSubscription.DAILY_OPENING);
+      final lastDailyCoin = getCoinsLog.meta?.firstWhereOrNull((element) => element.methodOfSubscription == MethodOfSubscription.DAILY_OPENING);
       if (lastDailyCoin == null) {
         _getDailyCoins();
       } else {
@@ -50,6 +50,7 @@ class DailyCoins extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get.back();
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: Constants.PADDING,

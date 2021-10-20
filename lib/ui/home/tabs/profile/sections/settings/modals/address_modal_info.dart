@@ -19,8 +19,8 @@ class AddressModalInfo extends StatelessWidget {
   final String name;
   final String address;
   final String city;
-  final String lat;
-  final String long;
+  final double lat;
+  final double long;
   final Function() onUpdate;
 
   @override

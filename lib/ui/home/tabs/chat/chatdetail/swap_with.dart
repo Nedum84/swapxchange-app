@@ -79,7 +79,7 @@ class _SwapWithState extends State<SwapWith> {
     ChatMessage chatMsg = ChatMessage(
       receiverId: p!.userId,
       type: ChatMessageType.PRODUCT_CHAT,
-      productChatId: pChat.id,
+      productChatId: pChat.productChatId,
       message: "${p.productId}@@${p.productName}@@${p.images!.first.imagePath}"
           " @@@ ${offerP!.productId}@@${offerP.productName}@@${offerP.images!.first.imagePath}", //Real time update
     );

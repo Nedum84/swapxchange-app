@@ -16,11 +16,12 @@ class ModalOptions extends StatelessWidget {
 
   const ModalOptions({Key? key, required this.product}) : super(key: key);
 
-  _onEdit() {
+  _onEdit() async {
     AddProductController.to.setEditing(true);
     AddProductController.to.initialize(product);
     Get.back();
-    Get.to(() => AddProduct());
+    await Get.to(() => AddProduct());
+    AddProductController.to.reset();
   }
 
   _onDelete() {

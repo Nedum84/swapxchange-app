@@ -17,7 +17,7 @@ class AddedImagePreview extends StatelessWidget {
       () => ViewImage(
         curStep: 0,
         imageProducts: [
-          ProductImage(imagePath: imgUrl, productId: 0, id: 0, idx: 0),
+          ProductImage(imagePath: imgUrl, productId: null, imageId: null, idx: 0),
         ],
       ),
     );

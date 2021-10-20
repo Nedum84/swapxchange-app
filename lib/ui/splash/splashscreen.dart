@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Get.to(() => Login());
     // return;
     setState(() => isError = false);
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
 
     final u = _authRepo.getCurrentUser();
     if (u == null) {
@@ -128,7 +128,12 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ],
                   ),
-                  Expanded(child: LoadingProgressMultiColor())
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: LoadingProgressMultiColor(),
+                    ),
+                  )
                 ],
               )
             : NoInternetError(onReload: _initialize),

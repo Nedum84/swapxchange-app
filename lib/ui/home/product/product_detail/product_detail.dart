@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
@@ -76,7 +77,7 @@ class ProductDetail extends StatelessWidget {
     ChatMessage chatMsg = ChatMessage(
       receiverId: poster.userId,
       type: ChatMessageType.PRODUCT_CHAT,
-      productChatId: pChat.id,
+      productChatId: pChat.productChatId,
       message: "${product.productId}@@${product.productName}@@${product.images!.first.imagePath} @@@ ${pChat.offerProductId}", //Real time update
     );
     ChatDetailState.addMessageToDb(chatMsg);
@@ -93,145 +94,148 @@ class ProductDetail extends StatelessWidget {
       _addProductView();
     });
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Container(
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              children: [
-                ImageCarousel(imageProducts: product.images!),
-                Container(
-                  padding: EdgeInsets.all(Constants.PADDING),
-                  transform: Matrix4.translationValues(0.0, -16.0, 0.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            Container(
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                children: [
+                  ImageCarousel(imageProducts: product.images!),
+                  Container(
+                    padding: EdgeInsets.all(Constants.PADDING),
+                    transform: Matrix4.translationValues(0.0, -16.0, 0.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '${product.productName}'.toUpperCase(),
-                            style: H2Style.copyWith(),
-                          ),
-                          Spacer(),
-                          Text(
-                            '₦${Helpers.formatMoney(cash: product.price!)}',
-                            style: TextStyle(
-                              color: KColors.PRIMARY,
-                              fontSize: 22,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Color(0xffCD4F4E).withOpacity(.8),
-                            size: 18,
-                          ),
-                          Text(
-                            '${product.userAddress} • ${Helpers.formatDistance(distance: product.distance!)}',
-                            style: StyleCategorySubTitle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 6),
-                      MapView(product: product),
-                      SizedBox(height: 16),
-                      if (product.userId != UserController.to.user!.userId)
-                        Column(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            CallChatItem(
-                              imgPath: 'images/icon-call.png',
-                              title: 'call for free',
-                              onClick: () => _getPoster(gotoCall: true),
+                            Text(
+                              '${product.productName}'.toUpperCase(),
+                              style: H2Style.copyWith(),
                             ),
-                            SizedBox(height: 24),
-                            CallChatItem(
-                              imgPath: 'images/icon-chat.png',
-                              title: 'start chat',
-                              onClick: () => _getPoster(gotoCall: false),
+                            Spacer(),
+                            Text(
+                              '₦${Helpers.formatMoney(cash: product.price!)}',
+                              style: TextStyle(
+                                color: KColors.PRIMARY,
+                                fontSize: 22,
+                              ),
                             ),
-                            SizedBox(height: 24),
                           ],
                         ),
-                      Text('CATEGORY', style: H3Style),
-                      SizedBox(height: 8),
-                      FutureBuilder(
-                        future: Future.wait([
-                          CategoryController.to.fetchById(catId: product.category!),
-                          SubCategoryController.to.fetchById(subCatId: product.subCategory!),
-                        ]),
-                        builder: (context, snapshots) {
-                          if (!snapshots.hasData) return Container();
-
-                          final data = snapshots.data! as List;
-                          final cat = data[0] as Category;
-                          final subCat = data[1] as SubCategory;
-                          return Text('${cat.categoryName} • ${subCat.subCategoryName}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5)));
-                        },
-                      ),
-                      SizedBox(height: 24),
-                      Text('DESCRIPTION', style: H3Style),
-                      SizedBox(height: 8),
-                      Text(lorem.substring(0, 100), style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
-                      SizedBox(height: 24),
-                      Text('POSTED BY', style: H3Style),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('${product.user!.name} on ${Helpers.formatDate(product.createdAt!)}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
-                          Row(
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: Color(0xffCD4F4E).withOpacity(.8),
+                              size: 18,
+                            ),
+                            Text(
+                              '${product.userAddress} • ${Helpers.formatDistance(distance: product.distance!)}',
+                              style: StyleCategorySubTitle,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 6),
+                        MapView(product: product),
+                        SizedBox(height: 16),
+                        if (product.userId != UserController.to.user!.userId)
+                          Column(
                             children: [
-                              Icon(Icons.remove_red_eye, size: 16, color: KColors.TEXT_COLOR_LIGHT2),
-                              Text("${product.noOfViews}", style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_LIGHT2)),
+                              CallChatItem(
+                                imgPath: 'images/icon-call.png',
+                                title: 'call for free',
+                                onClick: () => _getPoster(gotoCall: true),
+                              ),
+                              SizedBox(height: 24),
+                              CallChatItem(
+                                imgPath: 'images/icon-chat.png',
+                                title: 'start chat',
+                                onClick: () => _getPoster(gotoCall: false),
+                              ),
+                              SizedBox(height: 24),
                             ],
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 24),
-                      Text('USER\'S INTEREST', style: H3Style),
-                      SizedBox(height: 8),
-                      InterestAndSwapButton(product: product),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: ButtonOutline2(
-                              title: 'Share product',
-                              onClick: () => Share.share(Constants.SHARE_CONTENT, subject: 'Share via'),
+                        Text('CATEGORY', style: H3Style),
+                        SizedBox(height: 8),
+                        FutureBuilder(
+                          future: Future.wait([
+                            CategoryController.to.fetchById(catId: product.category!),
+                            SubCategoryController.to.fetchById(subCatId: product.subCategory!),
+                          ]),
+                          builder: (context, snapshots) {
+                            if (!snapshots.hasData) return Container();
+
+                            final data = snapshots.data! as List;
+                            final cat = data[0] as Category;
+                            final subCat = data[1] as SubCategory;
+                            return Text('${cat.categoryName} • ${subCat.subCategoryName}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5)));
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        Text('DESCRIPTION', style: H3Style),
+                        SizedBox(height: 8),
+                        Text(lorem.substring(0, 100), style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
+                        SizedBox(height: 24),
+                        Text('POSTED BY', style: H3Style),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('${product.user!.name} on ${Helpers.formatDate(product.createdAt!)}', style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_DARK.withOpacity(.5))),
+                            Row(
+                              children: [
+                                Icon(Icons.remove_red_eye, size: 16, color: KColors.TEXT_COLOR_LIGHT2),
+                                Text("${product.noOfViews}", style: StyleNormal.copyWith(color: KColors.TEXT_COLOR_LIGHT2)),
+                              ],
                             ),
-                          ),
-                          SizedBox(width: 8),
-                          if (product.userId != UserController.to.user!.userId)
+                          ],
+                        ),
+                        SizedBox(height: 24),
+                        Text('USER\'S INTEREST', style: H3Style),
+                        SizedBox(height: 8),
+                        InterestAndSwapButton(product: product),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
                             Expanded(
                               flex: 1,
-                              child: ReportProduct(product: product),
+                              child: ButtonOutline2(
+                                title: 'Share product',
+                                onClick: () => Share.share(Constants.SHARE_CONTENT, subject: 'Share via'),
+                              ),
                             ),
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
+                            SizedBox(width: 8),
+                            if (product.userId != UserController.to.user!.userId)
+                              Expanded(
+                                flex: 1,
+                                child: ReportProduct(product: product),
+                              ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          ProductDetailBackBtn(),
-          if (product.userId != UserController.to.user!.userId!) SaveBtn(product: product),
-        ],
+            ProductDetailBackBtn(),
+            if (product.userId != UserController.to.user!.userId!) SaveBtn(product: product),
+          ],
+        ),
       ),
     );
   }

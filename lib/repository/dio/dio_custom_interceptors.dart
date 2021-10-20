@@ -22,7 +22,8 @@ class DioCustomInterceptors extends Interceptor {
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
     // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
-    options.baseUrl = 'http://199.192.27.225:8088/v1/';
+    // options.baseUrl = 'http://199.192.27.225:8088/v1/';
+    options.baseUrl = 'http://localhost:3000/dev/api/v1/';
     options.connectTimeout = 15000;
     options.receiveTimeout = 12000;
     // Transform response data to Json Map
@@ -50,7 +51,8 @@ class DioCustomInterceptors extends Interceptor {
     }
 
     // Assume 401 stands for token expired
-    if (dioError.response?.statusCode == 401 && dioError.response!.statusMessage == "Unauthorized") {
+    final refreshEr = ["jwt expired", "Unauthorized"];
+    if (dioError.response?.statusCode == 401 && refreshEr.contains(dioError.response!.statusMessage)) {
       Tokens? tokens = await UserPrefs.getTokens();
       if (tokens?.refresh == null) {
         AlertUtils.toast('Your session has expired. Login again');
@@ -66,7 +68,7 @@ class DioCustomInterceptors extends Interceptor {
       dio.interceptors.requestLock.lock();
       dio.interceptors.responseLock.lock();
       dio.interceptors.errorLock.lock();
-      await tokenDio.post('${baseUrl}token/refresh', data: {
+      await tokenDio.post('${baseUrl}auth/refreshtoken', data: {
         "refresh_token": tokens?.refresh?.token,
       }).then((d) {
         if (d.statusCode != 200 || !d.data['success']) {

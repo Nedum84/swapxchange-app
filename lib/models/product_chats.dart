@@ -8,7 +8,7 @@ import 'package:swapxchange/models/product_image.dart';
 
 class ProductChats {
   ProductChats({
-    this.id,
+    this.productChatId,
     this.productId,
     this.offerProductId,
     this.senderId,
@@ -20,13 +20,13 @@ class ProductChats {
     this.productOfferImages,
   });
 
-  final int? id;
-  final int? productId;
-  final int? offerProductId;
-  final int? senderId;
-  final int? receiverId;
-  int? senderClosedDeal;
-  int? receiverClosedDeal;
+  final String? productChatId;
+  final String? productId;
+  final String? offerProductId;
+  final String? senderId;
+  final String? receiverId;
+  bool? senderClosedDeal;
+  bool? receiverClosedDeal;
   SwapStatus? chatStatus;
   final List<ProductImage>? productImages;
   final List<ProductImage>? productOfferImages;
@@ -36,20 +36,20 @@ class ProductChats {
   String toJson() => json.encode(toMap());
 
   factory ProductChats.fromMap(Map<String, dynamic> json) => ProductChats(
-        id: int.parse(json["id"]),
-        productId: int.parse(json["product_id"]),
-        offerProductId: int.parse(json["offer_product_id"]),
-        senderId: int.parse(json["sender_id"]),
-        receiverId: int.parse(json["receiver_id"]),
-        senderClosedDeal: int.parse(json["sender_closed_deal"]),
-        receiverClosedDeal: int.parse(json["receiver_closed_deal"]),
+        productChatId: json["product_chat_id"],
+        productId: json["product_id"],
+        offerProductId: json["offer_product_id"],
+        senderId: json["sender_id"],
+        receiverId: json["receiver_id"],
+        senderClosedDeal: json["sender_closed_deal"],
+        receiverClosedDeal: json["receiver_closed_deal"],
         chatStatus: ProductChats.statusToEnum(json["chat_status"]),
-        productImages: List<ProductImage>.from(jsonDecode(json["product_images"]).map((x) => ProductImage.fromMap(x))),
-        productOfferImages: List<ProductImage>.from(jsonDecode(json["product_offer_images"]).map((x) => ProductImage.fromMap(x))),
+        productImages: List<ProductImage>.from(json["product_images"]?.map((x) => ProductImage.fromMap(x))),
+        productOfferImages: List<ProductImage>.from(json["product_offer_images"]?.map((x) => ProductImage.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
+        "product_chat_id": productChatId,
         "product_id": productId,
         "offer_product_id": offerProductId,
         "sender_id": senderId,

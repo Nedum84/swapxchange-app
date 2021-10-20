@@ -20,7 +20,6 @@ void main() async {
   //For header start up color
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      // customise here
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ),

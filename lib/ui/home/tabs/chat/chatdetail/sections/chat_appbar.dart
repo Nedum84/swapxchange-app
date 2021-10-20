@@ -109,7 +109,7 @@ class UserOnlineStatus extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.data() == null) {
           return Container();
         }
-        final onlineStatus = snapshot.data!.data()?['online_status'];
+        final onlineStatus = (snapshot.data!.data()! as Map<String, dynamic>)['online_status'];
 
         return Text(
           onlineStatus ?? "offline",

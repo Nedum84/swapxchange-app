@@ -15,11 +15,11 @@ class FaqModel {
     this.updatedAt,
   });
 
-  final int? faqId;
+  final String? faqId;
   final String? question;
   final String? answer;
   final String? category;
-  final int? addedBy;
+  final String? addedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -28,13 +28,13 @@ class FaqModel {
   String toJson() => json.encode(toMap());
 
   factory FaqModel.fromMap(Map<String, dynamic> json) => FaqModel(
-        faqId: int.tryParse(json["faq_id"]),
+        faqId: json["faq_id"],
         question: json["question"],
         answer: json["answer"],
         category: json["category"],
-        addedBy: int.tryParse(json["added_by"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        addedBy: json["added_by"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toMap() => {

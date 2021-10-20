@@ -17,7 +17,7 @@ class RepoReportedProduct extends ApiClient {
 
   static Future<ReportedProductModel?> editReportedProductModel({required ReportedProductModel reportedProduct}) async {
     try {
-      Response response = await ApiClient.request().patch('/reportedproducts/${reportedProduct.id}', data: reportedProduct.toMap());
+      Response response = await ApiClient.request().patch('/reportedproducts/${reportedProduct.reportedId}', data: reportedProduct.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ReportedProductModel.fromMap(response.data["data"]["reported_product"]);

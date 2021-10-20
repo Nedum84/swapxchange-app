@@ -53,9 +53,11 @@ class NotificationRepo {
         }
       }
     };
-    final data3 = {}..addAll(model.toMap())..addAll({"registration_ids": tokens});
+    final data3 = {}
+      ..addAll(model.toMap())
+      ..addAll({"registration_ids": tokens});
 
-    print(data2);
+    // print(data2);
 
     await dio.post(url, data: data);
 
@@ -91,7 +93,7 @@ class NotificationRepo {
   }
 
   //Get All user unread messages
-  static Stream<QuerySnapshot> getMyNotifications({required int myId}) {
+  static Stream<QuerySnapshot> getMyNotifications({required String myId}) {
     return notificationCollection
         .where(FirebaseCollection.USER_ID, isEqualTo: myId)
         // .where(

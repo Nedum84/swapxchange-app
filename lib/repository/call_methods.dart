@@ -34,7 +34,7 @@ class CallMethods {
     final getCall = await callCollection.doc(call.callerId).get();
     if (getCall.data() != null) {
       //there's an incoming call
-      Call call = Call.fromMap(getCall.data()!);
+      Call call = Call.fromMap(getCall.data()! as Map<String, dynamic>);
       if (call.isMissedCall! && call.callerId == UserController.to.user!.uid) {
         addMissedCall(posterUid: call.receiverId!);
       }

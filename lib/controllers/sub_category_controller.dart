@@ -19,7 +19,7 @@ class SubCategoryController extends GetxController {
     isLoading(false);
   }
 
-  Future<List<SubCategory>> fetchByCategoryId({required int catId}) async {
+  Future<List<SubCategory>> fetchByCategoryId({required String catId}) async {
     List<SubCategory> list = [];
     List<SubCategory>? items = [];
     items = subCategoryList.where((element) => element.categoryId == catId).toList();
@@ -31,7 +31,7 @@ class SubCategoryController extends GetxController {
     return list;
   }
 
-  Future<SubCategory?> fetchById({required int subCatId}) async {
+  Future<SubCategory?> fetchById({required String subCatId}) async {
     SubCategory? subCategory;
     var item;
     item = subCategoryList.firstWhereOrNull((element) => element.subCategoryId == subCatId);

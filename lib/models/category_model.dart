@@ -15,7 +15,7 @@ class Category {
     this.updatedAt,
   });
 
-  final int? categoryId;
+  final String? categoryId;
   String? categoryName;
   String? categoryIcon;
   final int? idx;
@@ -30,13 +30,13 @@ class Category {
   String toJson() => json.encode(toMap());
 
   factory Category.fromMap(Map<String, dynamic> json) => Category(
-        categoryId: int.parse(json["category_id"].toString()),
+        categoryId: json["category_id"],
         categoryName: json["category_name"],
         categoryIcon: json["category_icon"],
-        idx: int.parse(json["idx"] == null ? "0" : json["idx"]), //---> Idx could be null from product list suggestions that only depends on id, icon & cat name
-        noOfProducts: int.parse(json["no_of_products"] == null ? "0" : json["no_of_products"]),
-        createdAt: DateTime.parse(json["created_at"] == null ? "2021-05-23 20:12:15" : json["created_at"]), //---> Dummy date ==2021-05-23 20:12:15
-        updatedAt: DateTime.parse(json["updated_at"] == null ? "2021-05-23 20:12:15" : json["updated_at"]), //---> Dummy date ==2021-05-23 20:12:15
+        idx: json["idx"], //---> Idx could be null from product list suggestions that only depends on id, icon & cat name
+        noOfProducts: json["no_of_products"] == null ? 0 : json["no_of_products"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toMap() => {

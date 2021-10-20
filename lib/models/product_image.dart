@@ -2,14 +2,14 @@ import 'dart:convert';
 
 class ProductImage {
   ProductImage({
-    this.id,
+    this.imageId,
     this.productId,
     this.imagePath,
     this.idx,
   });
 
-  final int? id;
-  int? productId;
+  final String? imageId;
+  String? productId;
   final String? imagePath;
   int? idx;
 
@@ -20,14 +20,14 @@ class ProductImage {
   String toJson() => json.encode(toMap());
 
   factory ProductImage.fromMap(Map<String, dynamic> json) => ProductImage(
-        id: int.tryParse(json["id"].toString()),
-        productId: int.tryParse(json["product_id"].toString()),
+        imageId: json["image_id"].toString(),
+        productId: json["product_id"].toString(),
         imagePath: json["image_path"],
-        idx: int.tryParse(json["idx"].toString()),
+        idx: json["idx"],
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
+        "image_id": imageId,
         "product_id": productId,
         "image_path": imagePath,
         "idx": idx,

@@ -28,7 +28,6 @@ class CoinsModel {
         balance: json["balance"],
         lastCredit: json["last_credit"] == null ? null : LastCredit.fromMap(json["last_credit"]),
         meta: json["meta"] == null ? [] : List<LastCredit>.from(json["meta"]?.map((x) => LastCredit.fromMap(x))),
-        // meta: null,
       );
 
   Map<String, dynamic> toMap() => {
@@ -53,7 +52,7 @@ class LastCredit {
   });
 
   final int? id;
-  final int? userId;
+  final String? userId;
   final int? amount;
   final String? reference;
   final MethodOfSubscription? methodOfSubscription;
@@ -65,12 +64,12 @@ class LastCredit {
   String toJson() => json.encode(toMap());
 
   factory LastCredit.fromMap(Map<String, dynamic> json) => LastCredit(
-        id: int.tryParse(json["id"]),
-        userId: int.tryParse(json["user_id"]),
-        amount: int.tryParse(json["amount"]),
+        id: json["id"],
+        userId: json["user_id"],
+        amount: json["amount"],
         reference: json["reference"],
         methodOfSubscription: LastCredit.statusToEnum(json["method_of_subscription"]),
-        createdAt: DateTime.parse(json["created_at"]),
+        createdAt: DateTime.parse(json["createdAt"]),
         currentTime: json["current_time"] == null ? DateTime.now() : DateTime?.tryParse(json["current_time"]) ?? DateTime.now(),
       );
 

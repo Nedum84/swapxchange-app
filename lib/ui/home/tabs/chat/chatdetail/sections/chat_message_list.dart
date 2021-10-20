@@ -36,11 +36,11 @@ class ChatMessageList extends StatelessWidget {
 
             List<ChatMessage> chatMessages = [];
             for (var message in data1.reversed) {
-              ChatMessage msg = ChatMessage.fromMap(message.data());
+              ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
               chatMessages.add(msg);
             }
             for (var message in data2.reversed) {
-              ChatMessage msg = ChatMessage.fromMap(message.data());
+              ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
               chatMessages.add(msg);
             }
             chatMessages.sort((a, b) => b.timestamp!.compareTo(a.timestamp!)); //desc

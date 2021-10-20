@@ -14,7 +14,6 @@ import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/notification_repo.dart';
 import 'package:swapxchange/repository/repo_product.dart';
-import 'package:swapxchange/repository/repo_product_image.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_category.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_product_suggestion.dart';
 import 'package:swapxchange/ui/home/product/addproduct/select_sub_category.dart';
@@ -65,20 +64,23 @@ class AddProduct extends GetView<AddProductController> {
         },
       );
     } else {
+      final newProduct = controller.product!;
+      newProduct.images = controller.imageList;
       controller.setLoading(true);
+
       if (controller.isEditing) {
-        final updateProduct = await RepoProduct.updateProduct(product: controller.product!);
+        final updateProduct = await RepoProduct.updateProduct(product: newProduct);
         if (updateProduct != null) {
           controller.updateProduct(updateProduct);
-          _updateImages(updateProduct, context);
+          _onSuccessPublish(updateProduct, context);
         } else {
           _showError("Error occurred! try again");
         }
       } else {
-        final createProduct = await RepoProduct.createProduct(product: controller.product!);
+        final createProduct = await RepoProduct.createProduct(product: newProduct);
         if (createProduct != null) {
           controller.updateProduct(createProduct);
-          _updateImages(createProduct, context);
+          _onSuccessPublish(createProduct, context);
         } else {
           _showError("Error occurred! try again");
         }
@@ -91,35 +93,22 @@ class AddProduct extends GetView<AddProductController> {
     controller.setLoading(false);
   }
 
-  _updateImages(Product product, BuildContext context) async {
-    // update my balance
+  _onSuccessPublish(Product product, BuildContext context) async {
+    // refresh my balance(because I just uploaded)
     await CoinsController.to.getBalance();
 
-    controller.updateImgWithProductId(product);
-    //Iterate over the images
-    controller.imageList.forEach((pImg) async {
-      RepoProductImage.upsertProductImage(productImage: pImg).then((value) async {
-        if (controller.imageList.last == pImg) {
-          final newProduct = await RepoProduct.getById(productId: product.productId!);
-          if (controller.isEditing) {
-            MyProductController.to.updateProduct(newProduct!);
-            AlertUtils.toast('Your product was successfully edited');
-            //redirect after the last Image upload & reset controller to defaults
-            controller.reset();
-            Get.back(result: newProduct, closeOverlays: true);
-          } else {
-            AlertUtils.toast('Successfully published your product');
-            //redirect after the last Image upload & reset controller to defaults
-            controller.reset();
-            _successAlert(context, product);
-            sendNotification(newProduct!);
-          }
-        }
-      }).catchError((error) {
-        print('Error: ' + error.toString());
-        controller.setLoading(false);
-      });
-    });
+    // final newProduct = await RepoProduct.getById(productId: product.productId!);
+    if (controller.isEditing) {
+      MyProductController.to.updateProduct(product);
+      AlertUtils.toast('Your product was successfully edited');
+      // reset controller to defaults
+      controller.reset();
+      Get.back(result: product, closeOverlays: true);
+    } else {
+      controller.reset();
+      _successAlert(context, product);
+      sendNotification(product);
+    }
   }
 
   _successAlert(BuildContext context, Product product) {
@@ -141,13 +130,13 @@ class AddProduct extends GetView<AddProductController> {
 
   //Send PUSH Notification
   static sendNotification(Product product) async {
-    final nearByUsers = await RepoProduct.findNearByUsers(lat: product.userAddressLat, long: product.userAddressLong);
+    final nearByUsers = await RepoProduct.findNearByUsers(productId: product.productId!);
     if (nearByUsers != null && nearByUsers.length > 0) {
       AppUser currentUser = UserController.to.user!;
       List<AppUser> receivers = [];
       nearByUsers.forEach((element) {
         if (element.userId != currentUser.userId) {
-          if (element.notification!.product == 1 && element.deviceToken!.isNotEmpty) {
+          if (element.notification!.product && element.deviceToken!.isNotEmpty) {
             receivers.add(element);
           }
         }
@@ -157,7 +146,7 @@ class AddProduct extends GetView<AddProductController> {
         final model = NotificationModel(
           data: NotificationData(
             type: NotificationType.PRODUCT,
-            id: product.productId.toString(),
+            id: product.productId,
             idSecondary: product.orderId,
             payload: product.toJson(),
           ),
@@ -171,7 +160,7 @@ class AddProduct extends GetView<AddProductController> {
         NotificationRepo.saveNotifications(model: model, users: receivers);
       }
     }
-    //Fetch my products
+    //Refresh my products controller
     MyProductController.to.fetchAll(reset: true);
     ProductController.to.fetchAll(reset: true);
   }
@@ -197,6 +186,9 @@ class AddProduct extends GetView<AddProductController> {
 
   @override
   Widget build(BuildContext context) {
+    // controller.reset();
+    // controller.isLoading = false;
+    // controller.refresh();
     // Get.back(closeOverlays: true);
     return GetBuilder<AddProductController>(builder: (addController) {
       // addController.setLoading(false);

@@ -29,6 +29,7 @@ class SearchAppBar extends StatelessWidget {
                 searchController.textFieldFocus.unfocus();
                 searchController.hideSearchSuggestion(true);
                 searchController.resetList(true);
+                searchController.productList.clear();
                 searchController.update();
                 searchController.fetchProducts();
               },
@@ -58,6 +59,7 @@ class SearchAppBar extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
+              searchController.productList.clear();
               searchController.resetList(true);
               searchController.fetchProducts();
             },

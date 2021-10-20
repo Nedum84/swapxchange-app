@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoProductViews extends ApiClient {
-  static Future<bool> addProductView({required int productId}) async {
+  static Future<bool> addProductView({required String productId}) async {
     try {
       Response response = await ApiClient.request().post('/productviews', data: {"product_id": productId});
 

@@ -66,7 +66,7 @@ class EditProfile extends StatelessWidget {
         },
         onError: (er) {
           AlertUtils.hideProgressDialog();
-          AlertUtils.alert('$er');
+          AlertUtils.toast('$er');
           print("$er");
         },
       );
@@ -116,7 +116,6 @@ class EditProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get.back();
     return Scaffold(
       backgroundColor: KColors.WHITE_GREY,
       appBar: PreferredSize(

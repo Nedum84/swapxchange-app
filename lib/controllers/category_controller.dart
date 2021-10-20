@@ -20,7 +20,7 @@ class CategoryController extends GetxController {
     categoryList(items.sortedAscBy((it) => it.idx!).toList());
   }
 
-  Future<Category?> fetchById({required int catId}) async {
+  Future<Category?> fetchById({required String catId}) async {
     Category? category;
     var item;
     item = categoryList.value.firstWhereOrNull((element) => element.categoryId == catId);

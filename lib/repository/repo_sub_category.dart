@@ -27,7 +27,7 @@ class RepoSubCategory extends ApiClient {
     }
   }
 
-  static Future<SubCategory?> getSubCategoryById({required int subCatId}) async {
+  static Future<SubCategory?> getSubCategoryById({required String subCatId}) async {
     try {
       Response response = await ApiClient.request().get('/subcategory/$subCatId');
 
@@ -58,7 +58,7 @@ class RepoSubCategory extends ApiClient {
     return null;
   }
 
-  static Future<List<SubCategory>?> findByCategoryId({required int catId}) async {
+  static Future<List<SubCategory>?> findByCategoryId({required String catId}) async {
     try {
       Response response = await ApiClient.request().get('/subcategory/category/$catId');
 

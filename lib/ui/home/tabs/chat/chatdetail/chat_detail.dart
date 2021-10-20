@@ -100,35 +100,35 @@ class ChatDetailState extends State<ChatDetail> {
     }
 
     //--> Close Previous Deal Btn
-    if (_productChats!.productId != 0 && _productChats!.offerProductId != 0) {
+    if (_productChats!.productId != null && _productChats!.offerProductId != null) {
       //Still open deal
       if (_productChats!.chatStatus == SwapStatus.OPEN) {
         showRejectDealBtn = false;
         //I sent the product
         if (_productChats!.senderId == _currentUser!.userId) {
           //The user have not closed the deal
-          if (_productChats!.senderClosedDeal == 0 && _productChats!.receiverClosedDeal == 0) {
+          if (_productChats!.senderClosedDeal == false && _productChats!.receiverClosedDeal == false) {
             //Show close deal btn
             closeDealText = "Close this deal";
-          } else if (_productChats!.receiverClosedDeal != 0) {
+          } else if (_productChats!.receiverClosedDeal != false) {
             //Show accept to close deal btn
             closeDealText = "Accept deal";
             showRejectDealBtn = true;
-          } else if (_productChats!.senderClosedDeal != 0) {
+          } else if (_productChats!.senderClosedDeal != false) {
             //Show close deal btn
             closeDealText = "Waiting for approval from ${_receiver.name}";
           }
         } else {
           // not me
           //The user(sender) have not closed the deal
-          if (_productChats!.senderClosedDeal == 0 && _productChats!.receiverClosedDeal == 0) {
+          if (_productChats!.senderClosedDeal == false && _productChats!.receiverClosedDeal == false) {
             //Show close deal btn
             closeDealText = "Close this deal";
-          } else if (_productChats!.senderClosedDeal != 0) {
+          } else if (_productChats!.senderClosedDeal != false) {
             //Show accept to close deal btn
             closeDealText = "Accept deal";
             showRejectDealBtn = true;
-          } else if (_productChats!.receiverClosedDeal != 0) {
+          } else if (_productChats!.receiverClosedDeal != false) {
             //Show close deal btn
             closeDealText = "Waiting for approval from ${_receiver.name}";
           }
@@ -150,7 +150,7 @@ class ChatDetailState extends State<ChatDetail> {
 
   void onCloseDeal() async {
     //--> Close Previous Deal Btn
-    if (_productChats!.productId != 0 && _productChats!.offerProductId != 0) {
+    if (_productChats!.productId != null && _productChats!.offerProductId != null) {
       //Still open deal
       if (_productChats!.chatStatus == SwapStatus.OPEN) {
         AlertUtils.confirm(
@@ -159,11 +159,11 @@ class ChatDetailState extends State<ChatDetail> {
           positiveBtnText: 'CLOSE DEAL',
           okCallBack: () async {
             AlertUtils.showProgressDialog(title: null);
-            final nPcChat = await RepoProductChats.findById(id: _productChats!.id!); //Move it up to avoid duplicate firebase msg send
+            final nPcChat = await RepoProductChats.findById(id: _productChats!.productChatId!); //Move it up to avoid duplicate firebase msg send
             //I sent the product
             if (_productChats!.senderId == _currentUser!.userId) {
-              nPcChat!.senderClosedDeal = 1;
-              if (nPcChat.receiverClosedDeal == 1) {
+              nPcChat!.senderClosedDeal = true;
+              if (nPcChat.receiverClosedDeal == true) {
                 nPcChat.chatStatus = SwapStatus.EXCHANGED;
               }
               final update = await RepoProductChats.createOne(productChats: nPcChat);
@@ -178,8 +178,8 @@ class ChatDetailState extends State<ChatDetail> {
               }
             } else {
               //The user(sender) have not closed the deal
-              nPcChat!.receiverClosedDeal = 1;
-              if (nPcChat.senderClosedDeal == 1) {
+              nPcChat!.receiverClosedDeal = true;
+              if (nPcChat.senderClosedDeal == true) {
                 nPcChat.chatStatus = SwapStatus.EXCHANGED;
               }
               final update = await RepoProductChats.createOne(productChats: nPcChat);

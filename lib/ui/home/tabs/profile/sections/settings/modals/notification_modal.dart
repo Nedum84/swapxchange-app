@@ -56,27 +56,27 @@ class _NotificationModalState extends State<NotificationModal> {
           children: [
             InfoList(
                 title: 'General',
-                status: notificationSetting.general == 1,
+                status: notificationSetting.general,
                 onChanged: (status) {
-                  setState(() => notificationSetting.general = status == true ? 1 : 0);
+                  setState(() => notificationSetting.general = status);
                 }),
             InfoList(
                 title: "Chats",
-                status: notificationSetting.chat == 1,
+                status: notificationSetting.chat,
                 onChanged: (status) {
-                  setState(() => notificationSetting.chat = status == true ? 1 : 0);
+                  setState(() => notificationSetting.chat = status);
                 }),
             InfoList(
                 title: "Nearby products",
-                status: notificationSetting.product == 1,
+                status: notificationSetting.product,
                 onChanged: (status) {
-                  setState(() => notificationSetting.product = status == true ? 1 : 0);
+                  setState(() => notificationSetting.product = status);
                 }),
             InfoList(
                 title: "Calls",
-                status: notificationSetting.call == 1,
+                status: notificationSetting.call,
                 onChanged: (status) {
-                  setState(() => notificationSetting.call = status == true ? 1 : 0);
+                  setState(() => notificationSetting.call = status);
                 }),
             SizedBox(height: 16),
             PrimaryButton(

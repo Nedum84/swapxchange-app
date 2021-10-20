@@ -5,6 +5,7 @@ import 'package:swapxchange/ui/widgets/custom_appbar.dart';
 import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
+import 'package:swapxchange/utils/helpers.dart';
 
 class AboutUs extends StatelessWidget {
   @override
@@ -32,7 +33,9 @@ class AboutUs extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.white,
                 ),
-                child: Html(data: data ?? "Network error"),
+                child: Html(
+                  data: data != null ? Helpers.parseHtmlString(data) : "Network error",
+                ),
               ),
             );
           }),

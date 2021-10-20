@@ -4,25 +4,36 @@ import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/repository/dio/error_catch.dart';
 
 class RepoProductChats extends ApiClient {
+  //upsert on the server
   static Future<ProductChats?> createOne({required ProductChats productChats}) async {
-    Response response = await ApiClient.request().post('/productchats', data: productChats.toJson());
+    final map = productChats.toMap();
+    map.removeWhere((key, value) => value == null || key == "product_images" || key == "product_offer_images" || key == "product_chat_id");
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return ProductChats.fromMap(response.data["data"]["product_chat"]);
+    try {
+      Response response = await ApiClient.request().post('/productchats', data: map);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ProductChats.fromMap(response.data["data"]["product_chat"]);
+      }
+    } catch (e) {
+      print(e);
     }
     return null;
   }
 
-  static Future<ProductChats?> findById({required int id}) async {
+  static Future<ProductChats?> findById({required String id}) async {
     Response response = await ApiClient.request().get('/productchats/$id');
 
-    if (response.statusCode == 200) {
-      return ProductChats.fromMap(response.data["data"]["product_chat"]);
+    try {
+      if (response.statusCode == 200) {
+        return ProductChats.fromMap(response.data["data"]["product_chat"]);
+      }
+    } catch (e) {
+      print(e);
     }
-    return null;
   }
 
-  static Future<ProductChats?> findRecentBwTwoUsers({required int secondUserId}) async {
+  static Future<ProductChats?> findRecentBwTwoUsers({required String secondUserId}) async {
     try {
       Response response = await ApiClient.request().get('/productchats/user/$secondUserId');
       if (response.statusCode == 200) {

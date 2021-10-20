@@ -14,7 +14,7 @@ import 'package:swapxchange/utils/styles.dart';
 class NotificationList extends StatelessWidget {
   onClick(NotificationModel item) async {
     if (item.data!.type == NotificationType.PRODUCT) {
-      final product = await RepoProduct.getById(productId: int.parse(item.data!.id!));
+      final product = await RepoProduct.getById(productId: item.data!.id!);
       if (product != null) {
         NotificationRepo.markAsRead(docId: item.docId!);
         Get.to(() => ProductDetail(product: product));
@@ -52,7 +52,7 @@ class NotificationList extends StatelessWidget {
             return Center(child: Text('No notification found'));
           }
 
-          var items = (data).map((data) => NotificationModel.fromMap({...data.data(), "doc_id": data.id})).toList();
+          var items = (data).map((data) => NotificationModel.fromMap({...data.data() as Map<String, dynamic>, "doc_id": data.id})).toList();
 
           return ListView.separated(
             padding: EdgeInsets.all(16),

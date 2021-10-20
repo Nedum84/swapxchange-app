@@ -14,6 +14,7 @@ import 'package:swapxchange/utils/styles.dart';
 
 class Settings extends StatelessWidget {
   var top = 0.0;
+
   _logOut() {
     AlertUtils.confirm(
       'Your products & settings are saved. Proceed to logout?',
@@ -92,7 +93,7 @@ class Settings extends StatelessWidget {
                       children: [
                         GetBuilder<UserController>(builder: (userController) {
                           final uN = userController.user!.notification!;
-                          final isOn = uN.general == 1 || uN.chat == 1 || uN.product == 1 || uN.call == 1;
+                          final isOn = uN.general || uN.chat || uN.product || uN.call;
                           return Text(
                             isOn ? 'On' : 'Off',
                             style: StyleNormal.copyWith(color: isOn ? KColors.PRIMARY : KColors.RED),

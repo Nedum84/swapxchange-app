@@ -134,7 +134,7 @@ class MenuBadge extends StatelessWidget {
                     return Container();
                   }
                   final data = snapshot.data!.docs;
-                  var items = (data).map((data) => NotificationModel.fromMap(data.data())).toList();
+                  var items = (data).map((data) => NotificationModel.fromMap(data.data() as Map<String, dynamic>)).toList();
                   if (items.length == 0) {
                     return Container();
                   }

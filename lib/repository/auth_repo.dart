@@ -174,18 +174,14 @@ class AuthRepo {
       mobileNumber: firebaseUser.phoneNumber,
       name: firebaseUser.displayName,
       profilePhoto: firebaseUser.photoURL,
-      state: "",
-      address: "",
-      addressLat: "",
-      addressLong: "",
-      deviceToken: "",
-      onlineStatus: EnumToString.convertToString(OnlineStatus.ONLINE).toLowerCase(),
-      userAppVersion: "1.1.2",
-      lastLogin: DateTime.now(),
     );
 
+    final userMap = appUser.toMap();
+    userMap.removeWhere((key, value) => value == null || value == "");
+    // if (appUser.mobileNumber == null) userMap.remove('mobile_number');
+
     //Register/Update on the server
-    await ApiClient.request().post('/users', data: appUser.toMap()).then((res) {
+    await ApiClient.request().post('/auth', data: userMap).then((res) {
       try {
         if (res.data != null) {
           appUser = AppUser.fromMap(res.data["data"]["user"]);
@@ -254,25 +250,25 @@ class AuthRepo {
     required Function(AppUser? appUser) onSuccess,
     required Function(dynamic er) onError,
   }) async {
-    late final AppUser u;
+    AppUser? u;
 
+    final userMap = appUser.toMap();
+    userMap.removeWhere((key, value) => value == null || key == "user_id" || key == "created_at" || key == "updated_at");
     //Update on the server
-    await ApiClient.request().patch('/users/me', data: appUser.toMap()).then((res) {
+    await ApiClient.request().patch('/users/me', data: userMap).then((res) {
       try {
-        if (res != null) {
-          u = AppUser.fromMap(res.data["data"]["user"]);
-        }
+        u = AppUser.fromMap(res.data["data"]["user"]);
       } catch (e) {
         print(e);
         onSuccess(null);
       }
     }).catchError((error) {
-      onError(error);
+      onError(catchErrors(error));
       return;
     });
 
     //Update on firebase
-    _userCollection.doc(getCurrentUser()!.uid).update(u.toMap()).then((value) => onSuccess(u)).catchError(onError);
+    if (u != null) _userCollection.doc(getCurrentUser()!.uid).update(u!.toMap()).then((value) => onSuccess(u)).catchError(onError);
   }
 
   void signOut() async {

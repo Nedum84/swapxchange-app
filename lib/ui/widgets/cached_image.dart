@@ -117,13 +117,16 @@ class CachedImage extends StatelessWidget {
                         : CachedNetworkImage(
                             imageUrl: imageUrl!,
                             fit: fit,
-                            httpHeaders: {'Authorization': "Bearer $token"},
+                            // httpHeaders: {'Authorization': "Bearer $token"},
                             placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false)),
                             errorWidget: (context, url, error) {
                               return Image.network(
                                 imageUrl ?? "",
                                 fit: fit,
-                                headers: {'Authorization': "Bearer $token"},
+                                // headers: {'Authorization': "Bearer $token"},
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  return _altWidget();
+                                },
                               );
                             },
                           );

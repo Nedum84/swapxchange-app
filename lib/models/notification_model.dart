@@ -14,7 +14,7 @@ class NotificationModel {
   final String priority;
   final PushNotification? notification;
   final NotificationData? data;
-  final int? userId; // The user this is being sent for
+  final String? userId; // The user this is being sent for
   final DateTime? dateCreated;
   final bool? isRead;
   final String? docId;

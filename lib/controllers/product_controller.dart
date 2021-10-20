@@ -75,6 +75,7 @@ class ProductController extends GetxController {
       }
     }
     //--> For scroll  text change
+
     // if (notification is ScrollEndNotification) {
     if (controller!.position.extentBefore >= 160 && pageTitle == "") {
       pageTitle = "Latest";

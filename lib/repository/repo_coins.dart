@@ -61,9 +61,9 @@ class RepoCoins extends ApiClient {
     return null;
   }
 
-  static Future<CoinsModel?> findAllByUserId({required int userId}) async {
+  static Future<CoinsModel?> findAllByUserId({required String userId, int limit = 500}) async {
     try {
-      Response response = await ApiClient.request().get('/coins/$userId');
+      Response response = await ApiClient.request().get('/coins/$userId?limit=$limit');
       if (response.statusCode == 200 || response.statusCode == 201) {
         return CoinsModel.fromMap(response.data["data"]);
       }

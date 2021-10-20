@@ -5,17 +5,7 @@ description: Sell/Swap stuff nearby
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.5+5
+version: 1.0.6+6
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -41,9 +31,9 @@ dependencies:
   firebase_messaging: ^9.1.3
 
 #   firebase storage
-  firebase_storage:
+  firebase_storage: ^10.0.5
 #   For making request to fire store database
-  cloud_firestore:
+  cloud_firestore: ^2.5.3
 
   # For handling facebook sign in
   #https://stackoverflow.com/questions/27448684/android-facebook-sdk-generate-release-key-hash
@@ -68,7 +58,7 @@ dependencies:
   cached_network_image: ^3.0.0
 
   # agora rtc engine
-  agora_rtc_engine: ^4.0.1
+  agora_rtc_engine: ^4.0.7
 
   # permission handler
   permission_handler: ^6.1.3
@@ -103,6 +93,7 @@ dependencies:
   flutter_html: ^2.1.1
   awesome_dialog: ^2.1.1
   url_launcher: ^6.0.9
+  universal_html: ^2.0.8 #decode html entities
 
 
 

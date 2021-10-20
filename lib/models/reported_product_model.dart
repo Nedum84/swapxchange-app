@@ -6,7 +6,7 @@ import 'dart:convert';
 
 class ReportedProductModel {
   ReportedProductModel({
-    this.id,
+    this.reportedId,
     this.reportedBy,
     this.productId,
     this.reportedMessage,
@@ -17,13 +17,13 @@ class ReportedProductModel {
     this.updatedAt,
   });
 
-  final int? id;
-  final int? reportedBy;
-  final int? productId;
+  final String? reportedId;
+  final String? reportedBy;
+  final String? productId;
   final String? reportedMessage;
-  final int? uploadedBy;
+  final String? uploadedBy;
   final String? status;
-  final int? resolvedBy;
+  final String? resolvedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -32,19 +32,19 @@ class ReportedProductModel {
   String toJson() => json.encode(toMap());
 
   factory ReportedProductModel.fromMap(Map<String, dynamic> json) => ReportedProductModel(
-        id: int.tryParse(json["id"]),
-        reportedBy: int.tryParse(json["reported_by"]),
-        productId: int.tryParse(json["product_id"]),
+        reportedId: json["reported_id"],
+        reportedBy: json["reported_by"],
+        productId: json["product_id"],
         reportedMessage: json["reported_message"],
-        uploadedBy: int.tryParse(json["uploaded_by"]),
+        uploadedBy: json["uploaded_by"],
         status: json["status"],
-        resolvedBy: int.tryParse(json["resolved_by"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        resolvedBy: json["resolved_by"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
+        "reported_id": reportedId,
         "reported_by": reportedBy,
         "product_id": productId,
         "reported_message": reportedMessage,
