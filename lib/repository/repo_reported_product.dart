@@ -3,9 +3,14 @@ import 'package:swapxchange/models/reported_product_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoReportedProduct extends ApiClient {
-  static Future<ReportedProductModel?> addReportedProductModel({required ReportedProductModel reported_product}) async {
+  static Future<ReportedProductModel?> addReportedProductModel({required ReportedProductModel reportedProduct}) async {
+    final map = {
+      "product_id": reportedProduct.productId,
+      "reported_message": reportedProduct.reportedMessage,
+    };
+
     try {
-      Response response = await ApiClient.request().post('/reportedproducts', data: reported_product.toMap());
+      Response response = await ApiClient.request().post('/reportedproducts', data: map);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ReportedProductModel.fromMap(response.data["data"]["reported_product"]);

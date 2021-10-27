@@ -52,6 +52,7 @@ class ProductDetail extends StatelessWidget {
             );
         } else {
           final getRecent = await RepoProductChats.findRecentBwTwoUsers(secondUserId: product.userId!);
+
           if (getRecent == null || getRecent.productId != product.productId) {
             ProductChats productChats = ProductChats(
               productId: product.productId,
@@ -60,8 +61,10 @@ class ProductDetail extends StatelessWidget {
               chatStatus: SwapStatus.OPEN,
             );
             final createOne = await RepoProductChats.createOne(productChats: productChats);
-            //--> Add swap suggestion to the database
-            addSwapSuggestionToChatMessage(pChat: createOne!, poster: poster);
+            if (createOne!.productId == product.productId) {
+              //--> Add swap suggestion to the database
+              addSwapSuggestionToChatMessage(pChat: createOne, poster: poster);
+            }
             Get.to(() => ChatDetail(receiver: poster));
           } else {
             //--> Update swap suggestion in the database
@@ -143,9 +146,11 @@ class ProductDetail extends StatelessWidget {
                               color: Color(0xffCD4F4E).withOpacity(.8),
                               size: 18,
                             ),
-                            Text(
-                              '${product.userAddress} • ${Helpers.formatDistance(distance: product.distance!)}',
-                              style: StyleCategorySubTitle,
+                            Expanded(
+                              child: Text(
+                                '${product.userAddress} • ${Helpers.formatDistance(distance: product.distance!)}',
+                                style: StyleCategorySubTitle,
+                              ),
                             ),
                           ],
                         ),

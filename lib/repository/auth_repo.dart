@@ -253,7 +253,7 @@ class AuthRepo {
     AppUser? u;
 
     final userMap = appUser.toMap();
-    userMap.removeWhere((key, value) => value == null || key == "user_id" || key == "created_at" || key == "updated_at");
+    userMap.removeWhere((key, value) => value == null || key == "user_id" || key == "user_level" || key == "created_at" || key == "updated_at");
     //Update on the server
     await ApiClient.request().patch('/users/me', data: userMap).then((res) {
       try {

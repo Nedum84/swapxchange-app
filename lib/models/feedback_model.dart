@@ -6,7 +6,7 @@ import 'dart:convert';
 
 class FeedbackModel {
   FeedbackModel({
-    this.id,
+    this.feedbackId,
     this.userId,
     this.message,
     this.status,
@@ -15,7 +15,7 @@ class FeedbackModel {
     this.updatedAt,
   });
 
-  final String? id;
+  final String? feedbackId;
   final String? userId;
   final String? message;
   final String? status;
@@ -28,7 +28,7 @@ class FeedbackModel {
   String toJson() => json.encode(toMap());
 
   factory FeedbackModel.fromMap(Map<String, dynamic> json) => FeedbackModel(
-        id: json["id"],
+        feedbackId: json["feedback_id"],
         userId: json["user_id"],
         message: json["message"],
         status: json["status"],
@@ -38,7 +38,7 @@ class FeedbackModel {
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
+        "feedback_id": feedbackId,
         "user_id": userId,
         "message": message,
         "status": status,

@@ -81,7 +81,7 @@ class ChatDetailState extends State<ChatDetail> {
     final getProduct = await RepoProduct.getById(productId: _productChats!.productId!);
     if (getProduct != null) setState(() => _product = getProduct);
 
-    if (_productChats?.offerProductId != 0) {
+    if (_productChats?.offerProductId != null) {
       final getOffer = await RepoProduct.getById(productId: _productChats!.offerProductId!);
       if (getOffer != null) setState(() => _offerProduct = getOffer);
     }
@@ -199,9 +199,10 @@ class ChatDetailState extends State<ChatDetail> {
     }
   }
 
-  void markProductsCompleted() {
-    RepoProduct.updateProduct(product: (_product!..productStatus = ProductStatus.COMPLETED_PRODUCT_STATUS));
-    RepoProduct.updateProduct(product: (_offerProduct!..productStatus = ProductStatus.COMPLETED_PRODUCT_STATUS));
+  void markProductsCompleted() async {
+    final completed = await RepoProductChats.markCompleted(_productChats!.productChatId);
+    print(completed?.length);
+
     MyProductController.to.fetchAll(reset: true);
   }
 

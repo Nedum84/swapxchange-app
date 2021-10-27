@@ -8,6 +8,7 @@ import 'package:swapxchange/models/product_image.dart';
 
 class ProductChats {
   ProductChats({
+    this.id,
     this.productChatId,
     this.productId,
     this.offerProductId,
@@ -20,6 +21,7 @@ class ProductChats {
     this.productOfferImages,
   });
 
+  final int? id;
   final String? productChatId;
   final String? productId;
   final String? offerProductId;
@@ -36,6 +38,7 @@ class ProductChats {
   String toJson() => json.encode(toMap());
 
   factory ProductChats.fromMap(Map<String, dynamic> json) => ProductChats(
+        id: json["id"],
         productChatId: json["product_chat_id"],
         productId: json["product_id"],
         offerProductId: json["offer_product_id"],
@@ -49,6 +52,7 @@ class ProductChats {
       );
 
   Map<String, dynamic> toMap() => {
+        "id": id,
         "product_chat_id": productChatId,
         "product_id": productId,
         "offer_product_id": offerProductId,

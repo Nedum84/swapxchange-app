@@ -20,7 +20,13 @@ AppBar chatAppBar({required AppUser receiverUser, required AppUser currentUser})
         Icons.arrow_back_ios,
         color: KColors.TEXT_COLOR_DARK,
       ),
-      onPressed: () => Get.back(),
+      onPressed: () {
+        try {
+          Get.back();
+        } catch (e) {
+          print(e);
+        }
+      },
     ),
     centerTitle: false,
     title: InkWell(

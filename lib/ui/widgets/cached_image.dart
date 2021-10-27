@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:swapxchange/models/tokens.dart';
 import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
-import 'package:swapxchange/utils/user_prefs.dart';
 
 const QUESTION_MARK2 = 'https://assets.stickpng.com/thumbs/5a461418d099a2ad03f9c999.png';
 const QUESTION_MARK = 'https://images.emojiterra.com/google/android-11/512px/2754.png';
@@ -98,40 +96,30 @@ class CachedImage extends StatelessWidget {
           width: isRound ? radius : width,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(isRound ? 50 : radius),
-            child: FutureBuilder<Tokens?>(
-              future: UserPrefs.getTokens(),
-              builder: (context, snapshots) {
-                if (!snapshots.hasData) {
-                  return Center(child: LoadingProgressMultiColor(showBg: false));
-                }
-
-                final tokens = snapshots.data!;
-                final token = tokens.access?.token;
-                return imageUrl == null || imageUrl!.isEmpty
-                    ? _altWidget()
-                    : !imageUrl!.contains('http') //For file images, use file image
-                        ? Image.file(
-                            File(imageUrl!),
+            child: imageUrl == null || imageUrl!.isEmpty
+                ? _altWidget()
+                : !imageUrl!.contains('http') //For file images, use file image
+                    ? Image.file(
+                        File(imageUrl!),
+                        fit: fit,
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: imageUrl!,
+                        fit: fit,
+                        // httpHeaders: {'Authorization': "Bearer $token"},
+                        placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false)),
+                        // placeholder: (context, url) => Container(width: 4, height: 4, child: Center(child: LoadingProgressMultiColor(showBg: false))),
+                        errorWidget: (context, url, error) {
+                          return Image.network(
+                            imageUrl ?? "",
                             fit: fit,
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: imageUrl!,
-                            fit: fit,
-                            // httpHeaders: {'Authorization': "Bearer $token"},
-                            placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false)),
-                            errorWidget: (context, url, error) {
-                              return Image.network(
-                                imageUrl ?? "",
-                                fit: fit,
-                                // headers: {'Authorization': "Bearer $token"},
-                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                  return _altWidget();
-                                },
-                              );
+                            // headers: {'Authorization': "Bearer $token"},
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              return _altWidget();
                             },
                           );
-              },
-            ),
+                        },
+                      ),
           ),
         ),
       );

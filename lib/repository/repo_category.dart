@@ -4,8 +4,12 @@ import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoCategory extends ApiClient {
   static Future<Category?> addCategory({required Category category}) async {
+    final map = {
+      "category_name": category.categoryName,
+      "category_icon": category.categoryIcon,
+    };
     try {
-      Response response = await ApiClient.request().post('/category', data: category.toMap());
+      Response response = await ApiClient.request().post('/category', data: map);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Category.fromMap(response.data["data"]["category"]);
@@ -16,8 +20,12 @@ class RepoCategory extends ApiClient {
   }
 
   static Future<Category?> editCategory({required Category category}) async {
+    final map = {
+      "category_name": category.categoryName,
+      "category_icon": category.categoryIcon,
+    };
     try {
-      Response response = await ApiClient.request().patch('/category/${category.categoryId}', data: category.toMap());
+      Response response = await ApiClient.request().patch('/category/${category.categoryId}', data: map);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Category.fromMap(response.data["data"]["category"]);

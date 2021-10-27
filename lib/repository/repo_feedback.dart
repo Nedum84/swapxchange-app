@@ -4,8 +4,9 @@ import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoFeedback extends ApiClient {
   static Future<FeedbackModel?> addFeedbackModel({required FeedbackModel feedback}) async {
+    final map = {"message": feedback.message};
     try {
-      Response response = await ApiClient.request().post('/feedback', data: feedback.toMap());
+      Response response = await ApiClient.request().post('/feedback', data: map);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return FeedbackModel.fromMap(response.data["data"]["feedback"]);
@@ -17,7 +18,7 @@ class RepoFeedback extends ApiClient {
 
   static Future<FeedbackModel?> editFeedbackModel({required FeedbackModel feedback}) async {
     try {
-      Response response = await ApiClient.request().patch('/feedback/${feedback.id}', data: feedback.toMap());
+      Response response = await ApiClient.request().patch('/feedback/${feedback.feedbackId}', data: feedback.toMap());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return FeedbackModel.fromMap(response.data["data"]["feedback"]);

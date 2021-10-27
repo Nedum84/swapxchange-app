@@ -23,30 +23,24 @@ class _SaveBtnState extends State<SaveBtn> {
 
   _checkSaved() async {
     final checkIsSaved = await RepoSavedProducts.checkSaved(productId: widget.product.productId!);
-    setState(() {
-      isSaved = checkIsSaved;
-    });
+    setState(() => isSaved = checkIsSaved);
   }
 
   _toggleSaved() async {
     if (isSaved) {
       final unSave = await RepoSavedProducts.removeSaved(productId: widget.product.productId!);
-    }
-    final savedProduct = await RepoSavedProducts.savedProduct(productId: widget.product.productId!);
+      if (unSave) {
+        setState(() => isSaved = false);
+      }
+    } else {
+      final savedProduct = await RepoSavedProducts.savedProduct(productId: widget.product.productId!);
 
-    if (savedProduct) {
-      _checkSaved();
-      SavedProductController.to.fetchAll(reset: true);
+      if (savedProduct) {
+        setState(() => isSaved = true);
+      }
     }
-  }
-
-  _toggleSaved() async {
-    final savedProduct = await RepoSavedProducts.savedProduct(productId: widget.product.productId!);
-
-    if (savedProduct) {
-      _checkSaved();
-      SavedProductController.to.fetchAll(reset: true);
-    }
+    //refresh
+    SavedProductController.to.fetchAll(reset: true);
   }
 
   @override

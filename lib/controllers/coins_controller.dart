@@ -23,6 +23,7 @@ class CoinsController extends GetxController {
       "reference": ref ?? "",
     };
     final response = await RepoCoins.addCoin(payload: payload);
+    print(response?.toMap());
     if (response != null) {
       updateBalance(response);
     }

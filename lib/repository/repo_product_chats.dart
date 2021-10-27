@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/product_chats.dart';
+import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/repository/dio/error_catch.dart';
 
@@ -7,7 +8,7 @@ class RepoProductChats extends ApiClient {
   //upsert on the server
   static Future<ProductChats?> createOne({required ProductChats productChats}) async {
     final map = productChats.toMap();
-    map.removeWhere((key, value) => value == null || key == "product_images" || key == "product_offer_images" || key == "product_chat_id");
+    map.removeWhere((key, value) => value == null || key == "id" || key == "product_images" || key == "product_offer_images" || key == "product_chat_id");
 
     try {
       Response response = await ApiClient.request().post('/productchats', data: map);
@@ -57,5 +58,21 @@ class RepoProductChats extends ApiClient {
     }
 
     return null;
+  }
+
+  static Future<List<Product>?> markCompleted(pChatId) async {
+    try {
+      Response response = await ApiClient.request().post('/productchats/completed/$pChatId');
+
+      if (response.statusCode == 200) {
+        var items = response.data["data"]["products"];
+
+        print(response.data["data"]);
+        var list = (items as List).map((data) => Product.fromMap(data)).toList();
+        return list;
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

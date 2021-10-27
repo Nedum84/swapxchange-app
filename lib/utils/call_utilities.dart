@@ -13,7 +13,7 @@ class CallUtils {
   static final CallMethods callMethods = CallMethods();
 
   static dial({required AppUser from, required AppUser to, useVideo = true}) async {
-    final int callUid = int.parse("${from.userId}${to.userId}");
+    final String callUid = "${from.userId}-${to.userId}";
     final String channelName = Helpers.genRandString();
     final String? callToken = await CallMethods.generateCallToken(uid: callUid, channelName: channelName);
 
