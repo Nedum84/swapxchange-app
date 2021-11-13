@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         primaryColor: KColors.PRIMARY,
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
+        // primaryColorBrightness: Brightness.dark,
       ),
       defaultTransition: Transition.rightToLeft,
       initialBinding: AllControllerBinding(),

@@ -8,12 +8,12 @@ class Constants {
   static final String AGORA_TOKEN = "00618f66d8a4cf141c29daf271a39cf8fe2IACMWQ6sr3cdWBKjkP2mhuF9KMH26BR/voSfgeZSM4/3AoamEDYAAAAAEAA3rfa7AYy4YAEAAQABjLhg";
 
   // TEST KEYS
-  static final PAYSTACK_PUBLIC_KEY = 'pk_test_b76b204c7b0b2c62574f9807e0dda5a14487048e';
-  static final PAYSTACK_SECRET_KEY = 'sk_test_9cd3e56e95f4abea6a56643e45ca3f606210effc';
+  // static final PAYSTACK_PUBLIC_KEY = 'pk_test_b76b204c7b0b2c62574f9807e0dda5a14487048e';
+  // static final PAYSTACK_SECRET_KEY = 'sk_test_9cd3e56e95f4abea6a56643e45ca3f606210effc';
 
   // //LIVE KEYS
-  // static final PAYSTACK_PUBLIC_KEY = 'pk_live_20911f8fc8fdf9447d243fe1526bdee388ea1481';
-  // static final PAYSTACK_SECRET_KEY = 'sk_live_1627b9cf52161b293eafcd2a5d3a9b68a0a2d726';
+  static final PAYSTACK_PUBLIC_KEY = 'pk_live_20911f8fc8fdf9447d243fe1526bdee388ea1481';
+  static final PAYSTACK_SECRET_KEY = 'sk_live_1627b9cf52161b293eafcd2a5d3a9b68a0a2d726';
 
   static final ANDROID_MAP_KEY = 'AIzaSyB2SmVI9__vmGe8LQmVhKtXgYwT88rRepQ';
   static final IOS_MAP_KEY = 'AIzaSyCDm9RxFcAe-2hYYFBBb9yUJEz374Xr6TA';
