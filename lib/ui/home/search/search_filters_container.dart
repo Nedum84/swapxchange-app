@@ -24,6 +24,7 @@ class SearchFiltersContainer extends StatelessWidget {
                   onClick: () {
                     controller.searchFilter(item);
                     controller.resetList(true);
+                    controller.productList.clear();
                     controller.update();
                     controller.fetchProducts();
                   },

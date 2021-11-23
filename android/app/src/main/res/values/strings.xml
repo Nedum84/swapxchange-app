@@ -3,5 +3,5 @@
     <string name="app_name">SwapXchange</string>
     <string name="facebook_app_id">110567791109082</string>
     <string name="fb_login_protocol_scheme">fb110567791109082</string>
-    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_id" translatable="false">Xchange-Messaging</string>
 </resources>

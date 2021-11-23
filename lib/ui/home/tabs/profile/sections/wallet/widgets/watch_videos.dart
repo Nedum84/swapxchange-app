@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';

@@ -46,3 +46,29 @@ final TextStyle StyleCategorySubTitle = Default.copyWith(
   color: KColors.TEXT_COLOR.withOpacity(.5),
   fontSize: 12,
 );
+
+TextField CustomTextField({required TextEditingController controller}) => TextField(
+      controller: controller,
+      keyboardType: TextInputType.text,
+      maxLines: 1,
+      textAlign: TextAlign.start,
+      style: TextStyle(
+        color: KColors.TEXT_COLOR_DARK,
+        fontWeight: FontWeight.w600,
+      ),
+      cursorColor: Colors.blueGrey,
+      decoration: InputDecoration(
+        hintText: 'Write here...',
+        hintStyle: StyleNormal.copyWith(
+          color: KColors.TEXT_COLOR,
+          fontWeight: FontWeight.w500,
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        border: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+      ),
+    );

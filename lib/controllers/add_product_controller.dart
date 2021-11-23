@@ -7,7 +7,6 @@ import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/product_image.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
-import 'package:swapxchange/utils/helpers.dart';
 
 class AddProductController extends GetxController {
   static AddProductController to = Get.find();
@@ -23,23 +22,24 @@ class AddProductController extends GetxController {
   Product? get product => _product;
 
   void initialize(Product product) async {
+    //--> Set product
+    updateProduct(product);
     //-> Category
     final Category? cat = await CategoryController.to.fetchById(catId: product.category!);
-    if (cat != null) setCategory(cat);
+    // if (cat != null) setCategory(cat);
+    if (cat != null) setCategory(cat, resetSubCat: false);
     //--> Sub cat
     final SubCategory? subCat = await SubCategoryController.to.fetchById(subCatId: product.subCategory!);
     if (subCat != null) setSubCategory(subCat);
     //--> Images
     if (product.images != null) setImgList(product.images!);
-    //--> Set product
-    updateProduct(product);
+    //--> Suggestions
+    if (product.suggestions != null) setSuggestions(product.suggestions!);
   }
 
   void create() {
     final currentUser = UserController.to.user!;
     Product product = Product(
-      userId: currentUser.userId,
-      orderId: Helpers.genRandString(),
       userAddress: currentUser.address,
       userAddressLat: currentUser.addressLat,
       userAddressLong: currentUser.addressLong,
@@ -49,9 +49,8 @@ class AddProductController extends GetxController {
       images: [],
       productName: "",
       productDescription: "",
-      suggestions: [],
-      productSuggestion: "",
-      uploadPrice: CoinsController.uploadAmount.toDouble(),
+      productSuggestion: [],
+      uploadPrice: CoinsController.uploadAmount,
     );
     updateProduct(product);
   }
@@ -77,16 +76,16 @@ class AddProductController extends GetxController {
     update();
   }
 
-  void setCategory(Category cat) {
+  void setCategory(Category cat, {bool resetSubCat = true}) {
     category = cat;
     _product!.category = cat.categoryId;
-    setSubCategory(null);
+    if (resetSubCat) setSubCategory(null);
     update();
   }
 
   void setSubCategory(SubCategory? subCat) {
     subCategory = subCat;
-    _product!.subCategory = subCat?.subCategoryId ?? 0;
+    _product!.subCategory = subCat?.subCategoryId ?? null;
     update();
   }
 
@@ -105,6 +104,12 @@ class AddProductController extends GetxController {
     update();
   }
 
+  void setSuggestions(List<Category> cats) {
+    suggestions.clear();
+    suggestions.addAll(cats);
+    update();
+  }
+
   void updateSuggestions(Category category) {
     bool isSelected = suggestions.indexWhere((element) => element.categoryId == category.categoryId) != -1;
     if (isSelected) {
@@ -112,11 +117,12 @@ class AddProductController extends GetxController {
     } else {
       suggestions.add(category);
     }
-    final sugs = suggestions.map((e) => e.categoryId).toString().replaceAll("(", "").replaceAll(")", "");
-    _product!.productSuggestion = sugs;
+    final sugs = suggestions.map((e) => e.categoryId).toList();
+    _product?.productSuggestion = sugs;
     update();
   }
 
+  // reset controller to defaults
   void reset() {
     _product = null;
     setEditing(false);

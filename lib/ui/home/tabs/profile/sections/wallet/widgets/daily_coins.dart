@@ -1,17 +1,44 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/repository/repo_coins.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
+import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class DailyCoins extends StatelessWidget {
   final CoinsController coinsController = CoinsController.to;
-  _getDailyCoins() async {
+  _checkEligible() async {
     AlertUtils.showProgressDialog();
-    final addCoins = await coinsController.addCoin(amount: CoinsController.dailyLimitCoinsAmount, methodOfSub: MethodOfSubscription.DAILY_OPENING);
+    final getCoinsLog = await RepoCoins.findAllByUserId(userId: UserController.to.user!.userId!, limit: 2);
+
+    if (getCoinsLog == null) {
+      _getDailyCoins();
+    } else {
+      final lastDailyCoin = getCoinsLog.meta?.firstWhereOrNull((element) => element.methodOfSubscription == MethodOfSubscription.DAILY_OPENING);
+      if (lastDailyCoin == null) {
+        _getDailyCoins();
+      } else {
+        if (Helpers.isToday(lastDailyCoin.createdAt!, lastDailyCoin.currentTime)) {
+          AlertUtils.hideProgressDialog();
+          AlertUtils.alert(
+            "It seems that you have already gotten today's daily reward. Check back tomorrow!",
+          );
+        } else {
+          _getDailyCoins();
+        }
+      }
+    }
+  }
+
+  _getDailyCoins() async {
+    final ref = "${Helpers.genRandString(length: 12)}-D-${UserController.to.user!.userId}";
+    final addCoins = await coinsController.addCoin(amount: CoinsController.dailyLimitCoinsAmount, methodOfSub: MethodOfSubscription.DAILY_OPENING, ref: ref);
     AlertUtils.hideProgressDialog();
     if (addCoins != null) {
       AlertUtils.alert(
@@ -23,6 +50,7 @@ class DailyCoins extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get.back();
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: Constants.PADDING,
@@ -36,7 +64,7 @@ class DailyCoins extends StatelessWidget {
       child: Column(
         children: [
           Image.asset(
-            'images/logo.jpg',
+            'images/coins.png',
             width: 60,
           ),
           SizedBox(height: 16),
@@ -52,7 +80,7 @@ class DailyCoins extends StatelessWidget {
           ),
           SizedBox(height: 16),
           ButtonSmall(
-            onClick: _getDailyCoins,
+            onClick: _checkEligible,
             text: 'Get ${CoinsController.dailyLimitCoinsAmount} Coins',
             textColor: Colors.white,
             bgColor: KColors.PRIMARY,

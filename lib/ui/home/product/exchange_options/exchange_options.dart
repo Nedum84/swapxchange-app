@@ -5,8 +5,9 @@ import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -36,7 +37,6 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
       'Do you want to swap your ${_myProduct!.productName} with ${suggestedProduct!.productName}',
       title: 'Confirm',
       positiveBtnText: 'YES',
-      context: context,
       okCallBack: () async {
         ProductChats productChats = ProductChats(
           productId: suggestedProduct.productId,
@@ -90,52 +90,50 @@ class _ExchangeOptionsState extends State<ExchangeOptions> {
             ),
           ];
         },
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: FutureBuilder<List<Product>?>(
-            future: RepoProduct.findExchangeOptions(productId: _myProduct!.productId!),
-            builder: (context, AsyncSnapshot<List<Product>?> snapshot) {
-              if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+        body: FutureBuilder<List<Product>?>(
+          future: RepoProduct.findExchangeOptions(productId: _myProduct!.productId!),
+          builder: (context, AsyncSnapshot<List<Product>?> snapshot) {
+            if (!snapshot.hasData) return Center(child: LoadingProgressMultiColor());
 
-              var products = snapshot.data;
-              if (products!.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No exchange found',
-                    style: StyleNormal.copyWith(fontSize: 16),
-                  ),
-                );
-              }
+            var products = snapshot.data;
+            if (products!.isEmpty) {
+              return Center(
+                child: Text(
+                  'No exchange found',
+                  style: StyleNormal.copyWith(fontSize: 16),
+                ),
+              );
+            }
 
-              return ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (build, index) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(vertical: 24),
-                      width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.all(Radius.circular(12))),
-                      child: Column(
-                        children: [
-                          SwapSuggestion(
-                            myProduct: _myProduct!,
-                            suggestedProduct: products[index],
-                            openProduct: true,
-                          ),
-                          SizedBox(height: 10),
-                          ButtonSmall(
-                            text: 'Suggest swap',
-                            py: 8,
-                            bgColor: KColors.PRIMARY,
-                            textColor: Colors.white.withOpacity(.8),
-                            onClick: () => _suggestSwap(products[index]),
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-            },
-          ),
+            return ListView.builder(
+                padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                itemCount: products.length,
+                itemBuilder: (build, index) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    width: double.infinity,
+                    margin: EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.all(Radius.circular(12))),
+                    child: Column(
+                      children: [
+                        SwapSuggestion(
+                          myProduct: _myProduct!,
+                          suggestedProduct: products[index],
+                          openProduct: true,
+                        ),
+                        SizedBox(height: 10),
+                        ButtonSmall(
+                          text: 'Suggest swap',
+                          py: 8,
+                          bgColor: KColors.PRIMARY,
+                          textColor: Colors.white.withOpacity(.8),
+                          onClick: () => _suggestSwap(products[index]),
+                        ),
+                      ],
+                    ),
+                  );
+                });
+          },
         ),
       ),
     );

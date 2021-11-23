@@ -21,11 +21,19 @@ class SearchAppBar extends StatelessWidget {
           Expanded(
             child: TextField(
               // controller: TextEditingController()..text = searchController.queryString.value,
-              // controller: searchController.textController,
+              controller: searchController.textController,
               focusNode: searchController.textFieldFocus,
               keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (str) {
+                searchController.textFieldFocus.unfocus();
+                searchController.hideSearchSuggestion(true);
+                searchController.resetList(true);
+                searchController.productList.clear();
+                searchController.update();
+                searchController.fetchProducts();
+              },
               maxLines: 1,
-              autofocus: true,
               style: TextStyle(
                 color: KColors.TEXT_COLOR,
                 fontWeight: FontWeight.w600,
@@ -46,11 +54,12 @@ class SearchAppBar extends StatelessWidget {
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.all(0).copyWith(left: 16),
               ),
-              onChanged: (newString) => searchController.setQueryString(newString),
+              onChanged: (newString) => searchController.getSuggestions(),
             ),
           ),
           InkWell(
             onTap: () {
+              searchController.productList.clear();
               searchController.resetList(true);
               searchController.fetchProducts();
             },

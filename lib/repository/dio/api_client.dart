@@ -11,3 +11,5 @@ class ApiClient {
     return dio;
   }
 }
+
+final apiClient = ApiClient.request();

@@ -16,3 +16,17 @@ class KColors {
   static final WHITE_GREY2 = Color(0xffEEF2F4);
   static final PRIMARY2 = Colors.white.withOpacity(.5);
 }
+
+final Map<int, Color> colorMap = {
+  50: Color(0xff00a14b).withOpacity(.05),
+  100: Color(0xff00a14b).withOpacity(.1),
+  200: Color(0xff00a14b).withOpacity(.2),
+  300: Color(0xff00a14b).withOpacity(.3),
+  400: Color(0xff00a14b).withOpacity(.4),
+  500: Color(0xff00a14b).withOpacity(.5),
+  600: Color(0xff00a14b).withOpacity(.6),
+  700: Color(0xff00a14b).withOpacity(.7),
+  800: Color(0xff00a14b).withOpacity(.8),
+  900: Color(0xff00a14b),
+};
+final MaterialColor colorCustom = MaterialColor(0xff00a14b, colorMap);

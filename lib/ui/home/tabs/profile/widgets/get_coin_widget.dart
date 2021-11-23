@@ -36,7 +36,7 @@ class GetCoinWidget extends StatelessWidget {
           SizedBox(width: 8),
           GetBuilder<CoinsController>(builder: (controller) {
             return Text(
-              '${Get.find<CoinsController>().myCoins!.balance} coins',
+              '${Get.find<CoinsController>().myCoins?.balance} coins',
               style: StyleNormal,
             );
           }),

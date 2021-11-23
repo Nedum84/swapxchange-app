@@ -7,7 +7,7 @@ class Call {
   String? receiverPic;
   String? channelId;
   String? callToken;
-  int? callUid;
+  String? callUid;
   bool? hasDialled;
   bool? useVideo;
   bool? isMissedCall;

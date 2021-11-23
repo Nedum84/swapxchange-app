@@ -14,16 +14,16 @@ class ChatMessage {
   });
 
   String? id;
-  int? senderId;
-  int? receiverId;
+  String? senderId;
+  String? receiverId;
   final String? type;
   String? message;
   String? photoUrl;
   int? timestamp;
-  final int? productChatId;
+  final String? productChatId;
   final bool isRead;
 
-  int secondUserId = 0;
+  String? secondUserId;
 
   factory ChatMessage.fromJson(String str) => ChatMessage.fromMap(json.decode(str));
 
@@ -59,4 +59,5 @@ class ChatMessageType {
   static const String IMAGE = "image";
   static const String PRODUCT_CHAT = "productChat";
   static const String MISSED_CALL = "missedCall";
+  static const String CLOSE_DEAL = "closeDeal";
 }

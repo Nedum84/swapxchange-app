@@ -1,13 +1,18 @@
-import 'dart:async';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/category_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/repository/repo_category.dart';
+import 'package:swapxchange/repository/repo_sub_category.dart';
+import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/login.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -20,6 +25,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   AuthRepo _authRepo = AuthRepo();
 
+  bool isError = false;
+
   @override
   void initState() {
     _initialize();
@@ -27,29 +34,50 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _initialize() async {
-    Get.put(CategoryController());
-    Get.put(SubCategoryController());
-    await Future.delayed(Duration(seconds: 5));
-    // final u = _authRepo.getCurrentUser();
-    // if (u == null) {
-    Get.offAll(() => Login(), transition: Transition.leftToRightWithFade);
-    // } else {
-    //   authenticateUser(u);
-    // }
+    // Get.to(() => Login());
+    // return;
+    setState(() => isError = false);
+    await Future.delayed(Duration(seconds: 1));
+
+    final u = _authRepo.getCurrentUser();
+    if (u == null) {
+      Get.offAll(() => Login());
+    } else {
+      authenticateUser(u);
+    }
   }
 
   void authenticateUser(User user) async {
     _authRepo.addDataToDb(
       firebaseUser: user,
       onSuccess: (appUser, tokens) {
-        print(tokens);
-        print(appUser);
+        _fetchData(user);
       },
       onError: (er) {
+        setState(() => isError = true);
         AlertUtils.toast("$er");
-        print(er);
       },
     );
+  }
+
+  _fetchData(User user) async {
+    final cats = await RepoCategory.findAll();
+    final subCats = await RepoSubCategory.findAll();
+    final coinsBalance = await CoinsController.to.getBalance();
+    if (cats != null && subCats != null && coinsBalance != null) {
+      CategoryController.to.setItems(items: cats);
+      SubCategoryController.to.setItems(items: subCats);
+      AuthFunctions.authenticateUser(
+        user: user,
+        onDone: () => setState(() => isError = false),
+        onError: (er) {
+          setState(() => isError = true);
+          AlertUtils.toast("$er");
+        },
+      );
+    } else {
+      setState(() => isError = true);
+    }
   }
 
   var colorizeColors = [
@@ -69,38 +97,95 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
         color: Colors.white,
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'images/logo_text1.png',
-              width: Get.width / 1.5,
-            ),
-            // Text(
-            //   'Find & Swap Stuff nearby',
-            //   style: TextStyle(color: KColors.TEXT_COLOR),
-            // ),
-            AnimatedTextKit(
-              repeatForever: true,
-              isRepeatingAnimation: true,
-              pause: Duration(milliseconds: 50),
-              animatedTexts: [
-                ColorizeAnimatedText(
-                  'Find & Swap Stuff nearby',
-                  textStyle: StyleNormal.copyWith(fontSize: 16),
-                  colors: colorizeColors,
-                  speed: Duration(milliseconds: 500),
-                ),
-              ],
-            )
-          ],
-        ),
+        child: !isError
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: SizedBox()),
+                  Column(
+                    children: [
+                      Image.asset(
+                        'images/logo_text1.png',
+                        width: Get.width / 1.5,
+                      ),
+                      AnimatedTextKit(
+                        repeatForever: true,
+                        isRepeatingAnimation: true,
+                        pause: Duration(milliseconds: 50),
+                        animatedTexts: [
+                          ColorizeAnimatedText(
+                            'Find & Swap Stuff nearby',
+                            textStyle: StyleNormal.copyWith(fontSize: 16),
+                            colors: colorizeColors,
+                            speed: Duration(milliseconds: 500),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: LoadingProgressMultiColor(),
+                    ),
+                  )
+                ],
+              )
+            : NoInternetError(onReload: _initialize),
+      ),
+    );
+  }
+}
+
+class NoInternetError extends StatelessWidget {
+  final Function() onReload;
+
+  const NoInternetError({Key? key, required this.onReload}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.perm_scan_wifi_outlined,
+            size: 64,
+            color: KColors.TEXT_COLOR_DARK,
+          ),
+          Text(
+            'No Connection',
+            style: H1Style,
+          ),
+          Text(
+            "An internet error occurred and we couldn't load the pages. Please, try again",
+            style: StyleNormal,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8),
+          ButtonOutline2(
+            title: 'Reload Page',
+            onClick: onReload,
+            py: 8,
+          ),
+        ],
       ),
     );
   }

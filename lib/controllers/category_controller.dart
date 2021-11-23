@@ -9,12 +9,6 @@ class CategoryController extends GetxController {
   RxList<Category> categoryList = <Category>[].obs;
   RxBool isLoading = true.obs;
 
-  @override
-  void onInit() {
-    fetch();
-    super.onInit();
-  }
-
   void fetch() async {
     isLoading(true);
     var items = await RepoCategory.findAll();
@@ -23,10 +17,10 @@ class CategoryController extends GetxController {
   }
 
   void setItems({required List<Category> items}) {
-    categoryList(items);
+    categoryList(items.sortedAscBy((it) => it.idx!).toList());
   }
 
-  Future<Category?> fetchById({required int catId}) async {
+  Future<Category?> fetchById({required String catId}) async {
     Category? category;
     var item;
     item = categoryList.value.firstWhereOrNull((element) => element.categoryId == catId);
@@ -36,6 +30,12 @@ class CategoryController extends GetxController {
     if (item != null) category = item;
 
     return category;
+  }
+
+  List<Category> hotDeals() {
+    final cats = categoryList;
+    cats.sort((a, b) => b.noOfProducts!.compareTo(a.noOfProducts!));
+    return cats;
   }
 
   void sort() {

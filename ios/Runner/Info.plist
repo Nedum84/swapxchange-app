@@ -109,6 +109,19 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>photos</string>
 
+    <!-- Permission options for URL launcher -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>https</string>
+      <string>http</string>
+    </array>
+    <!--Additional Permission for URL launcher -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>googlechromes</string>
+        <string>comgooglemaps</string>
+    </array>
+
 
 </dict>
 </plist>

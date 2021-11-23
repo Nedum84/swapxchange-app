@@ -26,7 +26,7 @@ class SwapSuggestBtn extends StatelessWidget {
                 radius: 12,
                 child: Icon(
                   Icons.sync_outlined,
-                  color: Colors.blueGrey,
+                  color: KColors.TEXT_COLOR,
                 ),
               ),
               Text(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/coins_controller.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/tabs/profile/sections/wallet/wallet_history.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -22,14 +22,14 @@ class WalletBalance extends StatelessWidget {
         child: Row(
           children: [
             Image.asset(
-              'images/logo.jpg',
-              width: 40,
+              'images/coins_icon.png',
+              width: 32,
             ),
             SizedBox(width: 6),
             Column(
               children: [
                 Text(
-                  '${coinsController.myCoins!.balance!}',
+                  '${coinsController.myCoins?.balance!}',
                   style: H2Style.copyWith(
                     color: Colors.black,
                     fontSize: 22,

@@ -4,7 +4,7 @@ import 'package:swapxchange/repository/dio/api_client.dart';
 
 class RepoProductSearch extends ApiClient {
   static Future<List<String>> findSearchSuggestions({required String query}) async {
-    Response response = await ApiClient.request().get('/products/search/suggest/$query');
+    Response response = await ApiClient.request().get('/products/search/suggest?search_query=$query');
 
     if (response.statusCode == 200) {
       var suggestions = response.data["data"]["suggestions"];
@@ -18,9 +18,8 @@ class RepoProductSearch extends ApiClient {
 
   //--> Find by search
   static Future<List<Product>?> findBySearch({required String query, required String filters, limit, offset}) async {
-    Response response = await ApiClient.request().get('/products/search/$query/$filters/$offset/$limit');
+    Response response = await ApiClient.request().get('/products/search?search_query=$query&filters=$filters&offset=$offset&limit=$limit');
 
-    print(response.data);
     if (response.statusCode == 200) {
       var items = response.data["data"]["products"];
 

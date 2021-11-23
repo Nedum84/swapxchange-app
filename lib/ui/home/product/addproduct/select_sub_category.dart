@@ -3,6 +3,7 @@ import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/ui/home/product/addproduct/widgets/bottomsheet_container.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -59,7 +60,7 @@ class SelectSubCategory extends StatelessWidget {
                 separatorBuilder: (BuildContext context, int index) => Divider(color: KColors.TEXT_COLOR.withOpacity(.3)),
               );
             }
-            return Center(child: CircularProgressIndicator());
+            return Center(child: LoadingProgressMultiColor());
           },
         ),
       ),

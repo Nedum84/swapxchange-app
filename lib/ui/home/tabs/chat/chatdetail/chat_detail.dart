@@ -2,12 +2,17 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:swapxchange/controllers/my_product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
+import 'package:swapxchange/models/notification_model.dart';
 import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/repository/notification_repo.dart';
 import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
@@ -15,6 +20,7 @@ import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/home/callscreens/pickup_layout.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/chat_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/chat_message_list.dart';
+import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/close_deal.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/swap_suggest_btn.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/topbar_swap_suggestion.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/swap_with.dart';
@@ -53,6 +59,9 @@ class ChatDetailState extends State<ChatDetail> {
   bool showEmojiPicker = false;
   bool showActiveProduct = false;
   bool showSwapBtn = false;
+  //Text to show for closed deal/ recent deal
+  String? closeDealText;
+  bool showRejectDealBtn = false;
 
   @override
   void initState() {
@@ -73,7 +82,7 @@ class ChatDetailState extends State<ChatDetail> {
     final getProduct = await RepoProduct.getById(productId: _productChats!.productId!);
     if (getProduct != null) setState(() => _product = getProduct);
 
-    if (_productChats?.offerProductId != 0) {
+    if (_productChats?.offerProductId != null) {
       final getOffer = await RepoProduct.getById(productId: _productChats!.offerProductId!);
       if (getOffer != null) setState(() => _offerProduct = getOffer);
     }
@@ -90,6 +99,143 @@ class ChatDetailState extends State<ChatDetail> {
     } else {
       setState(() => showSwapBtn = false);
     }
+
+    //--> Close Previous Deal Btn
+    if (_productChats!.productId != null && _productChats!.offerProductId != null) {
+      //Still open deal
+      if (_productChats!.chatStatus == SwapStatus.OPEN) {
+        showRejectDealBtn = false;
+        //I sent the product
+        if (_productChats!.senderId == _currentUser!.userId) {
+          //The user have not closed the deal
+          if (_productChats!.senderClosedDeal == false && _productChats!.receiverClosedDeal == false) {
+            //Show close deal btn
+            closeDealText = "Close this deal";
+          } else if (_productChats!.receiverClosedDeal != false) {
+            //Show accept to close deal btn
+            closeDealText = "Accept deal";
+            showRejectDealBtn = true;
+          } else if (_productChats!.senderClosedDeal != false) {
+            //Show close deal btn
+            closeDealText = "Waiting for approval from ${_receiver.name}";
+          }
+        } else {
+          // not me
+          //The user(sender) have not closed the deal
+          if (_productChats!.senderClosedDeal == false && _productChats!.receiverClosedDeal == false) {
+            //Show close deal btn
+            closeDealText = "Close this deal";
+          } else if (_productChats!.senderClosedDeal != false) {
+            //Show accept to close deal btn
+            closeDealText = "Accept deal";
+            showRejectDealBtn = true;
+          } else if (_productChats!.receiverClosedDeal != false) {
+            //Show close deal btn
+            closeDealText = "Waiting for approval from ${_receiver.name}";
+          }
+        }
+      } else if (_productChats!.chatStatus == SwapStatus.DECLINED) {
+        //Toast alert that the previous deal was declined
+        // AlertUtils.showCustomDialog(body: 'Your previous deal with this user was declined');
+        closeDealText = null;
+      } else if (_productChats!.chatStatus == SwapStatus.EXCHANGED) {
+        closeDealText = null;
+        //Toast alert that the previous deal was closed/exchanged successfully
+        // AlertUtils.showCustomDialog(body: 'Your previous deal with this user was closed/exchanged successfully');
+      }
+    } else {
+      closeDealText = null;
+    }
+    setState(() {});
+  }
+
+  void onCloseDeal() async {
+    //--> Close Previous Deal Btn
+    if (_productChats!.productId != null && _productChats!.offerProductId != null) {
+      //Still open deal
+      if (_productChats!.chatStatus == SwapStatus.OPEN) {
+        AlertUtils.confirm(
+          'Close this deal with ${_receiver.name}',
+          title: 'Confirm!',
+          positiveBtnText: 'CLOSE DEAL',
+          okCallBack: () async {
+            AlertUtils.showProgressDialog(title: null);
+            final nPcChat = await RepoProductChats.findById(id: _productChats!.productChatId!); //Move it up to avoid duplicate firebase msg send
+            //I sent the product
+            if (_productChats!.senderId == _currentUser!.userId) {
+              nPcChat!.senderClosedDeal = true;
+              if (nPcChat.receiverClosedDeal == true) {
+                nPcChat.chatStatus = SwapStatus.EXCHANGED;
+              }
+              final update = await RepoProductChats.createOne(productChats: nPcChat);
+              AlertUtils.hideProgressDialog();
+              if (update != null) {
+                if (update.chatStatus == SwapStatus.EXCHANGED) {
+                  AlertUtils.alert('Your deal with ${_receiver.name} was successfully closed');
+                  messageClosedDeal('Deal with this user was closed');
+                  markProductsCompleted();
+                }
+                _init();
+              }
+            } else {
+              //The user(sender) have not closed the deal
+              nPcChat!.receiverClosedDeal = true;
+              if (nPcChat.senderClosedDeal == true) {
+                nPcChat.chatStatus = SwapStatus.EXCHANGED;
+              }
+              final update = await RepoProductChats.createOne(productChats: nPcChat);
+              AlertUtils.hideProgressDialog();
+              if (update != null) {
+                if (update.chatStatus == SwapStatus.EXCHANGED) {
+                  AlertUtils.alert('Your deal with ${_receiver.name} was successfully closed');
+                  messageClosedDeal('Deal with this user was closed');
+                  markProductsCompleted();
+                }
+                _init();
+              }
+            }
+          },
+        );
+      }
+    }
+  }
+
+  void markProductsCompleted() async {
+    final completed = await RepoProductChats.markCompleted(_productChats!.productChatId);
+    print(completed?.length);
+
+    MyProductController.to.fetchAll(reset: true);
+  }
+
+  void onDeclineDeal() async {
+    AlertUtils.confirm(
+      'Decline this deal from ${_receiver.name}',
+      title: 'Confirm!',
+      positiveBtnText: 'DECLINE',
+      okCallBack: () async {
+        final nPcChat = _productChats!..chatStatus = SwapStatus.DECLINED;
+
+        AlertUtils.showProgressDialog(title: null);
+        final update = await RepoProductChats.createOne(productChats: nPcChat);
+        AlertUtils.hideProgressDialog();
+        if (update != null) {
+          if (update.chatStatus == SwapStatus.DECLINED) {
+            AlertUtils.alert('You declined the deal with ${_receiver.name}');
+            messageClosedDeal('Deal with this user was declined');
+          }
+          _init();
+        }
+      },
+    );
+  }
+
+  void messageClosedDeal(String msg) {
+    ChatMessage chatMsg = ChatMessage(
+      receiverId: _receiver.userId,
+      type: ChatMessageType.CLOSE_DEAL,
+      message: msg, //Real time update
+    );
+    addMessageToDb(chatMsg);
   }
 
   void _markAsRead() {
@@ -105,17 +251,14 @@ class ChatDetailState extends State<ChatDetail> {
   showEmojiContainer() => setState(() => showEmojiPicker = true);
 
   _findExchangeOptions() {
-    showModalBottomSheet(
+    Get.bottomSheet(
+      SwapWith(
+        suggestedProduct: _product,
+        productPoster: _receiver,
+        gotoChat: false,
+        productChatFn: (pChat) => _init(),
+      ),
       isScrollControlled: true,
-      context: context,
-      builder: (build) {
-        return SwapWith(
-          suggestedProduct: _product,
-          productPoster: _receiver,
-          gotoChat: false,
-          productChatFn: (pChat) => _init(),
-        );
-      },
     );
   }
 
@@ -141,7 +284,14 @@ class ChatDetailState extends State<ChatDetail> {
                     child: SwapSuggestBtn(
                       onClick: _findExchangeOptions,
                     ),
-                  )
+                  ),
+                  if (closeDealText != null && !showSwapBtn)
+                    CloseDealWidget(
+                      onCloseDeal: onCloseDeal,
+                      onDeclineDeal: onDeclineDeal,
+                      closeDealText: closeDealText!,
+                      showRejectDealBtn: showRejectDealBtn,
+                    ),
                 ],
               ),
             ),
@@ -154,9 +304,7 @@ class ChatDetailState extends State<ChatDetail> {
 
   Widget chatControls() {
     setWritingTo(bool val) {
-      setState(() {
-        isWriting = val;
-      });
+      setState(() => isWriting = val);
     }
 
     _showFileChooser() {
@@ -260,13 +408,40 @@ class ChatDetailState extends State<ChatDetail> {
     message.senderId = UserController.to.user!.userId;
     message.timestamp = Timestamp.now().microsecondsSinceEpoch;
     RepoChats.addMessageToDb(message);
+    sendNotification(message);
+  }
+
+  //Send PUSH Notification
+  static sendNotification(ChatMessage message) async {
+    final isProduct = message.type == ChatMessageType.PRODUCT_CHAT;
+    AppUser currentUser = UserController.to.user!;
+    AppUser? receiver = await UserController.to.getUser(userId: message.receiverId);
+    if (receiver != null) {
+      if (receiver.notification!.chat != 1) return;
+      final notRepo = NotificationRepo();
+      final model = NotificationModel(
+        data: NotificationData(
+          type: NotificationType.CHAT,
+          id: message.senderId.toString(),
+          idSecondary: message.receiverId.toString(),
+          payload: message.toJson(),
+          title: 'Message from ${currentUser.name}',
+          body: !isProduct ? message.message : "Swap suggestion",
+        ),
+        notification: PushNotification(
+          title: 'Message from ${currentUser.name}',
+          body: !isProduct ? message.message : "Swap suggestion",
+        ),
+      );
+      notRepo.sendNotification(tokens: [receiver.deviceToken!], model: model);
+    }
   }
 
   void pickImage({required ImageSource source}) async {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: null);
-      final String? imgPath = await _storageMethods.uploadImageToStorage(selectedImage);
+      final String? imgPath = await _storageMethods.uploadFile(selectedImage, StorageEnum.CHATS);
       AlertUtils.hideProgressDialog();
       if (imgPath != "") {
         sendMessage(type: ChatMessageType.IMAGE, imagePath: imgPath);

@@ -44,7 +44,7 @@ class SubCategoryItem extends StatelessWidget {
   const SubCategoryItem({Key? key, required this.subCat}) : super(key: key);
 
   _goto() {
-    Get.to(() => ViewSubCatProducts(subcategory: subCat), transition: Transition.leftToRight);
+    Get.to(() => ViewSubCatProducts(subcategory: subCat));
   }
 
   @override
@@ -64,11 +64,11 @@ class SubCategoryItem extends StatelessWidget {
                     "${subCat.subCategoryName}",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: StyleNormal,
+                    style: StyleNormal.copyWith(fontSize: 12),
                   ),
                   Text(
-                    '${subCat.noOfProducts} items',
-                    style: StyleCategorySubTitle,
+                    '${subCat.noOfProducts} item${subCat.noOfProducts == 1 ? '' : 's'}',
+                    style: StyleCategorySubTitle.copyWith(fontSize: 10),
                   ),
                 ],
               ),

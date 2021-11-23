@@ -11,6 +11,7 @@ class FirebaseCollection {
   static final EMAIL_FIELD = 'email';
 
   static final UID = 'uid';
+  static final USER_ID = 'user_id';
 
   static final String TIMESTAMP_FIELD = "timestamp";
 
@@ -19,4 +20,9 @@ class FirebaseCollection {
   static final String CALL_STATUS_DIALLED = "dialled";
   static final String CALL_STATUS_RECEIVED = "received";
   static final String CALL_STATUS_MISSED = "missed";
+
+  //Notification
+  static final NOTIFICATION_COLLECTION = 'notification';
+  //coins
+  static final COINS_COLLECTION = 'coins';
 }

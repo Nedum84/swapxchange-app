@@ -16,10 +16,10 @@ class SubCategory {
     this.noOfProducts,
   });
 
-  final int? subCategoryId;
-  final String? subCategoryName;
-  final String? subCategoryIcon;
-  final int? categoryId;
+  final String? subCategoryId;
+  String? subCategoryName;
+  String? subCategoryIcon;
+  final String? categoryId;
   final int? idx;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -30,14 +30,14 @@ class SubCategory {
   String toJson() => json.encode(toMap());
 
   factory SubCategory.fromMap(Map<String, dynamic> json) => SubCategory(
-        subCategoryId: int.parse(json["sub_category_id"]),
+        subCategoryId: json["sub_category_id"],
         subCategoryName: json["sub_category_name"],
         subCategoryIcon: json["sub_category_icon"],
-        categoryId: int.parse(json["category_id"]),
-        idx: int.parse(json["idx"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        noOfProducts: int.parse(json["no_of_products"]),
+        categoryId: json["category_id"],
+        idx: json["idx"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        noOfProducts: json["no_of_products"] == null ? 0 : json["no_of_products"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -46,8 +46,8 @@ class SubCategory {
         "sub_category_icon": subCategoryIcon,
         "category_id": categoryId,
         "idx": idx,
-        "created_at": createdAt!.toIso8601String(),
-        "updated_at": updatedAt!.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
         "no_of_products": noOfProducts,
       };
 }

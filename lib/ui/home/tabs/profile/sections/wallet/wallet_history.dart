@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/repo_coins.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -11,15 +15,10 @@ class WalletHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black26.withOpacity(.2),
-        iconTheme: IconThemeData(
-          color: KColors.TEXT_COLOR_DARK, //change your color here
-        ),
-        title: Text(
-          'History',
-          style: H1Style,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          title: 'History',
         ),
       ),
       body: SubPage(),
@@ -28,13 +27,31 @@ class WalletHistory extends StatelessWidget {
 }
 
 class SubPage extends StatelessWidget {
+  String _itemImage(LastCredit lastCredit) {
+    if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins500Price)) {
+      return 'images/coins1.png';
+    } else if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins1000Price)) {
+      return 'images/coins2.png';
+    } else if (lastCredit.amount == CoinsController.getCoinsFromAmount(CoinsController.coins5000Price)) {
+      return 'images/coins3.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.DAILY_OPENING) {
+      return 'images/coins.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.REGISTRATION) {
+      return 'images/coins3.png';
+    } else if (lastCredit.methodOfSubscription == MethodOfSubscription.WATCH_VIDEO) {
+      return 'images/coins_icon.png';
+    } else {
+      return 'images/coins.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<CoinsModel?>(
         future: RepoCoins.findAllByUserId(userId: UserController.to.user!.userId!),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: LoadingProgressMultiColor());
           }
           final data = snapshot.data;
           if (data == null || data.meta?.length == 0) {
@@ -48,7 +65,8 @@ class SubPage extends StatelessWidget {
               final item = data.meta?[index];
 
               return HistoryItem(
-                imgSrc: 'images/logo.jpg',
+                // imgSrc: _itemImage(item!),
+                imgSrc: 'images/coins_icon.png',
                 title: '${LastCredit.statusFromEnum2(item!.methodOfSubscription!)}',
                 amount: '${item.amount}',
                 subTitle: '${Helpers.formatDate2(item.createdAt!)}',
@@ -92,10 +110,10 @@ class HistoryItem extends StatelessWidget {
           fontSize: 12,
         ),
       ),
-      leading: Icon(
-        Icons.monochrome_photos,
-        size: 32,
-        color: KColors.TEXT_COLOR,
+      leading: Image.asset(
+        '$imgSrc',
+        width: 32,
+        // color: KColors.TEXT_COLOR,
       ),
       trailing: Text(
         isCredit ? '+$amount' : '-$amount',

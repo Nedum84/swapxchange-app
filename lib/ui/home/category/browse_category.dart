@@ -5,6 +5,7 @@ import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -71,7 +72,7 @@ class _BrowseCategoryState extends State<BrowseCategory> {
         ],
       ),
       body: (categories.length == 0)
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: LoadingProgressMultiColor())
           : Container(
               padding: EdgeInsets.all(Constants.PADDING),
               child: SizedBox(
@@ -81,12 +82,13 @@ class _BrowseCategoryState extends State<BrowseCategory> {
                     Flexible(
                       flex: 2,
                       child: CategoryCol(
-                          categories: categories,
-                          selected: selectedCategory!,
-                          onSelect: (sel) {
-                            setState(() => selectedCategory = sel);
-                            _fetchSubCategoryList();
-                          }),
+                        categories: categories,
+                        selected: selectedCategory!,
+                        onSelect: (sel) {
+                          setState(() => selectedCategory = sel);
+                          _fetchSubCategoryList();
+                        },
+                      ),
                     ),
                     SizedBox(width: 16),
                     Flexible(
