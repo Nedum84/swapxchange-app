@@ -33,13 +33,9 @@ class _ProfileState extends State<Profile> {
   bool handleScrollNotification(ScrollNotification notification) {
     //--> For scroll  text change
     if (controller!.position.extentBefore >= 30 && !showTitle) {
-      setState(() {
-        showTitle = true;
-      });
+      setState(() => showTitle = true);
     } else if (controller!.position.extentBefore < 30 && showTitle) {
-      setState(() {
-        showTitle = false;
-      });
+      setState(() => showTitle = false);
     }
     return false;
   }
@@ -83,7 +79,7 @@ class _ProfileState extends State<Profile> {
                   SizedBox(height: 24),
                   ProfileItem(
                     icon: Icons.settings,
-                    text: 'Edit profile',
+                    text: 'Open settings',
                     showArrowRight: true,
                     onClick: () => Get.to(() => Settings()),
                   ),

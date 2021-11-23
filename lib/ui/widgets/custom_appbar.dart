@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -55,6 +56,11 @@ class CustomAppbar extends StatelessWidget {
     return AppBar(
       backgroundColor: makeTransparent ? Colors.transparent : Colors.white,
       shadowColor: shadowColor ?? Colors.transparent,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,

@@ -64,7 +64,7 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
         child: CustomAppbar(
-          makeTransparent: true,
+          // makeTransparent: true,
           title: widget.subcategory.subCategoryName!,
         ),
       ),
@@ -129,6 +129,7 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
                             : NoDataFound(
                                 btnText: 'Refresh',
                                 subTitle: 'No product found',
+                                showBtn: false,
                                 onBtnClick: _fetchProducts,
                               ),
                       ),

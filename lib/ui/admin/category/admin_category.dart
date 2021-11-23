@@ -50,7 +50,6 @@ class _AdminCategoryState extends State<AdminCategory> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
         child: CustomAppbar(
-          makeTransparent: true,
           title: 'Categories',
           actionBtn: [
             IconButton(

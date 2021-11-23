@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
@@ -37,7 +38,7 @@ class _LoginState extends State<Login> {
           if (imgFile == null) {
             _authenticateUser(user);
           } else {
-            String? imgUrl = await RepoStorage().uploadFile(imgFile);
+            String? imgUrl = await _storageRepo.uploadFile(imgFile, StorageEnum.PROFILE);
             if (imgUrl == null) {
               _authenticateUser(user);
             } else {
@@ -55,7 +56,7 @@ class _LoginState extends State<Login> {
         setState(() => _isLoading = true);
       },
       onCancelled: () {
-        AlertUtils.toast('Operation cancelled');
+        AlertUtils.toast('Cancelled');
         setState(() => _isLoading = false);
       },
       onFailed: () {

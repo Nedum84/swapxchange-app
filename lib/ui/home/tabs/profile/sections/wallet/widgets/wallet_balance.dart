@@ -29,7 +29,7 @@ class WalletBalance extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  '${coinsController.myCoins!.balance!}',
+                  '${coinsController.myCoins?.balance!}',
                   style: H2Style.copyWith(
                     color: Colors.black,
                     fontSize: 22,

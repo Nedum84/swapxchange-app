@@ -13,7 +13,7 @@ class DashboardCustomAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(Constants.PADDING),
+      padding: EdgeInsets.symmetric(horizontal: Constants.PADDING, vertical: Constants.PADDING / 2),
       child: Row(
         children: [
           Expanded(

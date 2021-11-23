@@ -45,6 +45,8 @@ class _BuyCoinsState extends State<BuyCoins> {
     //   return;
     // }
 
+    print(Constants.PAYSTACK_PUBLIC_KEY);
+
     Charge charge = Charge()
       ..amount = amount //convert to kobo
       ..reference = paymentReference

@@ -68,6 +68,7 @@ class CategoryBtn extends StatelessWidget {
   final Function()? onClick;
   final double? size;
   final double? textSize;
+  final double padding;
   final String imagePath;
 
   const CategoryBtn({
@@ -79,6 +80,7 @@ class CategoryBtn extends StatelessWidget {
     this.size,
     this.textSize,
     required this.imagePath,
+    this.padding = 16,
   }) : super(key: key);
 
   @override
@@ -90,7 +92,8 @@ class CategoryBtn extends StatelessWidget {
           Container(
             height: size ?? Get.width / 6,
             width: size ?? Get.width / 6,
-            margin: EdgeInsets.all(4),
+            padding: EdgeInsets.all(padding),
+            margin: EdgeInsets.only(bottom: 2, top: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               boxShadow: showShadow ? [Constants.SHADOW] : [],
@@ -99,24 +102,24 @@ class CategoryBtn extends StatelessWidget {
               ),
               color: Colors.white,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+            child: Align(
+              alignment: Alignment.center,
               child: CachedImage(
                 imagePath,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 width: double.infinity,
                 height: double.infinity,
               ),
             ),
           ),
-          SizedBox(height: 4),
           Text(
             title,
-            style: StyleNormal.copyWith(color: textColor != null ? textColor : KColors.TEXT_COLOR, fontSize: textSize ?? 14),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          )
+            style: StyleNormal.copyWith(
+              color: textColor != null ? textColor : KColors.TEXT_COLOR,
+              fontSize: textSize ?? 14,
+            ),
+          ),
+          SizedBox(height: 4)
         ],
       ),
     );
@@ -150,7 +153,6 @@ class SeeAllBtn extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 4),
           Text(
             title,
             style: StyleNormal,

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/product_image.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_image.dart';
@@ -45,7 +46,7 @@ class _UploadHomeState extends State<UploadHome> {
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: null);
       // String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
-      final String? imgUrl = await _storageMethods.uploadFile(selectedImage);
+      final String? imgUrl = await _storageMethods.uploadFile(selectedImage, "products");
       AlertUtils.hideProgressDialog();
       if (imgUrl != null) {
         final imgP = ProductImage(
@@ -112,7 +113,7 @@ class _UploadHomeState extends State<UploadHome> {
                             }
                             AlertUtils.showProgressDialog(title: 'Deleting...');
                             //delete from firebase server
-                            await _storageMethods.delete(imageProduct.imagePath!);
+                            await _storageMethods.delete(imageProduct.imagePath!, StorageEnum.PRODUCTS);
                             ImageUploadUtilities.deleteImage(imageProduct);
                             //delete from our sls
                             if (addController.isEditing) {

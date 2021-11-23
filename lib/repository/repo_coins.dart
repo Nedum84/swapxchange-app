@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/dio/api_client.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
+import 'package:swapxchange/utils/encrypt.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 
 class RepoCoins extends ApiClient {
@@ -10,8 +13,14 @@ class RepoCoins extends ApiClient {
   static CollectionReference coinsCollection = FirebaseFirestore.instance.collection(FirebaseCollection.COINS_COLLECTION);
 
   static Future<CoinsModel?> addCoin({required Map payload}) async {
+    final strPayload = jsonEncode(payload);
+
+    final body = {
+      "payload": Encrypt.encrypt(strPayload),
+    };
+
     try {
-      Response response = await ApiClient.request().post('/coins', data: payload);
+      Response response = await ApiClient.request().post('/coins', data: body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final coinsModel = CoinsModel.fromMap(response.data["data"]);

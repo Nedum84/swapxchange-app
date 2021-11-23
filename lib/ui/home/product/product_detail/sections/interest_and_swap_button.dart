@@ -62,9 +62,10 @@ class InterestAndSwapButton extends StatelessWidget {
                   title: '${cat.shortCatName()}',
                   size: 40,
                   textSize: 10,
+                  padding: 8,
                 );
               },
-              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 8),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 6),
             ),
           ),
           SizedBox(width: 12),
@@ -77,14 +78,14 @@ class InterestAndSwapButton extends StatelessWidget {
                   (product.userId != UserController.to.user!.userId) ? 'SWAP' : " OPTIONS",
                   style: TextStyle(
                     color: KColors.PRIMARY,
-                    fontSize: 18,
+                    fontSize: 14,
                   ),
                 ),
                 SizedBox(width: 6),
                 Image.asset(
                   'images/icon-swap.png',
-                  width: 30,
-                  height: 30,
+                  width: 20,
+                  height: 20,
                 )
               ],
             ),

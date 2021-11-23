@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
@@ -17,13 +17,7 @@ void main() async {
   //Register notification
   registerNotification();
 
-  //For header start up color
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -34,9 +28,10 @@ class MyApp extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return GetMaterialApp(
       title: 'SwapXchange',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: KColors.PRIMARY,
-        primarySwatch: Colors.blue,
+        primarySwatch: colorCustom,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
         // primaryColorBrightness: Brightness.dark,
       ),

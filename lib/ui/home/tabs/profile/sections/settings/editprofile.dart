@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
@@ -78,10 +79,10 @@ class EditProfile extends StatelessWidget {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: 'Updating photo...');
-      String? imgUrl = await RepoStorage().uploadFile(selectedImage);
+      String? imgUrl = await RepoStorage().uploadFile(selectedImage, StorageEnum.PROFILE);
       if (imgUrl != null) {
         // delete previous image
-        await RepoStorage().delete(user.profilePhoto!);
+        await RepoStorage().delete(user.profilePhoto!, StorageEnum.PROFILE);
         // AuthRepo().getCurrentUser()!.updateProfile(photoURL: imgUrl); //Adding to the authentication table
         AppUser cUser = UserController.to.user!;
         cUser.profilePhoto = imgUrl;

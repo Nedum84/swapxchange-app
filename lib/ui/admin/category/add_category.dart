@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/repository/repo_category.dart';
 import 'package:swapxchange/repository/storage_methods.dart';
@@ -71,10 +72,10 @@ class _AddCategoryState extends State<AddCategory> {
       //Upload Banner/Icon if not already uploaded
       if (!imageUrl.contains('https')) {
         //--> Delete the previous one
-        if (isEditing) await _storageMethods.delete(widget.category!.categoryIcon!);
+        if (isEditing) await _storageMethods.delete(widget.category!.categoryIcon!, StorageEnum.CATEGORY);
         //Upload the new one
         final selectedImage = File(imageUrl);
-        final String? uploadedImgPath = await _storageMethods.uploadFile(selectedImage);
+        final String? uploadedImgPath = await _storageMethods.uploadFile(selectedImage, StorageEnum.CATEGORY);
         if (uploadedImgPath == null || uploadedImgPath == "") {
           AlertUtils.toast('Error uploading image');
           AlertUtils.hideProgressDialog();

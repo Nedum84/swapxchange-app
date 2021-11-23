@@ -89,7 +89,7 @@ class AuthRepo {
           loginSuccess(fbUser);
           break;
         case LoginStatus.cancelled:
-          // TODO: Handle this case.
+          onCancelled();
           break;
         case LoginStatus.failed:
           onFailed();

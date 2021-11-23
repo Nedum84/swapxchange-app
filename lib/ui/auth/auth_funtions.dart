@@ -28,7 +28,7 @@ class AuthFunctions {
       //-->Save tokens
       UserPrefs.setTokens(tokens: tokens);
 
-      if (appUser.name!.isEmpty) {
+      if (appUser.name == null) {
         Get.to(() => EnterName());
       } else if (appUser.address == null || appUser.address!.isEmpty) {
         Get.to(() => GrantPermission());

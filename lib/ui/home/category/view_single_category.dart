@@ -81,7 +81,6 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
         child: CustomAppbar(
-          makeTransparent: true,
           title: widget.category.categoryName!,
         ),
       ),
@@ -164,6 +163,7 @@ class _ViewSingleCategoryState extends State<ViewSingleCategory> {
                             : NoDataFound(
                                 btnText: 'Refresh',
                                 subTitle: 'No product found',
+                                showBtn: false,
                                 onBtnClick: _fetchProductsSubCats,
                               ),
                       ),

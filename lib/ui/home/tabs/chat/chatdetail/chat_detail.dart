@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/my_product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/models/notification_model.dart';
@@ -440,7 +441,7 @@ class ChatDetailState extends State<ChatDetail> {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
       AlertUtils.showProgressDialog(title: null);
-      final String? imgPath = await _storageMethods.uploadFile(selectedImage);
+      final String? imgPath = await _storageMethods.uploadFile(selectedImage, StorageEnum.CHATS);
       AlertUtils.hideProgressDialog();
       if (imgPath != "") {
         sendMessage(type: ChatMessageType.IMAGE, imagePath: imgPath);

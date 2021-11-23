@@ -64,11 +64,11 @@ class SubCategoryItem extends StatelessWidget {
                     "${subCat.subCategoryName}",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: StyleNormal,
+                    style: StyleNormal.copyWith(fontSize: 12),
                   ),
                   Text(
                     '${subCat.noOfProducts} item${subCat.noOfProducts == 1 ? '' : 's'}',
-                    style: StyleCategorySubTitle,
+                    style: StyleCategorySubTitle.copyWith(fontSize: 10),
                   ),
                 ],
               ),

@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
 
 class RepoStorage {
@@ -10,9 +13,12 @@ class RepoStorage {
 
   late Reference _storageReference;
 
-  Future<String?> uploadFile(File file) async {
+  Future<String?> uploadFile(File file, String folder) async {
+    if (folder != "") return cloudinaryUploadImage(file, folder);
+
     try {
-      _storageReference = firestore.ref().child('${DateTime.now().millisecondsSinceEpoch}');
+      final filename = file.path;
+      _storageReference = firestore.ref().child('$folder/$filename-${DateTime.now().millisecondsSinceEpoch}');
 
       UploadTask uploadTask = _storageReference.putFile(file);
       String url = await uploadTask.then((res) async {
@@ -24,7 +30,9 @@ class RepoStorage {
     }
   }
 
-  Future<bool> delete(String filePath) async {
+  Future<bool> delete(String filePath, String folder) async {
+    if (filePath.contains('cloudinary')) return deleteCloudinaryFile(filePath, folder);
+
     try {
       final ref = firestore.refFromURL(filePath);
       return await ref.delete().then((value) => true).catchError((e) => false);
@@ -39,7 +47,6 @@ class RepoStorage {
   }
 
   Future<File?> downloadFileFromUrl(String url) async {
-    String url = "https://graph.facebook.com/1752332884975552/picture";
     var tempDir = await getTemporaryDirectory();
     String savePath = tempDir.path + "/${Helpers.genRandString()}.jpg'";
     try {
@@ -68,6 +75,86 @@ class RepoStorage {
   void showDownloadProgress(received, total) {
     if (total != -1) {
       print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
+
+  Future<String?> cloudinaryUploadImage(File file, String folder) async {
+    const url = "https://api.cloudinary.com/v1_1/nellyinc/image/upload";
+
+    var timestamp = DateTime.now().microsecondsSinceEpoch;
+    final signature = getSignature("folder=$folder&timestamp=$timestamp");
+
+    Dio dio = Dio();
+    FormData formData = new FormData.fromMap({
+      "file": await MultipartFile.fromFile(
+        file.path,
+      ),
+      // "folder": folder,
+      // "upload_preset": "vmbpmifp", //unsigned
+
+      "api_key": Constants.CLOUDINARY_KEY,
+      "folder": folder,
+      "timestamp": timestamp,
+      "signature": signature,
+    });
+
+    try {
+      Response response = await dio.post(url, data: formData);
+
+      var data = jsonDecode(response.toString());
+      return data['secure_url'];
+    } catch (e) {
+      if (e is DioError) {
+        print(e.response?.data);
+      }
+    }
+  }
+
+  Future<bool> deleteCloudinaryFile(String strUrl, String folder) async {
+    const url = "https://api.cloudinary.com/v1_1/nellyinc/image/destroy";
+    final String? pubId = getPublicId(strUrl, folder);
+    if (pubId == null) return false;
+
+    var timestamp = DateTime.now().microsecondsSinceEpoch;
+    final signature = getSignature("public_id=$pubId&timestamp=$timestamp");
+
+    Dio dio = Dio();
+    FormData formData = new FormData.fromMap({
+      "public_id": pubId,
+      "api_key": Constants.CLOUDINARY_KEY,
+      "timestamp": timestamp,
+      "signature": signature,
+    });
+    try {
+      Response response = await dio.post(url, data: formData);
+
+      var data = jsonDecode(response.toString());
+      return data['result'] == 'ok';
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        print(e.response?.data);
+      }
+    }
+    return false;
+  }
+
+  String getSignature(String params) {
+    final secret = Constants.CLOUDINARY_SECRET;
+    var bytes = utf8.encode("$params$secret");
+
+    var digest = sha1.convert(bytes);
+    return digest.toString();
+  }
+
+  String? getPublicId(String url, String folder) {
+    try {
+      var str = url.split("/");
+
+      final publicId = str.last.split(".")[0];
+      return '$folder/$publicId';
+    } catch (e) {
+      print(e);
     }
   }
 }

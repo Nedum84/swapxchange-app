@@ -37,7 +37,7 @@ class DailyCoins extends StatelessWidget {
   }
 
   _getDailyCoins() async {
-    final ref = "${Helpers.genRandString(length: 24)}-D-${UserController.to.user!.userId}";
+    final ref = "${Helpers.genRandString(length: 12)}-D-${UserController.to.user!.userId}";
     final addCoins = await coinsController.addCoin(amount: CoinsController.dailyLimitCoinsAmount, methodOfSub: MethodOfSubscription.DAILY_OPENING, ref: ref);
     AlertUtils.hideProgressDialog();
     if (addCoins != null) {

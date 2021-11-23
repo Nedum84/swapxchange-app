@@ -89,13 +89,21 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // Get.put(BottomMenuController());
     return WillPopScope(
       onWillPop: () => Future.value(_backPressed()),
       child: PickupLayout(
         scaffold: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 0,
+            shadowColor: Colors.transparent,
+            backgroundColor: Colors.transparent,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+            ),
+          ),
           body: Container(
-            padding: EdgeInsets.only(top: context.mediaQueryPadding.top),
             child: PageView(
               controller: Get.find<BottomMenuController>().pageViewController,
               physics: NeverScrollableScrollPhysics(),
