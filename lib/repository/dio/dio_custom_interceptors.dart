@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:swapxchange/models/tokens.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
@@ -23,9 +21,9 @@ class DioCustomInterceptors extends Interceptor {
     Tokens? tokens = await UserPrefs.getTokens();
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/api/v1/' : 'http://10.0.2.2:8088/api/v1/';
+    // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/api/v1/' : 'http://10.0.2.2:8088/api/v1/';
     // options.baseUrl = 'https://b8iekmibpd.execute-api.eu-west-2.amazonaws.com/dev/api/v1/'; //Dev
-    // options.baseUrl = 'https://hh7whiv4ag.execute-api.eu-west-2.amazonaws.com/prod/api/v1/'; //Live
+    options.baseUrl = 'https://hh7whiv4ag.execute-api.eu-west-2.amazonaws.com/prod/api/v1/'; //Live
     // options.baseUrl = 'http://localhost:3000/dev/api/v1/';
     options.connectTimeout = 15000;
     options.receiveTimeout = 12000;

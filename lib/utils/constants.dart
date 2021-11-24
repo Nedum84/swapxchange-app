@@ -9,12 +9,12 @@ class Constants {
   static final String AGORA_TOKEN = dotenv.env['AGORA_TOKEN']!;
 
   // TEST KEYS
-  static final PAYSTACK_PUBLIC_KEY = dotenv.env['PAYSTACK_PUBLIC_KEY_TEST']!;
-  static final PAYSTACK_SECRET_KEY = dotenv.env['PAYSTACK_SECRET_KEY_TEST']!;
+  // static final PAYSTACK_PUBLIC_KEY = dotenv.env['PAYSTACK_PUBLIC_KEY_TEST']!;
+  // static final PAYSTACK_SECRET_KEY = dotenv.env['PAYSTACK_SECRET_KEY_TEST']!;
 
   // //LIVE KEYS
-  // static final PAYSTACK_PUBLIC_KEY =dotenv.env['PAYSTACK_PUBLIC_KEY']!;
-  // static final PAYSTACK_SECRET_KEY = dotenv.env['PAYSTACK_SECRET_KEY']!;
+  static final PAYSTACK_PUBLIC_KEY = dotenv.env['PAYSTACK_PUBLIC_KEY']!;
+  static final PAYSTACK_SECRET_KEY = dotenv.env['PAYSTACK_SECRET_KEY']!;
 
   static final ANDROID_MAP_KEY = dotenv.env['ANDROID_MAP_KEY']!;
   static final IOS_MAP_KEY = dotenv.env['IOS_MAP_KEY']!;
@@ -23,14 +23,14 @@ class Constants {
   static final ANDROID_FCM_KEY = dotenv.env['ANDROID_FCM_KEY']!;
   static final IOS_FCM_KEY = dotenv.env['IOS_FCM_KEY']!;
 
-  static final String RSA_PUBLIC_KEY = dotenv.env['RSA_PUBLIC_KEY_TEST']!;
-  // static final String RSA_PUBLIC_KEY = dotenv.env['RSA_PUBLIC_KEY']!;
+  // static final String RSA_PUBLIC_KEY = dotenv.env['RSA_PUBLIC_KEY_TEST']!;
+  static final String RSA_PUBLIC_KEY = dotenv.env['RSA_PUBLIC_KEY']!;
 
-  static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET_TEST']!;
-  static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY_TEST']!;
+  // static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET_TEST']!;
+  // static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY_TEST']!;
 
-  // static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET']!;
-  // static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY']!;
+  static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET']!;
+  static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY']!;
 
   static final SHARE_CONTENT = "Shopping/Swapping made easy with SwapXchange.shop. Get it on "
       "https://play.google.com/store/apps/details?id=com.app.swapxchange or visit https://swapxchange.shop";

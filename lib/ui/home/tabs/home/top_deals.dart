@@ -69,6 +69,7 @@ class CategoryBtn extends StatelessWidget {
   final double? size;
   final double? textSize;
   final double padding;
+  final int maxLines;
   final String imagePath;
 
   const CategoryBtn({
@@ -81,6 +82,7 @@ class CategoryBtn extends StatelessWidget {
     this.textSize,
     required this.imagePath,
     this.padding = 16,
+    this.maxLines = 1,
   }) : super(key: key);
 
   @override
@@ -118,6 +120,9 @@ class CategoryBtn extends StatelessWidget {
               color: textColor != null ? textColor : KColors.TEXT_COLOR,
               fontSize: textSize ?? 14,
             ),
+            maxLines: maxLines,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 4)
         ],

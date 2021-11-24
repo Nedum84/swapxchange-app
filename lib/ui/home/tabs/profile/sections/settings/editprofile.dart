@@ -19,14 +19,41 @@ import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/helpers.dart';
 import 'package:swapxchange/utils/styles.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
   AppUser user = UserController.to.user!;
-  TextEditingController nameController = TextEditingController(text: UserController.to.user!.name ?? "");
-  TextEditingController emailController = TextEditingController(text: UserController.to.user!.email ?? "");
-  TextEditingController phoneController = TextEditingController(text: UserController.to.user!.mobileNumber ?? "");
+
+  TextEditingController? nameController;
+
+  TextEditingController? emailController;
+
+  TextEditingController? phoneController;
+
   FocusNode textFieldFocusName = FocusNode();
+
   FocusNode textFieldFocusEmail = FocusNode();
+
   FocusNode textFieldFocusPhone = FocusNode();
+
+  @override
+  void initState() {
+    nameController = TextEditingController(text: user.name ?? "");
+    emailController = TextEditingController(text: user.email ?? "");
+    phoneController = TextEditingController(text: user.mobileNumber ?? "");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameController?.dispose();
+    emailController?.dispose();
+    phoneController?.dispose();
+  }
 
   _hideKeyboard() {
     textFieldFocusName.unfocus();
@@ -36,9 +63,9 @@ class EditProfile extends StatelessWidget {
 
   _update() async {
     _hideKeyboard();
-    final name = nameController.text.toString().trim();
-    final email = emailController.text.toString().trim();
-    final phone = phoneController.text.toString().trim();
+    final name = nameController!.text.toString().trim();
+    final email = emailController!.text.toString().trim();
+    final phone = phoneController!.text.toString().trim();
 
     var nameSplit = name.split(' ');
     if (name.isEmpty) {
@@ -277,7 +304,7 @@ class EditProfile extends StatelessWidget {
                           child: TextField(
                             controller: phoneController,
                             focusNode: textFieldFocusPhone,
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.phone,
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(

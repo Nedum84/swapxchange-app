@@ -30,6 +30,7 @@ class CategoryCol extends StatelessWidget {
                 title: current.categoryName!,
                 onClick: () => onSelect(current),
                 textSize: 10,
+                maxLines: 2,
               ),
             );
           },

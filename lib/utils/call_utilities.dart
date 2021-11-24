@@ -55,7 +55,7 @@ class CallUtils {
             body: "Click to answer before it ends ",
           ),
         );
-        notRepo.sendNotification(tokens: [to.deviceToken!], model: model);
+        if (to.deviceToken != null) notRepo.sendNotification(tokens: [to.deviceToken!], model: model);
       }
       Get.to(() => CallScreen(call: call, clientRole: ClientRole.Broadcaster));
     }

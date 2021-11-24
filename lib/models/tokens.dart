@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final tokens = tokensFromMap(jsonString);
-
 import 'dart:convert';
 
 class Tokens {

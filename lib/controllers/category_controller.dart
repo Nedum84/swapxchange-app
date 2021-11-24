@@ -20,6 +20,17 @@ class CategoryController extends GetxController {
     categoryList(items.sortedAscBy((it) => it.idx!).toList());
   }
 
+  void makeDistinct() {
+    List<Category> items = [];
+    categoryList.forEach((element) {
+      final check = items.firstWhereOrNull((e) => e.categoryId == element.categoryId);
+      if (check == null) {
+        items.add(element);
+      }
+    });
+    categoryList(items);
+  }
+
   Future<Category?> fetchById({required String catId}) async {
     Category? category;
     var item;
