@@ -28,9 +28,11 @@ class Constants {
 
   // static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET_TEST']!;
   // static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY_TEST']!;
+  // static final String CLOUDINARY_CLOUD_NAME = "nellyinc";
 
   static final String CLOUDINARY_SECRET = dotenv.env['CLOUDINARY_SECRET']!;
   static final String CLOUDINARY_KEY = dotenv.env['CLOUDINARY_KEY']!;
+  static final String CLOUDINARY_CLOUD_NAME = "swapxchange";
 
   static final SHARE_CONTENT = "Shopping/Swapping made easy with SwapXchange.shop. Get it on "
       "https://play.google.com/store/apps/details?id=com.app.swapxchange or visit https://swapxchange.shop";

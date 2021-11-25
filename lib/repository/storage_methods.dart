@@ -79,7 +79,7 @@ class RepoStorage {
   }
 
   Future<String?> cloudinaryUploadImage(File file, String folder) async {
-    const url = "https://api.cloudinary.com/v1_1/nellyinc/image/upload";
+    final String url = "https://api.cloudinary.com/v1_1/${Constants.CLOUDINARY_CLOUD_NAME}/image/upload";
 
     var timestamp = DateTime.now().microsecondsSinceEpoch;
     final signature = getSignature("folder=$folder&timestamp=$timestamp");
@@ -111,7 +111,7 @@ class RepoStorage {
   }
 
   Future<bool> deleteCloudinaryFile(String strUrl, String folder) async {
-    const url = "https://api.cloudinary.com/v1_1/nellyinc/image/destroy";
+    final String url = "https://api.cloudinary.com/v1_1/${Constants.CLOUDINARY_CLOUD_NAME}/image/destroy";
     final String? pubId = getPublicId(strUrl, folder);
     if (pubId == null) return false;
 

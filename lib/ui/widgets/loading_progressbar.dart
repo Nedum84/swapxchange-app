@@ -29,8 +29,9 @@ class LoadingProgressMultiColor extends StatefulWidget {
   final Color? txtColor;
   final bool showBg;
   final double? stokeWidth;
+  final double? size;
 
-  LoadingProgressMultiColor({this.title, this.txtColor, this.showBg = true, this.stokeWidth});
+  LoadingProgressMultiColor({this.title, this.txtColor, this.showBg = true, this.stokeWidth, this.size});
 
   @override
   _LoadingProgressMultiColorPageState createState() => _LoadingProgressMultiColorPageState();
@@ -61,12 +62,20 @@ class _LoadingProgressMultiColorPageState extends State<LoadingProgressMultiColo
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              strokeWidth: widget.stokeWidth ?? 4,
-              valueColor: animationController?.drive(ColorTween(
-                begin: KColors.PRIMARY,
-                end: KColors.SECONDARY,
-              )),
+            SizedBox(
+              width: widget.size ?? 35,
+              height: widget.size ?? 35,
+              // child: Transform.scale(
+              //   //works
+              //   scale: .5,
+              child: CircularProgressIndicator(
+                strokeWidth: widget.stokeWidth ?? 4,
+                valueColor: animationController?.drive(ColorTween(
+                  begin: KColors.PRIMARY,
+                  end: KColors.SECONDARY,
+                )),
+              ),
+              // ),
             ),
             if (widget.title != null) SizedBox(height: 8),
             if (widget.title != null)

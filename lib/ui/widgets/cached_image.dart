@@ -107,7 +107,7 @@ class CachedImage extends StatelessWidget {
                         imageUrl: imageUrl!,
                         fit: fit,
                         // httpHeaders: {'Authorization': "Bearer $token"},
-                        placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false)),
+                        placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false, size: 15)),
                         // placeholder: (context, url) => Container(width: 4, height: 4, child: Center(child: LoadingProgressMultiColor(showBg: false))),
                         errorWidget: (context, url, error) {
                           return Image.network(
