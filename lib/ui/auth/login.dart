@@ -67,15 +67,11 @@ class _LoginState extends State<Login> {
   }
 
   _authenticateUser(User user) async {
-    // final fetchData = await AuthFunctions.fetchDefaults();
-    // if(!fetchData){
-    //
-    // }
-
     AuthFunctions.authenticateUser(
       user: user,
       onDone: () {
-        setState(() => _isLoading = false);
+        //Allow spinner to load until it redirects...
+        // setState(() => _isLoading = false);
       },
       onError: (er) {
         setState(() => _isLoading = false);

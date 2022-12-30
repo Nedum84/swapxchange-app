@@ -26,7 +26,7 @@ class AdminOverview extends StatelessWidget {
               child: ListTile(
                 onTap: () => Get.to(() => AdminCategory()),
                 title: Text(
-                  'Our Categories',
+                  'Manage Categories',
                   style: StyleNormal,
                 ),
                 trailing: Icon(Icons.arrow_forward_ios, color: KColors.TEXT_COLOR),

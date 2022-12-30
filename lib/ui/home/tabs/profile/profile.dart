@@ -91,7 +91,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   ProfileItem(
                     icon: Icons.pets,
-                    text: 'All my products',
+                    text: 'My products',
                     showArrowRight: true,
                     onClick: () => Get.to(() => MyProducts()),
                   ),

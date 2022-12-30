@@ -197,6 +197,11 @@ class AuthRepo {
       return;
     });
 
+    //Stop execution if user isn't found
+    if (appUser == null) {
+      onError("Error occurred");
+      return;
+    }
     // Register/update on firebase
     try {
       await _userCollection
@@ -208,7 +213,7 @@ class AuthRepo {
           .catchError((error) => onError(error))
           .timeout(Duration(seconds: 20));
     } catch (e) {
-      // onError(e);
+      onError(e);
     }
   }
 

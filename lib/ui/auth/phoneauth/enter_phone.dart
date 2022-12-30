@@ -92,7 +92,7 @@ class _EnterPhoneState extends State<EnterPhone> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: KColors.PRIMARY,
+            color: KColors.TEXT_COLOR_DARK,
           ),
           onPressed: () => Get.back(),
         ),
