@@ -10,7 +10,7 @@ class ProductSearchController extends GetxController {
   RxList<Product> productList = <Product>[].obs;
   RxBool isLoading = true.obs;
   RxBool resetList = false.obs;
-  RxString queryString = "".obs;
+  // RxString queryString = "".obs;
   RxBool hideSearchSuggestion = true.obs;
   RxList searchSuggestions = [].obs;
   RxString searchFilter = SearchFilters.BEST_MATCH.obs;
@@ -21,25 +21,27 @@ class ProductSearchController extends GetxController {
 
   @override
   void onInit() {
-    textController.text = queryString.value;
     resetList(true);
-    fetchProducts();
+    // fetchProducts();
     super.onInit();
   }
 
-  setQueryString(str) {
-    queryString(str);
-    update();
-    _getSuggestions();
+  @override
+  void dispose() {
+    textController.dispose();
+    textFieldFocus.dispose();
+    // queryString("");
+    super.dispose();
   }
 
-  _getSuggestions() async {
+  getSuggestions() async {
+    String queryString = textController.text.toString().trim();
     List<String>? list = [];
-    if (queryString.value.isEmpty) {
+    if (queryString.isEmpty) {
       hideSearchSuggestion(true);
       update();
     } else {
-      list = await RepoProductSearch.findSearchSuggestions(query: queryString.value);
+      list = await RepoProductSearch.findSearchSuggestions(query: textController.text);
       if (list.length != 0) hideSearchSuggestion(false);
       update();
     }
@@ -50,18 +52,16 @@ class ProductSearchController extends GetxController {
   void fetchProducts() async {
     hideSearchSuggestion(true);
     isLoading(true);
-    update();
-    offset = resetList.value ? 0 : productList.value.length;
-    String query = queryString.value.isEmpty ? "none" : queryString.value;
+    offset = resetList.value ? 0 : productList.length;
+    String queryString = textController.text.toString().trim();
+
+    String query = queryString.isEmpty ? "none" : queryString;
     var items = await RepoProductSearch.findBySearch(query: query, filters: searchFilter.value, offset: offset, limit: limit);
     if (items!.length != 0) {
       if (resetList.value) {
         productList(items);
-        update();
       } else {
-        print('ffffgffffgf');
         productList.addAll(items);
-        update();
       }
     }
     isLoading(false);
@@ -85,7 +85,7 @@ class ProductSearchController extends GetxController {
 
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
-      if (!isLoading.value) {
+      if (!isLoading.value && productList.length > 0 && productList.length % limit == 0) {
         if (controller!.position.extentAfter < 500) {
           resetList(false);
           fetchProducts();

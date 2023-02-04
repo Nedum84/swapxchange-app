@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
-import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -14,9 +15,7 @@ class VerifyOtp extends StatefulWidget {
   final String phoneVerificationId;
   final String phoneNo;
 
-  VerifyOtp(
-      {Key? key, required this.phoneVerificationId, required this.phoneNo})
-      : super(key: key);
+  VerifyOtp({Key? key, required this.phoneVerificationId, required this.phoneNo}) : super(key: key);
 
   @override
   _VerifyOtpState createState() => _VerifyOtpState();
@@ -50,7 +49,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   void startTimer() {
     Timer.periodic(Duration(seconds: 1), (timer) {
       timerTicker = timer;
-      print(timer.tick);
+      // print(timer.tick);
       setState(() => _currentTime = timer.tick);
 
       if (timer.tick >= totalTimeMins) {
@@ -67,6 +66,11 @@ class _VerifyOtpState extends State<VerifyOtp> {
       onCodeSent: (phoneVerificationId) {
         _phoneVerificationId = phoneVerificationId;
         AlertUtils.toast('An OTP has been sent to your phone number');
+        setState(() {
+          totalTimeMins = 60;
+          _isLoading = false;
+        });
+        startTimer();
       },
       onCodeAutoRetrievalTimeout: (er) {
         AlertUtils.toast('Timeout: $er');
@@ -91,8 +95,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
     }
 
     setState(() => _isLoading = true);
-    var user = await _authRepo.verifyOTP(
-        otpCode: otpCode, verificationId: _phoneVerificationId!);
+    var user = await _authRepo.verifyOTP(otpCode: otpCode, verificationId: _phoneVerificationId!);
     if (user == null) {
       AlertUtils.toast('Incorrect OTP entered');
       setState(() => _isLoading = false);
@@ -102,7 +105,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
   }
 
   _authenticate(User user) {
-    Auth.authenticateUser(
+    AuthFunctions.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);
@@ -117,6 +120,18 @@ class _VerifyOtpState extends State<VerifyOtp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: KColors.WHITE_GREY,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: KColors.TEXT_COLOR_DARK,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
@@ -137,8 +152,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
+                    border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: TextField(
@@ -161,8 +175,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                       enabledBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
                     ),
                   ),
                 ),
@@ -182,7 +195,6 @@ class _VerifyOtpState extends State<VerifyOtp> {
               ],
             ),
           ),
-          CustomBackButton(),
           Positioned(
             left: 0,
             right: 0,

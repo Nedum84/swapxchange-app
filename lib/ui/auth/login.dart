@@ -1,9 +1,17 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
+import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/enter_phone.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/privacy/privacy.dart';
+import 'package:swapxchange/ui/home/tabs/profile/sections/settings/terms.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/styles.dart';
 
@@ -15,48 +23,59 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _isLoading = false;
   AuthRepo _authRepo = AuthRepo();
+  RepoStorage _storageRepo = RepoStorage();
 
   _facebookSignIn() async {
-    // print('sdsds');
-    // User? user = _authRepo.getCurrentUser();
-    // if (user != null)
-    //   Auth.authenticateUser(
-    //     user: user,
-    //     onDone: () {
-    //       setState(() => _isLoading = false);
-    //     },
-    //     onError: (er) {
-    //       setState(() => _isLoading = false);
-    //       AlertUtils.toast("$er");
-    //     },
-    //   );
-    // return;
-
-    // setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
 
     _authRepo.facebookSignIn(
-      loginSuccess: (user) {
-        Auth.authenticateUser(
-          user: user,
-          onDone: () {
-            setState(() => _isLoading = false);
-          },
-          onError: (er) {
-            setState(() => _isLoading = false);
-            AlertUtils.toast("$er");
-          },
-        );
+      loginSuccess: (user) async {
+        //--> Download Image and save it if not empty and haven't been saved earlier
+        if (user.photoURL!.isEmpty || !user.photoURL!.contains('facebook')) {
+          _authenticateUser(user);
+        } else {
+          File? imgFile = await _storageRepo.downloadFileFromUrl(user.photoURL!);
+          if (imgFile == null) {
+            _authenticateUser(user);
+          } else {
+            String? imgUrl = await _storageRepo.uploadFile(imgFile, StorageEnum.PROFILE);
+            if (imgUrl == null) {
+              _authenticateUser(user);
+            } else {
+              //Update the image URL on the User Obj
+              User? _user = FirebaseAuth.instance.currentUser;
+              await _user!.updateProfile(photoURL: imgUrl).timeout(Duration(seconds: 5));
+              await _user.reload().timeout(Duration(seconds: 5));
+              _user = FirebaseAuth.instance.currentUser;
+              _authenticateUser(_user!);
+            }
+          }
+        }
       },
       onProgress: () {
         setState(() => _isLoading = true);
       },
       onCancelled: () {
-        AlertUtils.toast('Operation cancelled');
+        AlertUtils.toast('Cancelled');
         setState(() => _isLoading = false);
       },
       onFailed: () {
         AlertUtils.toast('Facebook signin failed');
         setState(() => _isLoading = false);
+      },
+    );
+  }
+
+  _authenticateUser(User user) async {
+    AuthFunctions.authenticateUser(
+      user: user,
+      onDone: () {
+        //Allow spinner to load until it redirects...
+        // setState(() => _isLoading = false);
+      },
+      onError: (er) {
+        setState(() => _isLoading = false);
+        AlertUtils.toast("$er");
       },
     );
   }
@@ -90,7 +109,6 @@ class _LoginState extends State<Login> {
                 if (!_isLoading)
                   Get.to(
                     () => EnterPhone(),
-                    transition: Transition.rightToLeft,
                   );
               },
             ),
@@ -108,6 +126,10 @@ class _LoginState extends State<Login> {
                   children: <TextSpan>[
                     TextSpan(
                       text: 'Privacy Policy',
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Get.to(() => Privacy());
+                        },
                       style: TextStyle(
                         decoration: TextDecoration.underline,
                       ),
@@ -115,6 +137,10 @@ class _LoginState extends State<Login> {
                     TextSpan(text: ' and '),
                     TextSpan(
                         text: 'Licence Agreement',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(() => TermsAndConditions());
+                          },
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                         )),

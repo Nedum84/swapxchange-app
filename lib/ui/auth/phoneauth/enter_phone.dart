@@ -1,11 +1,12 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/ui/auth/auth_funtions.dart';
 import 'package:swapxchange/ui/auth/phoneauth/verify_phone.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
-import 'package:swapxchange/ui/components/step_progress_view.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -19,6 +20,7 @@ class _EnterPhoneState extends State<EnterPhone> {
   TextEditingController phoneNumberController = TextEditingController();
 
   FocusNode textFieldFocusPhone = FocusNode();
+  String countryCode = '+234';
 
   bool _isLoading = false;
   AuthRepo _authRepo = AuthRepo();
@@ -26,9 +28,8 @@ class _EnterPhoneState extends State<EnterPhone> {
   @override
   void initState() {
     super.initState();
-
-    User? user = _authRepo.getCurrentUser();
-    if (user != null) _authenticate(user);
+    // User? user = _authRepo.getCurrentUser();
+    // if (user != null) _authenticate(user);
   }
 
   _signInWithPhone() {
@@ -41,7 +42,7 @@ class _EnterPhoneState extends State<EnterPhone> {
       return;
     }
     //include country code
-    phoneNo = '+234$phoneNo';
+    phoneNo = '$countryCode$phoneNo';
 
     setState(() => _isLoading = true);
     _authRepo.phoneNumberSignIn(
@@ -55,7 +56,6 @@ class _EnterPhoneState extends State<EnterPhone> {
             phoneVerificationId: phoneVerificationId,
             phoneNo: phoneNo,
           ),
-          transition: Transition.leftToRight,
         );
       },
       onCodeAutoRetrievalTimeout: (er) {
@@ -71,7 +71,7 @@ class _EnterPhoneState extends State<EnterPhone> {
   }
 
   _authenticate(User user) {
-    Auth.authenticateUser(
+    AuthFunctions.authenticateUser(
       user: user,
       onDone: () {
         setState(() => _isLoading = false);
@@ -86,6 +86,17 @@ class _EnterPhoneState extends State<EnterPhone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: KColors.TEXT_COLOR_DARK,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
@@ -109,34 +120,53 @@ class _EnterPhoneState extends State<EnterPhone> {
                     border: Border.all(color: KColors.TEXT_COLOR_LIGHT.withOpacity(.5)),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: TextField(
-                    controller: phoneNumberController,
-                    focusNode: textFieldFocusPhone,
-                    keyboardType: TextInputType.phone,
-                    maxLines: 1,
-                    maxLength: 11,
-                    autofocus: true,
-                    style: TextStyle(
-                      color: KColors.TEXT_COLOR_DARK,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    cursorColor: Colors.blueGrey,
-                    decoration: InputDecoration(
-                      counterText: '',
-                      prefixText: '+234 ',
-                      prefixStyle: TextStyle(
-                        color: KColors.TEXT_COLOR_DARK,
-                        fontWeight: FontWeight.w600,
+                  child: Row(
+                    children: [
+                      CountryCodePicker(
+                          onChanged: (e) => setState(() => countryCode = e.toString()),
+                          initialSelection: 'NG',
+                          showCountryOnly: true,
+                          showFlag: false,
+                          hideSearch: true,
+                          showOnlyCountryWhenClosed: false,
+                          favorite: ['NG', 'GH'],
+                          textStyle: TextStyle(
+                            color: KColors.TEXT_COLOR_DARK,
+                            fontWeight: FontWeight.w600,
+                          )),
+                      Expanded(
+                        flex: 1,
+                        child: TextField(
+                          controller: phoneNumberController,
+                          focusNode: textFieldFocusPhone,
+                          keyboardType: TextInputType.phone,
+                          maxLines: 1,
+                          maxLength: 11,
+                          autofocus: true,
+                          style: TextStyle(
+                            color: KColors.TEXT_COLOR_DARK,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.blueGrey,
+                          decoration: InputDecoration(
+                            counterText: '',
+                            // prefixText: '$countryCode ',
+                            prefixStyle: TextStyle(
+                              color: KColors.TEXT_COLOR_DARK,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            // labelText: 'Enter phone',
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
+                          ),
+                        ),
                       ),
-                      // labelText: 'Enter phone',
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 8, bottom: 2, top: 2, right: 8),
-                    ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 64),
@@ -148,7 +178,6 @@ class _EnterPhoneState extends State<EnterPhone> {
               ],
             ),
           ),
-          CustomBackButton(),
           Positioned(
             left: 0,
             right: 0,

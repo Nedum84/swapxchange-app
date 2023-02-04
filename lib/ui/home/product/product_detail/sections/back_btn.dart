@@ -8,7 +8,7 @@ class ProductDetailBackBtn extends StatelessWidget {
       top: context.mediaQueryPadding.top,
       left: context.mediaQueryPadding.left + 4,
       child: CircleAvatar(
-        backgroundColor: Color.fromRGBO(0, 0, 0, 0.1),
+        backgroundColor: Color.fromRGBO(0, 0, 0, 0.3),
         child: IconButton(
           onPressed: () => Get.back(),
           icon: Icon(

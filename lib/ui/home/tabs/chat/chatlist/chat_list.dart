@@ -5,8 +5,9 @@ import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/repo_chats.dart';
-import 'package:swapxchange/ui/components/dashboard_custom_appbar.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatlist/chat_list_item.dart';
+import 'package:swapxchange/ui/widgets/dashboard_custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -22,8 +23,6 @@ class ChatList extends StatelessWidget {
           children: [
             DashboardCustomAppbar(
               title: 'Chats',
-              icon: Icons.phone,
-              iconClick: () => null,
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
@@ -33,7 +32,7 @@ class ChatList extends StatelessWidget {
                     stream: RepoChats.fetchChatList2(userId: user!.userId!),
                     builder: (context, snapshot2) {
                       if (!snapshot1.hasData || !snapshot2.hasData) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: LoadingProgressMultiColor());
                       }
                       final data1 = snapshot1.data!.docs;
                       final data2 = snapshot2.data!.docs;
@@ -50,11 +49,11 @@ class ChatList extends StatelessWidget {
 
                       List<ChatMessage> chatMessages = [];
                       for (var message in data1.reversed) {
-                        ChatMessage msg = ChatMessage.fromMap(message.data());
+                        ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
                         chatMessages.add(msg);
                       }
                       for (var message in data2.reversed) {
-                        ChatMessage msg = ChatMessage.fromMap(message.data());
+                        ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
                         chatMessages.add(msg);
                       }
                       chatMessages.sort((a, b) => b.timestamp!.compareTo(a.timestamp!)); //desc

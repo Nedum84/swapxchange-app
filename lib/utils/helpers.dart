@@ -5,12 +5,14 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:swapxchange/utils/alert_utils.dart';
+import 'package:universal_html/html.dart' as html;
 
 class Helpers {
   static String getInitials(String name) {
     List<String> nameSplit = name.split(" ");
-    String firstNameInitial = nameSplit[0][0];
-    String lastNameInitial = nameSplit[1][0];
+    String firstNameInitial = nameSplit.first[0];
+    String lastNameInitial = nameSplit.last[0];
     return firstNameInitial + lastNameInitial;
   }
 
@@ -30,14 +32,30 @@ class Helpers {
     final path = tempDir.path;
     String rand = genRandString();
 
+    int bytes = imageToCompress.readAsBytesSync().lengthInBytes;
+    final kb = bytes / 1024;
+    final mb = kb / 1024;
+
+    if (mb > 6) {
+      AlertUtils.toast('Image size too large(MAX: 6MB)');
+      return null;
+    }
+    print('BEFORE: $kb KB');
+    if (kb < 100) return imageToCompress;
+
     String targetPath = '$path/sxc_$rand.jpg';
     var result = await FlutterImageCompress.compressAndGetFile(
-      imageToCompress.absolute.path, targetPath,
-      quality: 75,
-      // rotate: 180,
-      // rotate: 0,
+      imageToCompress.absolute.path,
+      targetPath,
+      quality: 50,
       format: CompressFormat.jpeg,
     );
+
+    if (result != null) {
+      int bytesAfter = result.readAsBytesSync().lengthInBytes;
+      final kb = bytesAfter / 1024;
+      print('AFTER: $kb KB');
+    }
 
     return result;
   }
@@ -66,6 +84,15 @@ class Helpers {
       var formatter = DateFormat("EEEE MMM, dd H:m:a");
       return formatter.format(date);
     }
+  }
+
+  //Returns true if date is today
+  static bool isToday(DateTime date, DateTime? dateNow) {
+    // final now = DateTime.now();
+    final now = dateNow ?? DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final aDate = DateTime(date.year, date.month, date.day);
+    return aDate == today;
   }
 
   static String formatDateInt(int date) {
@@ -101,5 +128,16 @@ class Helpers {
     if (!withDot) return formatted.replaceAll('.00', "");
 
     return formatted;
+  }
+
+  static String getAddressCity({required String address}) {
+    var breakAddr = address.split(',');
+    var length = breakAddr.length;
+    return (length > 3) ? breakAddr[length - 3] : breakAddr[length - 2];
+  }
+
+  static String parseHtmlString(String htmlString) {
+    var text = html.Element.span()..appendHtml(htmlString);
+    return text.innerText;
   }
 }

@@ -8,12 +8,6 @@ class SubCategoryController extends GetxController {
   RxList<SubCategory> subCategoryList = <SubCategory>[].obs;
   RxBool isLoading = true.obs;
 
-  @override
-  void onInit() {
-    fetch();
-    super.onInit();
-  }
-
   void setItems({required List<SubCategory> items}) {
     subCategoryList(items);
   }
@@ -25,11 +19,11 @@ class SubCategoryController extends GetxController {
     isLoading(false);
   }
 
-  Future<List<SubCategory>> fetchByCategoryId({required int catId}) async {
+  Future<List<SubCategory>> fetchByCategoryId({required String catId}) async {
     List<SubCategory> list = [];
-    var items;
-    items = subCategoryList.value.where((element) => element.categoryId == catId).toList();
-    if (items == null || items.length == 0) {
+    List<SubCategory>? items = [];
+    items = subCategoryList.where((element) => element.categoryId == catId).toList();
+    if (items.length == 0) {
       items = await RepoSubCategory.findByCategoryId(catId: catId);
     }
     if (items!.isNotEmpty) list = items;
@@ -37,10 +31,10 @@ class SubCategoryController extends GetxController {
     return list;
   }
 
-  Future<SubCategory?> fetchById({required int subCatId}) async {
+  Future<SubCategory?> fetchById({required String subCatId}) async {
     SubCategory? subCategory;
     var item;
-    item = subCategoryList.value.firstWhereOrNull((element) => element.subCategoryId == subCatId);
+    item = subCategoryList.firstWhereOrNull((element) => element.subCategoryId == subCatId);
     if (item == null) {
       item = await RepoSubCategory.getSubCategoryById(subCatId: subCatId);
     }

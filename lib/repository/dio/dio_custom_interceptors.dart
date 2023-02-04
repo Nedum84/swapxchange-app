@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:get/get.dart' as GetX;
 import 'package:swapxchange/models/tokens.dart';
-import 'package:swapxchange/ui/auth/login.dart';
+import 'package:swapxchange/repository/auth_repo.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/user_prefs.dart';
 
@@ -15,7 +12,7 @@ class DioCustomInterceptors extends Interceptor {
   var tokenDio = Dio();
   var customHeaders = {
     // 'content-type': 'application/json',
-    'content-type': Headers.jsonContentType,
+    Headers.contentTypeHeader: Headers.jsonContentType,
     'Accept': Headers.acceptHeader,
   };
 
@@ -24,10 +21,12 @@ class DioCustomInterceptors extends Interceptor {
     Tokens? tokens = await UserPrefs.getTokens();
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/v1/' : 'http://10.0.2.2:8088/v1/';
-    // options.baseUrl = 'http://127.0.0.1:8088/v1/';
-    options.connectTimeout = 5000;
-    options.receiveTimeout = 3000;
+    // options.baseUrl = Platform.isIOS ? 'http://127.0.0.1:8088/api/v1/' : 'http://10.0.2.2:8088/api/v1/';
+    options.baseUrl = 'https://b8iekmibpd.execute-api.eu-west-2.amazonaws.com/dev/api/v1/'; //Dev
+    // options.baseUrl = 'https://hh7whiv4ag.execute-api.eu-west-2.amazonaws.com/prod/api/v1/'; //Live
+    // options.baseUrl = 'http://localhost:3000/dev/api/v1/';
+    options.connectTimeout = 15000;
+    options.receiveTimeout = 12000;
     // Transform response data to Json Map
     options.responseType = ResponseType.json;
     //Add headers
@@ -39,6 +38,7 @@ class DioCustomInterceptors extends Interceptor {
 
   @override
   onResponse(Response response, ResponseInterceptorHandler handler) {
+    // print("PATH: ${response.requestOptions.path}:: ${response.data["data"]}");
     print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
     return super.onResponse(response, handler);
   }
@@ -52,11 +52,12 @@ class DioCustomInterceptors extends Interceptor {
     }
 
     // Assume 401 stands for token expired
-    if (dioError.response?.statusCode == 401) {
+    final refreshEr = ["jwt expired", "Unauthorized", "invalid signature"];
+    if (dioError.response?.statusCode == 401 && refreshEr.contains(dioError.response!.data!["message"])) {
       Tokens? tokens = await UserPrefs.getTokens();
       if (tokens?.refresh == null) {
         AlertUtils.toast('Your session has expired. Login again');
-        GetX.Get.offAll(() => Login());
+        AuthRepo().signOut();
         return handler.next(dioError);
       }
       //request options...
@@ -68,7 +69,7 @@ class DioCustomInterceptors extends Interceptor {
       dio.interceptors.requestLock.lock();
       dio.interceptors.responseLock.lock();
       dio.interceptors.errorLock.lock();
-      await tokenDio.post('${baseUrl}token/refresh', data: {
+      await tokenDio.post('${baseUrl}auth/refreshtoken', data: {
         "refresh_token": tokens?.refresh?.token,
       }).then((d) {
         if (d.statusCode != 200 || !d.data['success']) {
@@ -89,13 +90,16 @@ class DioCustomInterceptors extends Interceptor {
         dio.fetch(options).then(
           (r) => handler.resolve(r),
           onError: (e) {
+            //Goto Login ooo
+            AuthRepo().signOut();
             handler.reject(e);
           },
         );
       }).catchError((er) {
+        //Goto Login ooo
+        AuthRepo().signOut();
         handler.reject(dioError);
       });
-      return;
     }
     return super.onError(dioError, handler);
   }

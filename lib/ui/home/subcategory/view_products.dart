@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:swapxchange/controllers/product_search_controller.dart';
 import 'package:swapxchange/controllers/sub_category_controller.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/models/sub_category_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
-import 'package:swapxchange/ui/components/custom_appbar.dart';
-import 'package:swapxchange/ui/components/product_item.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
+import 'package:swapxchange/ui/widgets/custom_appbar.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/no_data_found.dart';
+import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 
@@ -61,11 +61,17 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(Constants.APPBAR_HEIGHT),
+        child: CustomAppbar(
+          // makeTransparent: true,
+          title: widget.subcategory.subCategoryName!,
+        ),
+      ),
       body: Container(
-        padding: EdgeInsets.all(Constants.PADDING).copyWith(top: context.mediaQueryPadding.top),
+        padding: EdgeInsets.symmetric(horizontal: Constants.PADDING),
         child: Column(
           children: [
-            CustomAppbar(title: widget.subcategory.subCategoryName!),
             Container(
               height: 40,
               child: (filters.length == 0)
@@ -118,11 +124,12 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
                         child: (isLoading)
                             ? Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
+                                child: LoadingProgressMultiColor(),
                               )
                             : NoDataFound(
                                 btnText: 'Refresh',
                                 subTitle: 'No product found',
+                                showBtn: false,
                                 onBtnClick: _fetchProducts,
                               ),
                       ),
@@ -137,7 +144,7 @@ class _ViewSubCatProductsState extends State<ViewSubCatProducts> {
   bool handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       if (!isLoading) {
-        if (controller!.position.extentAfter < 500) {
+        if (controller!.position.extentAfter < 500 && products.length % limit == 0) {
           _fetchProducts();
         }
       }

@@ -4,54 +4,60 @@ import 'package:swapxchange/controllers/category_controller.dart';
 import 'package:swapxchange/models/category_model.dart';
 import 'package:swapxchange/ui/home/category/browse_category.dart';
 import 'package:swapxchange/ui/home/category/view_single_category.dart';
+import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
 import 'package:swapxchange/utils/styles.dart';
 
 class TopDeals extends StatelessWidget {
-  final catController = CategoryController.to;
-
   _goto(Category category) {
     Get.to(() => ViewSingleCategory(category: category));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Top Deals',
-          style: H1Style,
-        ),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: CategoryBtn(
-                title: catController.categoryList[0].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[0]),
+    return GetBuilder<CategoryController>(builder: (controller) {
+      final hotCats = controller.hotDeals();
+      if (controller.categoryList.isEmpty) return Container();
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Top Deals',
+            style: H1Style,
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[0].categoryIcon ?? "",
+                  title: hotCats[0].categoryName ?? "",
+                  onClick: () => _goto(hotCats[0]),
+                ),
               ),
-            ),
-            Expanded(
-              child: CategoryBtn(
-                title: catController.categoryList[1].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[1]),
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[1].categoryIcon ?? "",
+                  title: hotCats[1].categoryName ?? "",
+                  onClick: () => _goto(hotCats[1]),
+                ),
               ),
-            ),
-            Expanded(
-              child: CategoryBtn(
-                title: catController.categoryList[2].categoryName ?? "",
-                onClick: () => _goto(catController.categoryList[2]),
+              Expanded(
+                child: CategoryBtn(
+                  imagePath: hotCats[2].categoryIcon ?? "",
+                  title: hotCats[2].categoryName ?? "",
+                  onClick: () => _goto(hotCats[2]),
+                ),
               ),
-            ),
-            Expanded(child: SeeAllBtn(title: 'See All')),
-          ],
-        )
-      ],
-    );
+              Expanded(child: SeeAllBtn(title: 'See All')),
+            ],
+          )
+        ],
+      );
+    });
   }
 }
 
@@ -62,6 +68,9 @@ class CategoryBtn extends StatelessWidget {
   final Function()? onClick;
   final double? size;
   final double? textSize;
+  final double padding;
+  final int maxLines;
+  final String imagePath;
 
   const CategoryBtn({
     Key? key,
@@ -71,6 +80,9 @@ class CategoryBtn extends StatelessWidget {
     this.onClick,
     this.size,
     this.textSize,
+    required this.imagePath,
+    this.padding = 16,
+    this.maxLines = 1,
   }) : super(key: key);
 
   @override
@@ -82,31 +94,37 @@ class CategoryBtn extends StatelessWidget {
           Container(
             height: size ?? Get.width / 6,
             width: size ?? Get.width / 6,
-            margin: EdgeInsets.all(4),
+            padding: EdgeInsets.all(padding),
+            margin: EdgeInsets.only(bottom: 2, top: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               boxShadow: showShadow ? [Constants.SHADOW] : [],
               border: Border.all(
                 color: textColor != null ? KColors.TEXT_COLOR_LIGHT.withOpacity(.2) : Colors.transparent,
               ),
+              color: Colors.white,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.asset(
-                'images/logo.jpg',
-                fit: BoxFit.cover,
+            child: Align(
+              alignment: Alignment.center,
+              child: CachedImage(
+                imagePath,
+                fit: BoxFit.contain,
                 width: double.infinity,
                 height: double.infinity,
               ),
             ),
           ),
-          SizedBox(height: 4),
           Text(
             title,
-            style: StyleNormal.copyWith(color: textColor != null ? textColor : KColors.TEXT_COLOR, fontSize: textSize ?? 14),
-            maxLines: 1,
+            style: StyleNormal.copyWith(
+              color: textColor != null ? textColor : KColors.TEXT_COLOR,
+              fontSize: textSize ?? 14,
+            ),
+            maxLines: maxLines,
+            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
-          )
+          ),
+          SizedBox(height: 4)
         ],
       ),
     );
@@ -121,7 +139,7 @@ class SeeAllBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() => BrowseCategory(), transition: Transition.cupertinoDialog),
+      onTap: () => Get.to(() => BrowseCategory()),
       child: Column(
         children: [
           Container(
@@ -130,9 +148,7 @@ class SeeAllBtn extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                Constants.SHADOW,
-              ],
+              boxShadow: [Constants.SHADOW],
             ),
             child: CircleAvatar(
               backgroundColor: Colors.white,
@@ -142,7 +158,6 @@ class SeeAllBtn extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 4),
           Text(
             title,
             style: StyleNormal,

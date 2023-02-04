@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:swapxchange/utils/colors.dart';
+import 'package:swapxchange/utils/styles.dart';
 
 class NoDataFound extends StatelessWidget {
   final String btnText;
   final String? subTitle;
   final Color? btnBgColor;
+  final bool showBtn;
   final Function() onBtnClick;
 
-  NoDataFound({required this.btnText, this.subTitle, required this.onBtnClick, this.btnBgColor});
+  NoDataFound({required this.btnText, this.subTitle, required this.onBtnClick, this.btnBgColor, this.showBtn = true});
 
   @override
   Widget build(BuildContext context) {
@@ -19,34 +21,35 @@ class NoDataFound extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            subTitle ?? 'Nothing found?',
-            style: TextStyle(color: Colors.blueGrey, fontSize: 14, fontWeight: FontWeight.bold),
+            subTitle ?? 'Nothing found',
+            style: StyleNormal.copyWith(color: KColors.TEXT_COLOR),
           ),
           SizedBox(
             height: 12,
           ),
-          InkWell(
-            onTap: onBtnClick,
-            child: Container(
-              width: 200,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(25.00)),
-                color: (btnBgColor != null) ? btnBgColor : KColors.PRIMARY,
-                boxShadow: [
-                  BoxShadow(color: KColors.TEXT_COLOR, blurRadius: 20.0),
-                ],
-              ),
-              child: Text(
-                btnText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
+          if (showBtn)
+            InkWell(
+              onTap: onBtnClick,
+              child: Container(
+                width: 200,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(25.00)),
+                  color: (btnBgColor != null) ? btnBgColor : KColors.PRIMARY,
+                  boxShadow: [
+                    BoxShadow(color: KColors.TEXT_COLOR, blurRadius: 1.0),
+                  ],
+                ),
+                child: Text(
+                  btnText,
+                  textAlign: TextAlign.center,
+                  style: StyleNormal.copyWith(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );

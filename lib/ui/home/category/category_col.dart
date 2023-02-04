@@ -19,15 +19,18 @@ class CategoryCol extends StatelessWidget {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final current = categories[index];
-            Color? txtColor = selected.categoryId != current.categoryId ? KColors.TEXT_COLOR.withOpacity(.2) : null;
+            final isCurrent = selected.categoryId == current.categoryId;
+            Color? txtColor = !isCurrent ? KColors.TEXT_COLOR.withOpacity(.4) : KColors.TEXT_COLOR_DARK;
             return Container(
-              margin: EdgeInsets.only(bottom: 8),
+              margin: EdgeInsets.only(bottom: 4),
               child: CategoryBtn(
+                imagePath: current.categoryIcon ?? "",
                 textColor: txtColor,
                 showShadow: selected.categoryId != current.categoryId ? false : true,
                 title: current.categoryName!,
                 onClick: () => onSelect(current),
-                textSize: 12,
+                textSize: 10,
+                maxLines: 2,
               ),
             );
           },

@@ -71,7 +71,7 @@ class ChatListItem extends StatelessWidget {
     final userController = UserController.to;
 
     return FutureBuilder<ProductChats?>(
-        future: RepoProductChats.findRecentBwTwoUsers(secondUserId: chatMessage.secondUserId),
+        future: RepoProductChats.findRecentBwTwoUsers(secondUserId: chatMessage.secondUserId!),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Container();
@@ -117,7 +117,7 @@ class ChatListItem extends StatelessWidget {
                               radius: 4,
                             ),
                       UnreadChats(
-                        secondUserId: chatMessage.secondUserId,
+                        secondUserId: chatMessage.secondUserId!,
                         myId: userController.user!.userId!,
                       )
                     ],

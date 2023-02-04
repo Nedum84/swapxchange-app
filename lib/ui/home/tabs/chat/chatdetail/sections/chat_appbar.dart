@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:swapxchange/enum/online_status.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/repository/auth_repo.dart';
-import 'package:swapxchange/ui/splash/sliver_header2.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/utils/call_utilities.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -21,11 +20,17 @@ AppBar chatAppBar({required AppUser receiverUser, required AppUser currentUser})
         Icons.arrow_back_ios,
         color: KColors.TEXT_COLOR_DARK,
       ),
-      onPressed: () => Get.back(),
+      onPressed: () {
+        try {
+          Get.back();
+        } catch (e) {
+          print(e);
+        }
+      },
     ),
     centerTitle: false,
     title: InkWell(
-      onTap: () => Get.to(() => SliverHeader2()),
+      // onTap: () => Get.to(() => SliverHeader2()),
       child: Row(
         children: [
           CachedImage(
@@ -110,7 +115,7 @@ class UserOnlineStatus extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.data() == null) {
           return Container();
         }
-        final onlineStatus = snapshot.data!.data()?['online_status'];
+        final onlineStatus = (snapshot.data!.data()! as Map<String, dynamic>)['online_status'];
 
         return Text(
           onlineStatus ?? "offline",

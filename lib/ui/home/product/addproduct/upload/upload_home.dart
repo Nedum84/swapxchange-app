@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
+import 'package:swapxchange/enum/storage_enum.dart';
 import 'package:swapxchange/models/product_image.dart';
-import 'package:swapxchange/repository/image_methods.dart';
+import 'package:swapxchange/repository/repo_product.dart';
+import 'package:swapxchange/repository/repo_product_image.dart';
+import 'package:swapxchange/repository/storage_methods.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/image_listview.dart';
 import 'package:swapxchange/ui/home/product/addproduct/upload/image_viewpager.dart';
 import 'package:swapxchange/ui/widgets/choose_image_from.dart';
@@ -27,6 +31,7 @@ class UploadHome extends StatefulWidget {
 
 class _UploadHomeState extends State<UploadHome> {
   AddProductController addController = AddProductController.to;
+  final RepoStorage _storageMethods = RepoStorage();
 
   @override
   void initState() {
@@ -39,17 +44,39 @@ class _UploadHomeState extends State<UploadHome> {
   void selectImage(ImageSource source) async {
     File? selectedImage = await Helpers.pickImage(source: source);
     if (selectedImage != null) {
-      String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
+      AlertUtils.showProgressDialog(title: null);
+      // String? imgUrl = await ImageMethods.uploadSingleImage(imageFile: selectedImage);
+      final String? imgUrl = await _storageMethods.uploadFile(selectedImage, "products");
+      AlertUtils.hideProgressDialog();
       if (imgUrl != null) {
         final imgP = ProductImage(
-          id: 0,
-          productId: 0,
+          imageId: null,
+          productId: null,
           imagePath: imgUrl,
           idx: 0,
         );
-        ImageUploadUtilities.addImage(imgP);
+        if (addController.isEditing) {
+          imgP.productId = addController.product!.productId!;
+          final create = await RepoProductImage.create(productImage: imgP);
+          if (create != null) {
+            _refreshImageList();
+          }
+        } else {
+          ImageUploadUtilities.addImage(imgP);
+        }
       } else {
         AlertUtils.toast('Error occurred while uploading your image.');
+      }
+    }
+  }
+
+  //refresh image list to tally with that of the server
+  _refreshImageList() async {
+    if (addController.isEditing) {
+      final p = await RepoProduct.getById(productId: addController.product!.productId!);
+      if (p != null) {
+        addController.setImgList(p.images!);
+        addController.product!.images = p.images!;
       }
     }
   }
@@ -59,7 +86,9 @@ class _UploadHomeState extends State<UploadHome> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light,
+        ),
         backgroundColor: KColors.WHITE_GREY,
         shadowColor: Colors.transparent,
       ),
@@ -76,10 +105,31 @@ class _UploadHomeState extends State<UploadHome> {
                     children: [
                       ImageViewpager(
                         deleteImage: (imageProduct) {
-                          ImageUploadUtilities.deleteImage(imageProduct);
+                          AlertUtils.confirm('Delete this image?', okCallBack: () async {
+                            //deny if last image
+                            if (addController.isEditing && addController.imageList.length == 1) {
+                              AlertUtils.toast('Last image cannot be deleted');
+                              return;
+                            }
+                            AlertUtils.showProgressDialog(title: 'Deleting...');
+                            //delete from firebase server
+                            await _storageMethods.delete(imageProduct.imagePath!, StorageEnum.PRODUCTS);
+                            ImageUploadUtilities.deleteImage(imageProduct);
+                            //delete from our sls
+                            if (addController.isEditing) {
+                              final delete = await RepoProductImage.delete(productImage: imageProduct);
+                              if (delete) {
+                                _refreshImageList();
+                              }
+                            }
+                            AlertUtils.hideProgressDialog();
+                          });
                         },
-                        makeCover: (imageProduct) {
+                        makeCover: (imageProduct) async {
                           ImageUploadUtilities.shuffleImageIndex(imageProduct);
+                          if (addController.isEditing) {
+                            final update = await RepoProductImage.updateIndex(productImage: imageProduct);
+                          }
                         },
                       ),
                       Positioned(

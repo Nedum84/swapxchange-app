@@ -5,6 +5,7 @@ import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/call.dart';
 import 'package:swapxchange/repository/call_methods.dart';
 import 'package:swapxchange/ui/home/callscreens/pickup_screen.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 
 class PickupLayout extends StatelessWidget {
   final Widget scaffold;
@@ -24,7 +25,7 @@ class PickupLayout extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data!.data() != null) {
                 //there's an incoming call
-                Call call = Call.fromMap(snapshot.data!.data()!);
+                Call call = Call.fromMap(snapshot.data!.data()! as Map<String, dynamic>);
 
                 if (!call.hasDialled!) {
                   return PickupScreen(call: call);
@@ -35,7 +36,7 @@ class PickupLayout extends StatelessWidget {
           )
         : Container(
             child: Center(
-              child: CircularProgressIndicator(),
+              child: LoadingProgressMultiColor(),
             ),
           );
   }

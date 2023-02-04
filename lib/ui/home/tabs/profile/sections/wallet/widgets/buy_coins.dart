@@ -4,7 +4,7 @@ import 'package:swapxchange/controllers/coins_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/coins_model.dart';
 import 'package:swapxchange/repository/paystack_repo.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/constants.dart';
@@ -27,15 +27,29 @@ class _BuyCoinsState extends State<BuyCoins> {
 
   _chargeCard() async {
     final user = UserController.to.user!;
+    final amount = selectedAmount * 100;
+    final email = user.email!.isNotEmpty ? user.email : "${user.name!.toLowerCase().replaceAll(' ', '.')}@swapxchange.shop";
+
     String paymentReference = PaystackRepo.genPaymentReference(
-      noOfCoins: _getCoinsFromAmount(selectedAmount),
+      noOfCoins: CoinsController.getCoinsFromAmount(selectedAmount),
       userId: user.userId!,
+      price: selectedAmount,
     );
+    // String? accessCode = await PaystackRepo.createAccessCode(
+    //   paymentReference: paymentReference,
+    //   amount: amount,
+    //   email: email!,
+    // );
+    // if (accessCode == null) {
+    //   AlertUtils.toast("Couldn't generate access token, try again");
+    //   return;
+    // }
+
     Charge charge = Charge()
-      ..amount = selectedAmount * 100 //convert to kobo
-      // ..amount = 20*100//convert to kobo
+      ..amount = amount //convert to kobo
       ..reference = paymentReference
-      ..email = user.email ?? "demo@swapxchange.ng";
+      // ..accessCode = accessCode
+      ..email = email;
     CheckoutResponse response = await plugin.checkout(
       context,
       method: CheckoutMethod.card,
@@ -48,25 +62,24 @@ class _BuyCoinsState extends State<BuyCoins> {
         _buyCoins(reference: response.reference!);
       } else {
         AlertUtils.hideProgressDialog();
-        AlertUtils.showCustomDialog(context, body: 'Payment Verification Error, Contact support for further assistance with reference:${response.reference}.');
+        AlertUtils.showCustomDialog(body: 'Payment Verification Error, Contact support for further assistance with reference:${response.reference}.');
       }
     } else {
-      AlertUtils.showCustomDialog(context, fromTop: false, body: response.message);
+      AlertUtils.showCustomDialog(fromTop: false, body: response.message);
     }
   }
 
-  //--> Purchase coins fromt the server
+  //--> Purchase coins from the server
   _buyCoins({required String reference}) async {
-    AlertUtils.showProgressDialog();
     final addCoins = await CoinsController.to.addCoin(
-      amount: _getCoinsFromAmount(selectedAmount),
+      amount: CoinsController.getCoinsFromAmount(selectedAmount),
       methodOfSub: MethodOfSubscription.PURCHASE,
       ref: reference,
     );
     AlertUtils.hideProgressDialog();
     if (addCoins != null) {
       AlertUtils.alert(
-        'You have successfully purchased ${_getCoinsFromAmount(selectedAmount)} coins. Keep shopping/swapping at swapXchange.',
+        'You have successfully purchased ${CoinsController.getCoinsFromAmount(selectedAmount)} coins. Keep shopping/swapping at swapXchange.',
         title: 'Success!!',
       );
     }
@@ -74,16 +87,6 @@ class _BuyCoinsState extends State<BuyCoins> {
 
   _changeSelAmount(int amount) {
     setState(() => selectedAmount = amount);
-  }
-
-  int _getCoinsFromAmount(int amount) {
-    if (amount == CoinsController.coins500Price) {
-      return 500;
-    } else if (amount == CoinsController.coins1000Price) {
-      return 1000;
-    } else {
-      return 5000;
-    }
   }
 
   @override
@@ -115,8 +118,8 @@ class _BuyCoinsState extends State<BuyCoins> {
             children: [
               CoinBox(
                 amount: '${CoinsController.coins500Price}',
-                imgSrc: 'images/logo.jpg',
-                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins500Price)}',
+                imgSrc: 'images/coins1.png',
+                noOfCoins: '${CoinsController.getCoinsFromAmount(CoinsController.coins500Price)}',
                 titleColor: KColors.TEXT_COLOR,
                 borderColor: (selectedAmount == CoinsController.coins500Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
                 onClick: () => _changeSelAmount(CoinsController.coins500Price),
@@ -124,8 +127,8 @@ class _BuyCoinsState extends State<BuyCoins> {
               SizedBox(width: 4),
               CoinBox(
                 amount: '${CoinsController.coins1000Price}',
-                imgSrc: 'images/logo.jpg',
-                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins1000Price)}',
+                imgSrc: 'images/coins2.png',
+                noOfCoins: '${CoinsController.getCoinsFromAmount(CoinsController.coins1000Price)}',
                 percentOff: '5',
                 titleColor: Colors.black,
                 borderColor: (selectedAmount == CoinsController.coins1000Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
@@ -134,8 +137,8 @@ class _BuyCoinsState extends State<BuyCoins> {
               SizedBox(width: 4),
               CoinBox(
                 amount: '${CoinsController.coins5000Price}',
-                imgSrc: 'images/logo.jpg',
-                noOfCoins: '${_getCoinsFromAmount(CoinsController.coins5000Price)}',
+                imgSrc: 'images/coins3.png',
+                noOfCoins: '${CoinsController.getCoinsFromAmount(CoinsController.coins5000Price)}',
                 percentOff: '25',
                 titleColor: KColors.TEXT_COLOR,
                 borderColor: (selectedAmount == CoinsController.coins5000Price) ? KColors.PRIMARY : KColors.WHITE_GREY2,
@@ -146,7 +149,7 @@ class _BuyCoinsState extends State<BuyCoins> {
           SizedBox(height: 16),
           ButtonSmall(
             onClick: _chargeCard,
-            text: 'Buy ${_getCoinsFromAmount(selectedAmount)} coins',
+            text: 'Buy ${CoinsController.getCoinsFromAmount(selectedAmount)} coins',
             textColor: Colors.white,
             bgColor: KColors.PRIMARY,
             radius: 8,

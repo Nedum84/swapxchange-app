@@ -4,6 +4,7 @@ import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
 import 'package:swapxchange/repository/repo_chats.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/sections/chat_message_item.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 
 class ChatMessageList extends StatelessWidget {
   final AppUser currentUser;
@@ -20,7 +21,7 @@ class ChatMessageList extends StatelessWidget {
           stream: RepoChats.fetchChats2(user1: currentUser.userId!, user2: receiverUser.userId!),
           builder: (context, snapshot2) {
             if (!snapshot1.hasData || !snapshot2.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: LoadingProgressMultiColor());
             }
             //Mark chats as read
             RepoChats.markAsRead(secondUserId: receiverUser.userId!, myId: currentUser.userId!);
@@ -35,11 +36,11 @@ class ChatMessageList extends StatelessWidget {
 
             List<ChatMessage> chatMessages = [];
             for (var message in data1.reversed) {
-              ChatMessage msg = ChatMessage.fromMap(message.data());
+              ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
               chatMessages.add(msg);
             }
             for (var message in data2.reversed) {
-              ChatMessage msg = ChatMessage.fromMap(message.data());
+              ChatMessage msg = ChatMessage.fromMap(message.data() as Map<String, dynamic>);
               chatMessages.add(msg);
             }
             chatMessages.sort((a, b) => b.timestamp!.compareTo(a.timestamp!)); //desc
@@ -48,6 +49,7 @@ class ChatMessageList extends StatelessWidget {
               padding: EdgeInsets.all(8),
               reverse: true,
               itemCount: chatMessages.length,
+              physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 return ChatMessageItem(chatMessage: chatMessages[index]);
               },

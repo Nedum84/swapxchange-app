@@ -59,10 +59,13 @@ class _CallScreenState extends State<CallScreen> {
     this._addAgoraEventHandlers();
     // await _engine?.enableWebSdkInteroperability(true);
     VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
-    configuration.dimensions = VideoDimensions(1920, 1080);
+    configuration.dimensions = VideoDimensions(
+      width: 1920,
+      height: 1080,
+    );
     // await _engine?.setParameters('''{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}''');
     await _engine?.setVideoEncoderConfiguration(configuration);
-    await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, currentUser!.userId ?? 0);
+    await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, int.tryParse(currentUser!.userId!) ?? 0);
     // await _engine?.joinChannel(widget.call.callToken, widget.call.channelId!, null, widget.call.callUid!);
   }
 
@@ -70,7 +73,7 @@ class _CallScreenState extends State<CallScreen> {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       // snapshot is null which means that call is hanged and documents are deleted
       callStreamSubscription = callMethods.callStream(uid: currentUser!.uid!).listen((DocumentSnapshot ds) async {
-        if (ds.data() == null || ds.data()!.isEmpty) {
+        if (ds.data() == null || (ds.data()! as Map<String, dynamic>).isEmpty) {
           AlertUtils.toast('Call ended.');
           if (this.mounted) Get.back();
         }

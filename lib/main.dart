@@ -1,18 +1,23 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swapxchange/binding/allcontroller_binding.dart';
+import 'package:swapxchange/ui/home/tabs/dashboard/register_notification.dart';
 import 'package:swapxchange/ui/splash/splashscreen.dart';
+import 'package:swapxchange/utils/colors.dart';
 
 void main() async {
-  // await GetStorage.init('SwapXchangeContainer'); //get storage initialization
-  await GetStorage.init(); //get storage initialization
   //initialize the binding
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   //initialize the binding
   await Firebase.initializeApp();
+
+  //Register notification
+  registerNotification();
+
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -22,10 +27,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'SwapXchange',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: KColors.PRIMARY,
+        primarySwatch: colorCustom,
         textTheme: GoogleFonts.montserratTextTheme(textTheme),
+        // primaryColorBrightness: Brightness.dark,
       ),
       defaultTransition: Transition.rightToLeft,
       initialBinding: AllControllerBinding(),

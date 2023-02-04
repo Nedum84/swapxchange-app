@@ -5,6 +5,7 @@ import 'package:swapxchange/repository/repo_coins.dart';
 class CoinsController extends GetxController {
   static CoinsController to = Get.find();
   static int uploadAmount = 100;
+  static int registrationCoinsAmount = 500;
   static int dailyLimitCoinsAmount = 10;
   static int referralCoinsAmount = 50;
   static int watchVideoAmount = 20;
@@ -22,6 +23,7 @@ class CoinsController extends GetxController {
       "reference": ref ?? "",
     };
     final response = await RepoCoins.addCoin(payload: payload);
+    print(response?.toMap());
     if (response != null) {
       updateBalance(response);
     }
@@ -39,5 +41,20 @@ class CoinsController extends GetxController {
   void updateBalance(CoinsModel coinsModel) {
     _myCoins = coinsModel;
     update();
+  }
+
+  void resetBal() {
+    _myCoins = null;
+    update();
+  }
+
+  static int getCoinsFromAmount(int amount) {
+    if (amount == coins500Price) {
+      return 500;
+    } else if (amount == coins1000Price) {
+      return 1000;
+    } else {
+      return 5000;
+    }
   }
 }

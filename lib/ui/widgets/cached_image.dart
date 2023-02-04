@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:swapxchange/models/tokens.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
-import 'package:swapxchange/utils/user_prefs.dart';
 
 const QUESTION_MARK2 = 'https://assets.stickpng.com/thumbs/5a461418d099a2ad03f9c999.png';
 const QUESTION_MARK = 'https://images.emojiterra.com/google/android-11/512px/2754.png';
@@ -37,20 +38,20 @@ class CachedImage extends StatelessWidget {
     Widget altView;
 
     switch (this.alt) {
-      case ImagePlaceholder.NoImage:
-        altView = Container();
-        break;
+      // case ImagePlaceholder.NoImage:
+      //   altView = Container();
+      //   break;
       case ImagePlaceholder.User:
         altView = ClipRRect(
           borderRadius: BorderRadius.circular(isRound ? 50 : radius),
           child: Container(
             height: isRound ? radius : height,
             width: isRound ? radius : width,
-            color: KColors.TEXT_COLOR.withOpacity(.1),
+            color: KColors.TEXT_COLOR.withOpacity(.06),
             padding: EdgeInsets.all(2),
             child: Icon(
               Icons.person,
-              color: Colors.black26,
+              color: Colors.black12,
             ),
           ),
         );
@@ -68,12 +69,14 @@ class CachedImage extends StatelessWidget {
           child: Container(
             height: isRound ? radius : height,
             width: isRound ? radius : width,
-            color: KColors.TEXT_COLOR.withOpacity(.1),
+            color: KColors.TEXT_COLOR.withOpacity(.05),
             padding: EdgeInsets.all(2),
-            child: Text(
-              'LOADING',
-              style: StyleNormal.copyWith(
-                color: Colors.black26,
+            child: Center(
+              child: Text(
+                'LOADING...',
+                style: StyleNormal.copyWith(
+                  color: Colors.black12,
+                ),
               ),
             ),
           ),
@@ -93,30 +96,30 @@ class CachedImage extends StatelessWidget {
           width: isRound ? radius : width,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(isRound ? 50 : radius),
-            child: FutureBuilder<Tokens?>(
-                future: UserPrefs.getTokens(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-
-                  final token = snapshot.data?.access?.token;
-                  return imageUrl == null || imageUrl!.isEmpty
-                      ? _altWidget()
-                      : CachedNetworkImage(
-                          imageUrl: imageUrl!,
-                          fit: fit,
-                          httpHeaders: {'Authorization': "Bearer $token"},
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) {
-                            return Image.network(
-                              imageUrl!,
-                              fit: fit,
-                              headers: {'Authorization': "Bearer $token"},
-                            );
-                          },
-                        );
-                }),
+            child: imageUrl == null || imageUrl!.isEmpty
+                ? _altWidget()
+                : !imageUrl!.contains('http') //For file images, use file image
+                    ? Image.file(
+                        File(imageUrl!),
+                        fit: fit,
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: imageUrl!,
+                        fit: fit,
+                        // httpHeaders: {'Authorization': "Bearer $token"},
+                        placeholder: (context, url) => Center(child: LoadingProgressMultiColor(showBg: false, size: 15)),
+                        // placeholder: (context, url) => Container(width: 4, height: 4, child: Center(child: LoadingProgressMultiColor(showBg: false))),
+                        errorWidget: (context, url, error) {
+                          return Image.network(
+                            imageUrl ?? "",
+                            fit: fit,
+                            // headers: {'Authorization': "Bearer $token"},
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              return _altWidget();
+                            },
+                          );
+                        },
+                      ),
           ),
         ),
       );

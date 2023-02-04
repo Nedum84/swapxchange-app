@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/bottom_menu_controller.dart';
+import 'package:swapxchange/controllers/coins_controller.dart';
+import 'package:swapxchange/enum/bottom_menu_item.dart';
 import 'package:swapxchange/enum/online_status.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/tokens.dart';
@@ -12,6 +14,7 @@ import 'package:swapxchange/repository/dio/error_catch.dart';
 import 'package:swapxchange/ui/auth/login.dart';
 import 'package:swapxchange/utils/firebase_collections.dart';
 import 'package:swapxchange/utils/prefs_app_user.dart';
+import 'package:swapxchange/utils/user_prefs.dart';
 
 class AuthRepo {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -86,7 +89,7 @@ class AuthRepo {
           loginSuccess(fbUser);
           break;
         case LoginStatus.cancelled:
-          // TODO: Handle this case.
+          onCancelled();
           break;
         case LoginStatus.failed:
           onFailed();
@@ -112,7 +115,6 @@ class AuthRepo {
       final signIn = await _auth.signInWithCredential(phoneAuthCredential);
 
       final User user = signIn.user!;
-      print(phoneAuthCredential);
       loginSuccess(user);
     }
 
@@ -120,8 +122,6 @@ class AuthRepo {
       onFailed(error.message!);
       print(error);
     }
-
-    ;
 
     void codeSent(String verificationId, code) => onCodeSent(verificationId);
 
@@ -168,51 +168,53 @@ class AuthRepo {
     required Function(dynamic er) onError,
   }) async {
     Tokens? tokens;
-    AppUser appUser = AppUser(
+    AppUser? appUser = AppUser(
       uid: firebaseUser.uid,
       email: firebaseUser.email,
       mobileNumber: firebaseUser.phoneNumber,
       name: firebaseUser.displayName,
       profilePhoto: firebaseUser.photoURL,
-      state: "",
-      address: "",
-      addressLat: "",
-      addressLong: "",
-      deviceToken: "",
-      onlineStatus: EnumToString.convertToString(OnlineStatus.ONLINE).toLowerCase(),
-      userAppVersion: "1.1.2",
-      lastLogin: DateTime.now(),
     );
 
+    final userMap = appUser.toMap();
+    userMap.removeWhere((key, value) => value == null || value == "");
+    // if (appUser.mobileNumber == null) userMap.remove('mobile_number');
+
     //Register/Update on the server
-    await ApiClient.request().post('/users', data: appUser.toMap()).then((res) {
+    await ApiClient.request().post('/auth', data: userMap).then((res) {
       try {
-        if (res != null) {
+        if (res.data != null) {
           appUser = AppUser.fromMap(res.data["data"]["user"]);
           tokens = Tokens.fromMap(res.data["data"]["tokens"]);
-
-          //--> remove later
-          onSuccess(appUser, tokens);
+          if (tokens != null) UserPrefs.setTokens(tokens: tokens!);
         }
       } catch (e) {
-        onError(e);
+        onError(catchErrors(e));
+        return;
       }
     }).catchError((error) {
       onError(catchErrors(error));
       return;
     });
 
+    //Stop execution if user isn't found
+    if (appUser == null) {
+      onError("Error occurred");
+      return;
+    }
     // Register/update on firebase
-    // try {
-    //   await _userCollection
-    //       .doc(firebaseUser.uid)
-    //       .set(appUser.toMap())
-    //       .then((value) => onSuccess(appUser, tokens))
-    //       .catchError((error) => onError(error))
-    //       .timeout(Duration(seconds: 5));
-    // } catch (e) {
-    //   onError(e);
-    // }
+    try {
+      await _userCollection
+          .doc(firebaseUser.uid)
+          .set(appUser!.toMap())
+          .then(
+            (value) => onSuccess(appUser, tokens),
+          )
+          .catchError((error) => onError(error))
+          .timeout(Duration(seconds: 20));
+    } catch (e) {
+      onError(e);
+    }
   }
 
   //Update Address & return new Appuser data
@@ -253,32 +255,33 @@ class AuthRepo {
     required Function(AppUser? appUser) onSuccess,
     required Function(dynamic er) onError,
   }) async {
-    late final AppUser u;
+    AppUser? u;
 
+    final userMap = appUser.toMap();
+    userMap.removeWhere((key, value) => value == null || key == "user_id" || key == "user_level" || key == "created_at" || key == "updated_at");
     //Update on the server
-    await ApiClient.request().patch('/users', data: appUser.toMap()).then((res) {
+    await ApiClient.request().patch('/users/me', data: userMap).then((res) {
       try {
-        print(res.statusMessage);
-        print(res.data);
-        if (res != null) {
-          u = AppUser.fromMap(res.data.data.user);
-          // onSuccess(AppUser.fromMap(res.data.data.user));
-        }
+        u = AppUser.fromMap(res.data["data"]["user"]);
       } catch (e) {
         print(e);
         onSuccess(null);
       }
     }).catchError((error) {
-      onError(error);
+      onError(catchErrors(error));
       return;
     });
 
     //Update on firebase
-    _userCollection.doc(getCurrentUser()!.uid).update(u.toMap()).then((value) => onSuccess(u)).catchError(onError);
+    if (u != null) _userCollection.doc(getCurrentUser()!.uid).update(u!.toMap()).then((value) => onSuccess(u)).catchError(onError);
   }
 
-  void signOut(BuildContext context) async {
+  void signOut() async {
     try {
+      // Reset data...
+      CoinsController.to.resetBal();
+      Get.find<BottomMenuController>().onChangeMenu(BottomMenuItem.HOME);
+      //Sign out
       await PrefsAppUser().signOut(); //prefs clear
       await FacebookAuth.instance.logOut();
       await _auth.signOut();
@@ -286,12 +289,13 @@ class AuthRepo {
       print(e);
     }
 
-    Get.offAll(() => Login(), transition: Transition.cupertinoDialog);
+    Get.offAll(() => Login());
   }
 
-  void setOnlineStatus({required String userId, required OnlineStatus userState}) {
-    _userCollection.doc(userId).update({
-      "state": EnumToString.convertToString(userState).toLowerCase(),
+  void setOnlineStatus({required String uid, required OnlineStatus userState}) {
+    _userCollection.doc(uid).update({
+      "online_status": EnumToString.convertToString(userState).toLowerCase(),
+      "last_login": DateTime.now(),
     });
   }
 

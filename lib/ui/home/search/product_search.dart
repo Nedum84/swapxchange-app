@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/product_search_controller.dart';
-import 'package:swapxchange/ui/components/product_item.dart';
 import 'package:swapxchange/ui/home/search/search_appbar.dart';
 import 'package:swapxchange/ui/home/search/search_filters_container.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
+import 'package:swapxchange/ui/widgets/product_item.dart';
 import 'package:swapxchange/utils/constants.dart';
 
 import 'suggestions_container.dart';
@@ -30,7 +31,7 @@ class ProductSearch extends StatelessWidget {
                           // init: ProductSearchController(),
                           builder: (productController) {
                             if (productController.isLoading.value) {
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: LoadingProgressMultiColor());
                             }
                             if (productController.productList.isEmpty) {
                               return Center(

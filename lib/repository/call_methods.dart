@@ -34,7 +34,7 @@ class CallMethods {
     final getCall = await callCollection.doc(call.callerId).get();
     if (getCall.data() != null) {
       //there's an incoming call
-      Call call = Call.fromMap(getCall.data()!);
+      Call call = Call.fromMap(getCall.data()! as Map<String, dynamic>);
       if (call.isMissedCall! && call.callerId == UserController.to.user!.uid) {
         addMissedCall(posterUid: call.receiverId!);
       }
@@ -63,12 +63,12 @@ class CallMethods {
     }
   }
 
-  static Future<String?> generateCallToken({required int uid, required channelName}) async {
+  static Future<String?> generateCallToken({required String uid, required channelName}) async {
     final data = {"uid": uid, "channel_name": channelName};
     Response response = await ApiClient.request().post('/agora/generatetoken', data: data);
 
-    if (response.statusCode == 200) {
-      return response.data["data"]["token"][0];
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response.data["data"]["token"];
     }
 
     return null;

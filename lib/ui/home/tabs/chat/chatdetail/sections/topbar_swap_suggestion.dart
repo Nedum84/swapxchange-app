@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:swapxchange/models/product_model.dart';
+import 'package:swapxchange/ui/home/product/product_detail/product_detail.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
 import 'package:swapxchange/ui/widgets/question_mark.dart';
 import 'package:swapxchange/utils/colors.dart';
@@ -22,7 +24,12 @@ class TopbarSwapSuggestion extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Container(
+            child: InkWell(
+              onTap: () {
+                if (product != null) {
+                  Get.to(() => ProductDetail(product: product!));
+                }
+              },
               child: Row(
                 children: [
                   Expanded(
@@ -53,7 +60,12 @@ class TopbarSwapSuggestion extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Container(
+            child: InkWell(
+              onTap: () {
+                if (offerProduct != null) {
+                  Get.to(() => ProductDetail(product: offerProduct!));
+                }
+              },
               child: Row(
                 children: [
                   (offerProduct != null && offerProduct!.images!.length > 0)

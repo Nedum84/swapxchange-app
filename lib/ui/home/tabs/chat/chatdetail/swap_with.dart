@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/user_controller.dart';
 import 'package:swapxchange/models/app_user.dart';
 import 'package:swapxchange/models/chat_message.dart';
@@ -8,11 +9,12 @@ import 'package:swapxchange/models/product_chats.dart';
 import 'package:swapxchange/models/product_model.dart';
 import 'package:swapxchange/repository/repo_product.dart';
 import 'package:swapxchange/repository/repo_product_chats.dart';
-import 'package:swapxchange/ui/components/custom_button.dart';
 import 'package:swapxchange/ui/home/product/addproduct/add_product.dart';
 import 'package:swapxchange/ui/home/product/exchange_options/swap_suggestion.dart';
 import 'package:swapxchange/ui/home/tabs/chat/chatdetail/chat_detail.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/ui/widgets/custom_button.dart';
+import 'package:swapxchange/ui/widgets/loading_progressbar.dart';
 import 'package:swapxchange/utils/alert_utils.dart';
 import 'package:swapxchange/utils/colors.dart';
 import 'package:swapxchange/utils/styles.dart';
@@ -45,7 +47,6 @@ class _SwapWithState extends State<SwapWith> {
       'Do you want to swap your ${myProduct!.productName} with ${widget.suggestedProduct!.productName}',
       title: 'Confirm',
       positiveBtnText: 'YES',
-      context: context,
       okCallBack: () async {
         ProductChats productChats = ProductChats(
           productId: widget.suggestedProduct!.productId,
@@ -78,7 +79,7 @@ class _SwapWithState extends State<SwapWith> {
     ChatMessage chatMsg = ChatMessage(
       receiverId: p!.userId,
       type: ChatMessageType.PRODUCT_CHAT,
-      productChatId: pChat.id,
+      productChatId: pChat.productChatId,
       message: "${p.productId}@@${p.productName}@@${p.images!.first.imagePath}"
           " @@@ ${offerP!.productId}@@${offerP.productName}@@${offerP.images!.first.imagePath}", //Real time update
     );
@@ -140,7 +141,7 @@ class _SwapWithState extends State<SwapWith> {
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: LoadingProgressMultiColor());
               }
 
               List<Product>? myProducts = snapshot.data;
@@ -185,6 +186,11 @@ class _SwapWithState extends State<SwapWith> {
                           )
                         : AddNewOffer(
                             onClick: () {
+                              final addCont = AddProductController.to;
+                              if (addCont.product == null) {
+                                addCont.setEditing(false);
+                                addCont.create();
+                              }
                               Get.back();
                               Get.to(() => AddProduct());
                             },
@@ -263,7 +269,7 @@ class AddNewOffer extends StatelessWidget {
                 ),
               ),
               child: Icon(
-                Icons.enhance_photo_translate_sharp,
+                Icons.add_a_photo,
                 size: 40,
                 color: KColors.TEXT_COLOR_DARK.withOpacity(.1),
               ),

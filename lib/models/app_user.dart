@@ -17,26 +17,34 @@ class AppUser {
     this.state,
     this.profilePhoto,
     this.deviceToken,
+    this.notification,
+    this.userLevel,
     this.onlineStatus,
     this.userAppVersion,
+    this.baseCurrency,
     this.lastLogin,
     this.createdAt,
     this.updatedAt,
   });
 
-  final int? userId;
+  final String? userId;
   final String? uid;
-  final String? name;
-  final String? email;
-  final String? mobileNumber;
-  final String? address;
-  final String? addressLat;
-  final String? addressLong;
-  final String? state;
-  final String? profilePhoto;
-  final String? deviceToken;
+  String? name;
+  String? email;
+  String? mobileNumber;
+  String? address;
+  double? addressLat;
+  double? addressLong;
+  String? state;
+  String? profilePhoto;
+  String? deviceToken;
+  NotificationSetting? notification;
+  int? userLevel;
+
+  // int? radius;
   final String? onlineStatus;
   final String? userAppVersion;
+  final String? baseCurrency;
   final DateTime? lastLogin;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -46,7 +54,7 @@ class AppUser {
   String toJson() => json.encode(toMap());
 
   factory AppUser.fromMap(Map<String, dynamic> json) => AppUser(
-        userId: int.parse(json["user_id"]),
+        userId: json["user_id"],
         uid: json["uid"],
         name: json["name"],
         email: json["email"],
@@ -57,11 +65,14 @@ class AppUser {
         state: json["state"],
         profilePhoto: json["profile_photo"],
         deviceToken: json["device_token"],
+        notification: NotificationSetting.fromMap((json["notification"])),
+        userLevel: json["user_level"],
         onlineStatus: json["online_status"],
         userAppVersion: json["user_app_version"],
+        baseCurrency: json["base_currency"],
         lastLogin: DateTime.parse(json["last_login"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["createdAt"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -76,10 +87,46 @@ class AppUser {
         "state": state,
         "profile_photo": profilePhoto,
         "device_token": deviceToken,
+        "notification": notification?.toMap(),
+        "user_level": userLevel,
         "online_status": onlineStatus,
         "user_app_version": userAppVersion,
+        "base_currency": baseCurrency,
         "last_login": lastLogin?.toIso8601String(),
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+      };
+}
+
+//0-> OFF, 1-> ON
+class NotificationSetting {
+  NotificationSetting({
+    this.general = true,
+    this.call = true,
+    this.chat = true,
+    this.product = true,
+  });
+
+  bool general;
+  bool call;
+  bool chat;
+  bool product;
+
+  factory NotificationSetting.fromJson(String str) => NotificationSetting.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory NotificationSetting.fromMap(Map<String, dynamic> json) => NotificationSetting(
+        general: json["general"],
+        call: json["call"],
+        chat: json["chat"],
+        product: json["product"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "general": general,
+        "call": call,
+        "chat": chat,
+        "product": product,
       };
 }

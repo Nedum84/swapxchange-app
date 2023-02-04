@@ -41,7 +41,7 @@ class ImageUploadUtilities {
     imageProducts.forEach((element) {
       element.idx = i;
       newList.add(element);
-      print(element.toMap().toString());
+      // print(element.toMap().toString());
       i++;
     });
     addProductController.setImgList(newList);

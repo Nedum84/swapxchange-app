@@ -28,8 +28,10 @@ class LoadingProgressMultiColor extends StatefulWidget {
   final String? title;
   final Color? txtColor;
   final bool showBg;
+  final double? stokeWidth;
+  final double? size;
 
-  LoadingProgressMultiColor({this.title, this.txtColor, this.showBg = true});
+  LoadingProgressMultiColor({this.title, this.txtColor, this.showBg = true, this.stokeWidth, this.size});
 
   @override
   _LoadingProgressMultiColorPageState createState() => _LoadingProgressMultiColorPageState();
@@ -60,31 +62,32 @@ class _LoadingProgressMultiColorPageState extends State<LoadingProgressMultiColo
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: widget.showBg ? Colors.white : Colors.transparent,
+            SizedBox(
+              width: widget.size ?? 35,
+              height: widget.size ?? 35,
+              // child: Transform.scale(
+              //   //works
+              //   scale: .5,
               child: CircularProgressIndicator(
-                strokeWidth: 5,
+                strokeWidth: widget.stokeWidth ?? 4,
                 valueColor: animationController?.drive(ColorTween(
                   begin: KColors.PRIMARY,
                   end: KColors.SECONDARY,
                 )),
               ),
+              // ),
             ),
-            SizedBox(
-              height: 8,
-            ),
-            (widget.title != null)
-                ? Text(
-                    widget.title!,
-                    style: TextStyle(
-                      color: widget.txtColor ?? Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      decoration: TextDecoration.none,
-                    ),
-                  )
-                : Container(),
+            if (widget.title != null) SizedBox(height: 8),
+            if (widget.title != null)
+              Text(
+                widget.title!,
+                style: TextStyle(
+                  color: widget.txtColor ?? Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  decoration: TextDecoration.none,
+                ),
+              ),
           ],
         ),
       ),

@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "961054493199-h1vcojkl484pgsgrf9atne7a4ke6jjcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.swapxchange",
+            "certificate_hash": "a6107a92ed51ede77efcab83f309d176cb4c404e"
+          }
+        },
+        {
+          "client_id": "961054493199-m1q8q506r93ps2s5s8jdhprvv4v13bs8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.swapxchange",
+            "certificate_hash": "43814424422fc2efd74ac4f7dba58c3cce2ea0ec"
+          }
+        },
+        {
+          "client_id": "961054493199-ud4ai5875djqa1eskflbdoaj9k5tjg7e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.swapxchange",
+            "certificate_hash": "40428b336b4cf83b2d46ec2c330c14cb5cc2ebf6"
+          }
+        },
+        {
           "client_id": "961054493199-qdl3mq1u5rbe77cvpnp1o8jp0bsh11ah.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +53,13 @@
             {
               "client_id": "961054493199-qdl3mq1u5rbe77cvpnp1o8jp0bsh11ah.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "961054493199-625jvjmot6cim228vi003i6fd5t2ggnc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.swapxchange"
+              }
             }
           ]
         }

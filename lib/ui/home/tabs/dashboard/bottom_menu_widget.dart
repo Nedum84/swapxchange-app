@@ -1,70 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:swapxchange/controllers/add_product_controller.dart';
 import 'package:swapxchange/controllers/bottom_menu_controller.dart';
 import 'package:swapxchange/enum/bottom_menu_item.dart';
 import 'package:swapxchange/ui/home/product/addproduct/add_product.dart';
+import 'package:swapxchange/ui/home/tabs/chat/chatlist/unread_chats.dart';
 import 'package:swapxchange/utils/colors.dart';
 
 class BottomMenuWidget extends StatelessWidget {
-  final IconData icon;
   final String title;
-  final PageController pageViewController;
   final BottomMenuItem bottomMenuItem;
 
   BottomMenuWidget({
     required this.title,
-    required this.icon,
     required this.bottomMenuItem,
-    required this.pageViewController,
   });
-
-  void setMenu() {
-    Get.find<BottomMenuController>().onChangeMenu(bottomMenuItem);
-
-    switch (bottomMenuItem) {
-      case BottomMenuItem.HOME:
-        pageViewController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.CHAT:
-        pageViewController.animateToPage(1, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.SAVED:
-        pageViewController.animateToPage(2, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-      case BottomMenuItem.ADD:
-        Get.to(() => AddProduct());
-        break;
-      default:
-        pageViewController.animateToPage(3, duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    // return Container();
     return GetBuilder<BottomMenuController>(
       init: BottomMenuController(),
       builder: (bottomMenuProvider) {
+        final isCurrent = bottomMenuProvider.bottomMenuItem == bottomMenuItem;
         return InkWell(
-          onTap: () => setMenu(),
+          onTap: () => bottomMenuProvider.onChangeMenu(bottomMenuItem),
           child: Container(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            // padding: EdgeInsets.all(8),
+            alignment: Alignment.center,
+            height: 55,
+            child: Stack(
+              // alignment: Alignment.center,
+              //Stack to allow badge dot display
               children: [
-                Icon(
-                  icon,
-                  color: (bottomMenuProvider.bottomMenuItem == bottomMenuItem) ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      width: isCurrent ? 22 : 18,
+                      height: isCurrent ? 22 : 18,
+                      child: FittedBox(
+                        child: Icon(
+                          bottomMenuProvider.bottomIcon(bottomMenuItem),
+                          color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
+                          // size: double.infinity,
+                        ),
+                      ),
+                    ),
+                    AnimatedDefaultTextStyle(
+                      duration: Duration(milliseconds: 300),
+                      style: TextStyle(
+                        fontSize: isCurrent ? 11 : 10,
+                        color: isCurrent ? KColors.TEXT_COLOR_MEDIUM : KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
+                      ),
+                      child: Text(title),
+                    ),
+                  ],
                 ),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: (bottomMenuProvider.bottomMenuItem == bottomMenuItem) ? KColors.TEXT_COLOR_MEDIUM : Colors.black12,
-                  ),
-                )
+                if (bottomMenuItem == BottomMenuItem.CHAT) UnreadChatsDot(), //Dot Badge
               ],
             ),
           ),
@@ -99,14 +93,15 @@ class AddMenuWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.add,
-                  color: Colors.black12,
+                  FontAwesomeIcons.plusSquare,
+                  color: KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
+                  size: 18,
                 ),
                 Text(
                   'Add',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black12,
+                    fontSize: 10,
+                    color: KColors.TEXT_COLOR_MEDIUM.withOpacity(.4),
                   ),
                 )
               ],

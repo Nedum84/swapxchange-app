@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swapxchange/models/product_image.dart';
-import 'package:swapxchange/ui/components/step_progress_view.dart';
 import 'package:swapxchange/ui/widgets/cached_image.dart';
+import 'package:swapxchange/ui/widgets/step_progress_view.dart';
 
 class ViewImage extends StatefulWidget {
   final int curStep;
